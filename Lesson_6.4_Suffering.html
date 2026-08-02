@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suffering: Not Home Yet — Lesson 6.4</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================
+   GAMMA DESIGN SYSTEM — THEME TOKENS
+   Sourced from Cristo Viene's Sermon Slide System brand book.
+   =========================================== */
+:root {
+    --primary: #494FBC;
+    --primary-surface: #D9DAF1;
+    --primary-deep: #363B8F;
+    --border: #BFC1D6;
+    --heading: #000000;
+    --text: #262525;
+    --muted: #6B6D7F;
+    --bg: #FFFFFF;
+    --hairline: #EEEEF3;
+
+    --font: 'Inter', sans-serif;
+
+    --pad-outer: 96px;
+    --pad-top: 72px;
+    --pad-bottom: 64px;
+    --radius-card: 20px;
+    --radius-sm: 8px;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.7s;
+
+    --stage-bg: #FFFFFF;
+    --slide-bg: #FFFFFF;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); color: var(--text); }
+
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES
+   (viewport-base.css, included in full)
+   =========================================== */
+html, body {
+    width: 100%; height: 100%; margin: 0; overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+.deck-viewport {
+    position: fixed; inset: 0; overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+.deck-stage {
+    position: absolute; left: 0; top: 0;
+    width: 1920px; height: 1080px; overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+.slide {
+    position: absolute; inset: 0; width: 1920px; height: 1080px;
+    overflow: hidden; display: block;
+    visibility: hidden; opacity: 0; pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+.slide.active, .slide.visible {
+    visibility: visible; opacity: 1; pointer-events: auto; z-index: 1;
+}
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+    z-index: 1000;
+}
+@media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide {
+        position: relative; display: block !important; visibility: visible !important;
+        opacity: 1 !important; pointer-events: auto !important;
+        width: 1920px; height: 1080px; break-after: page; page-break-after: always;
+    }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* ===========================================
+   REVEAL ANIMATIONS — calm, quiet register
+   =========================================== */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                transform var(--duration-normal) var(--ease-out-expo);
+}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.reveal:nth-child(1) { transition-delay: 0.05s; }
+.reveal:nth-child(2) { transition-delay: 0.15s; }
+.reveal:nth-child(3) { transition-delay: 0.25s; }
+.reveal:nth-child(4) { transition-delay: 0.35s; }
+.reveal:nth-child(5) { transition-delay: 0.45s; }
+.reveal:nth-child(6) { transition-delay: 0.55s; }
+.reveal:nth-child(7) { transition-delay: 0.65s; }
+.reveal:nth-child(8) { transition-delay: 0.75s; }
+
+/* ===========================================
+   SLIDE SHELL / CHROME
+   =========================================== */
+.slide-inner { position: relative; width: 100%; height: 100%; }
+.slide-content {
+    position: absolute; left: var(--pad-outer); right: var(--pad-outer);
+    top: var(--pad-top); bottom: var(--pad-bottom);
+    display: flex; flex-direction: column; justify-content: center; gap: 28px;
+}
+.chrome-label {
+    position: absolute; top: 56px; left: var(--pad-outer);
+    font-size: 20px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--primary);
+}
+.chrome-footer {
+    position: absolute; left: var(--pad-outer); right: var(--pad-outer); bottom: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 16px; font-weight: 300; color: var(--muted);
+    padding-top: 18px; border-top: 1px solid var(--hairline);
+}
+
+/* ===========================================
+   TYPOGRAPHY SCALE
+   =========================================== */
+.t-display { font-size: 108px; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; color: var(--heading); }
+.t-title   { font-size: 80px;  font-weight: 800; line-height: 1.08; letter-spacing: -0.01em; color: var(--heading); }
+.t-subtitle{ font-size: 44px;  font-weight: 700; line-height: 1.2; color: var(--heading); }
+.t-card-head { font-size: 40px; font-weight: 700; line-height: 1.2; color: var(--primary); }
+.t-quote   { font-size: 36px;  font-weight: 400; font-style: italic; line-height: 1.45; color: var(--text); }
+.t-body-lg { font-size: 30px;  font-weight: 400; line-height: 1.55; color: var(--text); }
+.t-body    { font-size: 25px;  font-weight: 400; line-height: 1.6; color: var(--text); }
+.t-body-sm { font-size: 21px;  font-weight: 400; line-height: 1.55; color: var(--muted); }
+.t-checklist { font-size: 25px; font-weight: 600; line-height: 1.4; color: var(--text); }
+.t-hook    { font-size: 34px; font-weight: 400; font-style: italic; color: var(--muted); }
+
+/* ===========================================
+   GAMMA COMPONENTS
+   =========================================== */
+.card-outline {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 40px 44px;
+}
+.scripture-card {
+    background: var(--bg); border-left: 4px solid var(--primary);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    padding: 36px 44px; display: flex; flex-direction: column; gap: 14px;
+}
+.scripture-card--compact { padding: 26px 32px; gap: 8px; }
+.scripture-card--compact .t-card-head { font-size: 28px; }
+.scripture-card--compact .t-body { font-size: 21px; }
+
+.callout {
+    background: var(--primary-surface); border-radius: var(--radius-card);
+    padding: 36px 40px; display: flex; gap: 20px; align-items: flex-start;
+}
+.callout svg { flex-shrink: 0; margin-top: 6px; }
+.callout p { margin: 0; }
+
+.pull-quote {
+    border-left: 3px solid var(--primary); padding-left: 32px;
+}
+
+.checklist-item { display: flex; gap: 20px; align-items: flex-start; }
+.checklist-box {
+    width: 32px; height: 32px; border-radius: var(--radius-sm);
+    background: var(--primary-surface); flex-shrink: 0; margin-top: 4px;
+}
+.checklist-item p { margin: 0; }
+
+.bullets { list-style: none; margin: 0; padding: 0; }
+.bullets li {
+    position: relative; padding-left: 30px; margin-bottom: 18px;
+}
+.bullets li::before {
+    content: ''; position: absolute; left: 0; top: 14px;
+    width: 9px; height: 9px; border-radius: 50%; background: var(--text);
+}
+.bullets.two-col { columns: 2; column-gap: 56px; }
+.bullets.two-col li { break-inside: avoid; }
+
+.split { display: grid; grid-template-columns: 44% 56%; height: 100%; }
+.split-panel {
+    position: relative; overflow: hidden; background: var(--primary-deep);
+}
+.split-panel-img {
+    position: absolute; top: -5%; left: -5%; width: 110%; height: 110%;
+    background-size: cover; background-position: center;
+    animation: kenBurns 22s ease-in-out infinite alternate;
+}
+@keyframes kenBurns {
+    0%   { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.09) translate(-1.5%, -1%); }
+}
+.split-panel-overlay {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(165deg, rgba(73,79,188,0.38) 0%, rgba(54,59,143,0.16) 55%, rgba(54,59,143,0) 100%);
+}
+.photo-credit {
+    position: absolute; bottom: 20px; left: 24px; pointer-events: none;
+    font-size: 12px; color: rgba(255,255,255,0.75); letter-spacing: 0.02em;
+}
+.split-content { display: flex; flex-direction: column; justify-content: center; padding: 0 var(--pad-outer); gap: 24px; }
+.split-content .chrome-label { position: static; top: auto; left: auto; margin-bottom: 4px; }
+
+.story-placeholder {
+    border: 1.5px dashed var(--border); border-radius: var(--radius-card);
+    padding: 26px 32px; display: flex; gap: 16px; align-items: flex-start;
+}
+.story-placeholder .tag {
+    font-size: 15px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--primary); white-space: nowrap; margin-top: 3px;
+}
+.story-placeholder p { margin: 0; color: var(--muted); font-style: italic; font-size: 21px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+
+.contrast-card { border-radius: var(--radius-card); padding: 32px 36px; }
+.contrast-card.culture { background: var(--bg); border: 1px solid var(--border); }
+.contrast-card.god { background: var(--primary-surface); }
+.contrast-card .tag {
+    font-size: 17px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--primary); margin-bottom: 12px; display: block;
+}
+
+/* ===========================================
+   GAMMA-PARITY COMPONENTS (added for slides ported from the Gamma deck)
+   =========================================== */
+.solid-box { background: var(--primary-surface); border-radius: var(--radius-card); padding: 28px 30px; }
+.solid-box h4 { margin: 0 0 8px; font-size: 22px; font-weight: 700; color: var(--primary); }
+.solid-box p { margin: 0; font-size: 18px; color: var(--text); line-height: 1.45; }
+
+.outline-box { background: var(--bg); border-left: 3px solid var(--primary); border-radius: 0 16px 16px 0; padding: 24px 28px; }
+.outline-box h4 { margin: 0 0 8px; font-size: 21px; font-weight: 700; color: var(--heading); }
+.outline-box p { margin: 0; font-size: 18px; color: var(--text); line-height: 1.5; }
+.outline-box.compact { padding: 20px 24px; }
+.outline-box.compact h4 { font-size: 19px; }
+.outline-box.compact p { font-size: 16.5px; }
+
+.joined-boxes { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; }
+.joined-boxes > div { padding: 28px 26px; border-left: 1px solid var(--border); }
+.joined-boxes > div:first-child { border-left: none; }
+.joined-boxes h4 { margin: 0 0 8px; font-size: 20px; font-weight: 700; color: var(--primary); }
+.joined-boxes p { margin: 0; font-size: 17px; color: var(--text); line-height: 1.45; }
+
+.beat-item .tag { font-size: 16px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--primary); display: block; margin-bottom: 6px; }
+.beat-item p { margin: 0; font-size: 22px; color: var(--text); line-height: 1.4; }
+
+.arrow-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.arrow-item .arrow-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.arrow-item .arrow-head svg { flex-shrink: 0; }
+.arrow-item h4 { margin: 0; font-size: 26px; font-weight: 700; color: var(--heading); }
+.arrow-item p { margin: 0; font-size: 19px; color: var(--text); line-height: 1.5; }
+
+.category-item h4 { margin: 0 0 6px; font-size: 21px; font-weight: 700; color: var(--heading); }
+.category-item p { margin: 0; font-size: 18px; color: var(--muted); line-height: 1.45; }
+
+.step-item { display: flex; gap: 22px; align-items: flex-start; }
+.step-number {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;
+    flex-shrink: 0;
+}
+.step-item h4 { margin: 0 0 4px; font-size: 22px; font-weight: 700; color: var(--heading); }
+.step-item p { margin: 0; font-size: 19px; color: var(--text); line-height: 1.45; }
+
+.inset-image { border-radius: var(--radius-card); overflow: hidden; }
+.inset-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ===========================================
+   TITLE SLIDE SPECIFIC
+   =========================================== */
+.title-slide .chrome-label { color: var(--primary); }
+
+/* Animated scripture-card variant — accent bar draws in, text settles behind it.
+   Opt-in via .anim; other scripture-cards in the deck keep the static border-left. */
+.scripture-card.anim { border-left: none; padding: 0; display: flex; flex-direction: row; gap: 0; }
+.scripture-card.anim .scripture-bar {
+    width: 4px; background: var(--primary); flex-shrink: 0;
+    transform: scaleY(0); transform-origin: top;
+    transition: transform 0.9s var(--ease-out-expo);
+}
+.scripture-card.anim .scripture-body { padding: 36px 44px; display: flex; flex-direction: column; gap: 14px; }
+.scripture-card.anim .scripture-body p {
+    opacity: 0; transform: translateY(14px);
+    transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+}
+.scripture-card.anim .scripture-body p:nth-child(1) { transition-delay: 0.55s; }
+.scripture-card.anim .scripture-body p:nth-child(2) { transition-delay: 0.7s; }
+.slide.visible .scripture-card.anim .scripture-bar { transform: scaleY(1); }
+.slide.visible .scripture-card.anim .scripture-body p { opacity: 1; transform: translateY(0); }
+
+/* ===========================================
+   DECK CONTROLS (outside slide design system)
+   =========================================== */
+.deck-controls {
+    display: flex; gap: 10px; align-items: center;
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(6px);
+    padding: 10px 16px; border-radius: 999px; border: 1px solid var(--border);
+}
+.dot {
+    width: 9px; height: 9px; border-radius: 50%; background: var(--border);
+    cursor: pointer; transition: background 0.3s, transform 0.3s;
+}
+.dot.active { background: var(--primary); transform: scale(1.3); }
+.nav-btn {
+    background: none; border: none; color: var(--primary); font-size: 18px;
+    cursor: pointer; padding: 0 6px; line-height: 1;
+}
+
+/* ===========================================
+   SLIDE MANAGER TOOLBAR (visible only in edit mode)
+   =========================================== */
+.slide-manager-toolbar {
+    position: fixed; top: 18px; right: 18px; z-index: 10001;
+    display: flex; gap: 6px; align-items: center;
+    background: #fff; border: 1px solid var(--border); border-radius: 999px;
+    padding: 8px 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    opacity: 0; pointer-events: none; transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.slide-manager-toolbar.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.slide-manager-toolbar button {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: none; color: var(--text); font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    padding: 8px 12px; border-radius: 999px; transition: background 0.2s, color 0.2s;
+}
+.slide-manager-toolbar button:hover { background: var(--primary-surface); color: var(--primary); }
+.slide-manager-toolbar button.danger:hover { background: #F6DADA; color: #B3352E; }
+.slide-manager-toolbar button:disabled { opacity: 0.35; cursor: not-allowed; background: none !important; color: var(--text) !important; }
+.slide-manager-toolbar .divider { width: 1px; height: 22px; background: var(--hairline); margin: 0 2px; }
+.slide-manager-toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--heading); color: #fff; padding: 10px 18px; border-radius: 999px;
+    font-size: 14px; font-family: 'Inter', sans-serif; opacity: 0;
+    transition: opacity 0.3s, transform 0.3s; z-index: 10002; pointer-events: none;
+}
+.slide-manager-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===========================================
+   COPY / PASTE CONTENT BLOCKS (edit mode only)
+   =========================================== */
+body.edit-mode .slide.active .slide-content > .reveal,
+body.edit-mode .slide.active .split-content > .reveal {
+    position: relative;
+    outline: 1px dashed transparent;
+    outline-offset: 6px;
+    transition: outline-color 0.15s ease;
+}
+body.edit-mode .slide.active .slide-content > .reveal:hover,
+body.edit-mode .slide.active .split-content > .reveal:hover {
+    outline-color: var(--border);
+}
+/* Single floating button, repositioned on hover via JS — never a child of the
+   block it points at, so it can never end up inside contenteditable content. */
+.copy-btn {
+    position: fixed; left: 0; top: 0; z-index: 10015;
+    transform: translate(-50%, -50%);
+    width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color: #fff;
+    border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px;
+    opacity: 0; pointer-events: none; transition: opacity 0.12s ease, transform 0.12s ease, left 0.06s linear, top 0.06s linear;
+}
+.copy-btn.show { opacity: 1; pointer-events: auto; }
+.copy-btn:hover { transform: translate(-50%, -50%) scale(1.12); background: var(--primary-deep); }
+.delete-btn {
+    position: fixed; left: 0; top: 0; z-index: 10015;
+    transform: translate(-50%, -50%);
+    width: 30px; height: 30px; border-radius: 50%; background: #C13B32; color: #fff;
+    border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px;
+    opacity: 0; pointer-events: none; transition: opacity 0.12s ease, transform 0.12s ease, left 0.06s linear, top 0.06s linear;
+}
+.delete-btn.show { opacity: 1; pointer-events: auto; }
+.delete-btn:hover { transform: translate(-50%, -50%) scale(1.12); background: #A32D25; }
+.slide-manager-toolbar button.paste-btn.has-clipboard { color: var(--primary); }
+
+/* ===========================================
+   SELECTION TOOLBAR (appears when text is highlighted in edit mode)
+   =========================================== */
+.selection-toolbar {
+    position: fixed; z-index: 10020; left: 0; top: 0;
+    transform: translate(-50%, calc(-100% - 12px));
+    display: flex; align-items: center; gap: 2px;
+    background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 6px 8px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+    opacity: 0; pointer-events: none; transition: opacity 0.12s ease;
+    font-family: 'Inter', sans-serif;
+}
+.selection-toolbar.show { opacity: 1; pointer-events: auto; }
+.selection-toolbar button {
+    background: none; border: none; color: var(--text); cursor: pointer;
+    width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif; font-size: 15px; flex-shrink: 0;
+}
+.selection-toolbar button:hover { background: var(--primary-surface); color: var(--primary); }
+.selection-toolbar button.active { background: var(--primary); color: #fff; }
+.sel-divider { width: 1px; height: 20px; background: var(--hairline); margin: 0 4px; flex-shrink: 0; }
+.sel-size-combo { position: relative; display: flex; align-items: center; }
+.sel-size-combo input[type="number"] {
+    width: 40px; text-align: right; border: none; background: none; color: var(--text);
+    font-family: 'Inter', sans-serif; font-size: 13px; padding: 4px 0 4px 6px; border-radius: 7px 0 0 7px;
+    -moz-appearance: textfield;
+}
+.sel-size-combo input[type="number"]:focus { background: var(--primary-surface); outline: none; }
+.sel-size-combo input[type="number"]::-webkit-inner-spin-button,
+.sel-size-combo input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.sel-size-toggle {
+    background: none; border: none; color: var(--muted); cursor: pointer; font-size: 10px;
+    padding: 6px 6px; border-radius: 0 7px 7px 0;
+}
+.sel-size-toggle:hover { background: var(--primary-surface); color: var(--primary); }
+.sel-size-menu {
+    position: absolute; top: calc(100% + 8px); left: 0; z-index: 10021;
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18); padding: 4px;
+    display: none; flex-direction: column; max-height: 220px; overflow-y: auto; min-width: 60px;
+}
+.sel-size-menu.show { display: flex; }
+.sel-size-menu button {
+    background: none; border: none; text-align: left; padding: 6px 10px; border-radius: 6px;
+    font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text); cursor: pointer; width: 100%; flex-shrink: 0;
+}
+.sel-size-menu button:hover { background: var(--primary-surface); color: var(--primary); }
+.sel-colors { display: flex; gap: 5px; align-items: center; padding: 0 4px; }
+.sel-swatch {
+    width: 18px; height: 18px; border-radius: 50%; padding: 0; border: 1.5px solid var(--border);
+    cursor: pointer; transition: transform 0.15s;
+}
+.sel-swatch:hover { transform: scale(1.15); }
+.sel-swatch-custom {
+    position: relative; overflow: hidden;
+    background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+    display: flex;
+}
+.sel-swatch-custom input[type="color"] {
+    position: absolute; inset: -6px; opacity: 0; cursor: pointer; width: 30px; height: 30px; border: none; padding: 0;
+}
+
+/* ===========================================
+   INLINE EDITING
+   =========================================== */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle {
+    position: fixed; top: 18px; left: 18px; z-index: 10001;
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border);
+    background: #fff; font-size: 18px; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--primary); color: #fff; }
+[contenteditable="true"] { outline: 1px dashed var(--primary); outline-offset: 4px; cursor: text; }
+.save-toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--heading); color: #fff; padding: 10px 18px; border-radius: 999px;
+    font-size: 14px; opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 10002;
+}
+.save-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===========================================
+   IMAGE EDITING (upload or link, while in edit mode)
+   =========================================== */
+.img-editable.edit-active { cursor: pointer; }
+.img-editable.edit-active::after {
+    content: '🖼  Click to change image';
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.4); color: #fff; font-size: 15px; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s ease; pointer-events: none; text-align: center; padding: 20px;
+}
+.img-editable.edit-active:hover::after { opacity: 1; }
+
+.image-picker-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 10010;
+    display: none; align-items: center; justify-content: center;
+}
+.image-picker-overlay.show { display: flex; }
+.image-picker-card {
+    background: #fff; border-radius: 20px; padding: 32px 36px; width: 440px; max-width: 90vw;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.28); font-family: 'Inter', sans-serif;
+}
+.image-picker-card h3 { margin: 0 0 22px; font-size: 20px; font-weight: 800; color: var(--heading); }
+.image-picker-card label {
+    display: block; font-size: 12px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+}
+.image-picker-section { margin-bottom: 22px; }
+.image-picker-dropzone {
+    border: 1.5px dashed var(--border); border-radius: 14px; padding: 20px;
+    text-align: center; font-size: 14px; color: var(--muted); cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+.image-picker-dropzone:hover, .image-picker-dropzone.drag-over { border-color: var(--primary); background: var(--primary-surface); }
+.image-picker-dropzone input[type="file"] { display: none; }
+.image-picker-or { text-align: center; font-size: 12px; color: var(--muted); margin: 18px 0; text-transform: uppercase; letter-spacing: 0.08em; }
+.image-picker-row { display: flex; gap: 10px; }
+.image-picker-row input[type="text"] {
+    flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border);
+    font-size: 14px; font-family: inherit; color: var(--text);
+}
+.image-picker-row button {
+    padding: 11px 20px; border-radius: 10px; border: none; background: var(--primary); color: #fff;
+    font-weight: 700; font-size: 14px; cursor: pointer; flex-shrink: 0;
+}
+.image-picker-row button:hover { background: var(--primary-deep); }
+.image-picker-actions { display: flex; justify-content: flex-end; margin-top: 24px; }
+.image-picker-actions button {
+    padding: 10px 18px; border-radius: 10px; border: 1px solid var(--border); background: none;
+    color: var(--muted); font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit;
+}
+.image-picker-actions button:hover { background: var(--hairline); }
+</style>
+</head>
+<body class="">
+
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏️</button>
+<div class="save-toast" id="saveToast">Saved locally</div>
+
+<button type="button" class="copy-btn" id="hoverCopyBtn" title="Copy this block">⧉</button>
+<button type="button" class="delete-btn" id="hoverDeleteBtn" title="Delete this block">🗑</button>
+
+<div class="image-picker-overlay" id="imagePickerOverlay">
+  <div class="image-picker-card">
+    <h3>Change Image</h3>
+    <div class="image-picker-section">
+      <label>Upload from your device</label>
+      <div class="image-picker-dropzone" id="imageDropzone">
+        Click to choose a file, or drag one here
+        <input type="file" id="imageFileInput" accept="image/*">
+      </div>
+    </div>
+    <div class="image-picker-or">or</div>
+    <div class="image-picker-section">
+      <label>Paste an image link</label>
+      <div class="image-picker-row">
+        <input type="text" id="imageUrlInput" placeholder="https://...">
+        <button id="imageUrlApply">Use link</button>
+      </div>
+    </div>
+    <div class="image-picker-actions">
+      <button id="imagePickerCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage" style="transform: translate(26.6667px, 0px) scale(0.847222);">
+
+<!-- =========================================================
+     SLIDE 0 — TITLE
+     ========================================================= -->
+<section class="slide title-slide" data-index="0">
+  <div class="slide-inner">
+    <div class="split">
+      <div class="split-panel">
+        <div class="split-panel-img img-editable" style="background-image:url('assets/title-fog-path.jpg')" data-img-id="img-0"></div>
+        <div class="split-panel-overlay"></div>
+        <div class="photo-credit">Photo — Maksim Shutov / Unsplash</div>
+      </div>
+      <div class="split-content">
+        <div class="chrome-label reveal editable" data-edit-id="el-0">Lesson 6.4 · Cristo Viene</div>
+        <h1 class="t-display reveal editable" data-edit-id="el-1">SUFFERING<br>Not Home Yet</h1>
+        <p class="t-hook reveal editable" data-edit-id="el-2">"You're not stuck in the suffering. You're just not home yet."</p>
+        <div class="scripture-card anim">
+          <div class="scripture-bar"></div>
+          <div class="scripture-body">
+            <p class="t-body editable" data-edit-id="el-3"><span style="font-size: 1em;">"I consider that our present sufferings are not worth comparing with the glory that will be revealed in us."</span></p>
+            <p class="t-body-sm editable" data-edit-id="el-4">— Romans 8:18</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 1 — BIG IDEA: "Suffering: Not Home Yet"
+     ========================================================= -->
+<section class="slide" data-index="1">
+  <div class="slide-inner">
+    <div class="split">
+      <div class="split-panel">
+        <div class="split-panel-img img-editable" style="background-image:url('assets/big-idea-sunrise-road.jpg')" data-img-id="img-1"></div>
+        <div class="split-panel-overlay"></div>
+        <div class="photo-credit">AI-generated image</div>
+      </div>
+      <div class="split-content">
+        <div class="chrome-label reveal editable" data-edit-id="el-5">Big Idea</div>
+        <h2 class="t-title reveal editable" data-edit-id="el-6">Suffering</h2>
+        
+        <div class="grid-3 reveal" style="gap:16px;">
+          <div class="solid-box">
+            <h4 class="editable" data-edit-id="el-8">It's Real</h4>
+            <p class="editable" data-edit-id="el-9">Pain is not pretend. We don't minimize it.</p>
+          </div>
+          <div class="solid-box">
+            <h4 class="editable" data-edit-id="el-10">It's Temporary</h4>
+            <p class="editable" data-edit-id="el-11">This is not the final chapter of your story.</p>
+          </div>
+          <div class="solid-box">
+            <h4 class="editable" data-edit-id="el-12">Glory Is Coming</h4>
+            <p class="editable" data-edit-id="el-13">What's ahead outweighs everything it costs you now.</p>
+          </div>
+        </div>
+      <p class="t-body-lg reveal editable" data-edit-id="el-7"><strong>Big Idea:</strong> Suffering is real and it hurts — but it's temporary. The glory coming is eternal and beyond compare.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 2 — HOOK: "Nobody Escapes This"
+     ========================================================= -->
+<section class="slide" data-index="2">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-14">Hook</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" data-edit-id="el-15">Nobody Escapes This</h2>
+      <p class="t-body reveal editable" data-edit-id="el-16">Everybody suffers. No exceptions.</p>
+      <div class="arrow-row reveal">
+        <div class="arrow-item">
+          <div class="arrow-head">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="14 6 20 12 14 18"></polyline></svg>
+            <h4 class="editable" data-edit-id="el-17"><span style="font-size: 32px;">The Confusion</span></h4>
+          </div>
+          <p class="editable" data-edit-id="el-18"><span style="font-size: 28px;">People think being a Christian was supposed to make life easier — and felt confused when it didn't?</span></p>
+        </div>
+        <div class="arrow-item">
+          <div class="arrow-head">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="14 6 20 12 14 18"></polyline></svg>
+            <h4 class="editable" data-edit-id="el-19"><span style="font-size: 32px;">They Question</span></h4>
+          </div>
+          <p class="editable" data-edit-id="el-20"><span style="font-size: 28px;">"If God is good and loves me, why do I still hurt like this?"</span></p>
+        </div>
+        <div class="arrow-item">
+          <div class="arrow-head">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="14 6 20 12 14 18"></polyline></svg>
+            <h4 class="editable" data-edit-id="el-21"><span style="font-size: 32px;">The Truth</span></h4>
+          </div>
+          <p class="editable" data-edit-id="el-22"><span style="font-size: 28px;">Following Jesus is not a get-out-of-suffering-free card. But it changes everything about how the story ends.</span></p>
+        </div>
+      </div>
+      <div class="story-placeholder reveal">
+        <span class="tag">Your story</span>
+        <p class="editable" data-edit-id="el-23">I''ve fought with Depression, Heartbreak, loss of Identity. But the one thing that kept me going was my faith God.</p>
+      </div>
+    </div>
+    <div class="chrome-footer reveal">
+      <span>Suffering · Not Home Yet</span>
+      <span>03</span>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 3 — THE PSYCHOLOGY: "You Can Survive Almost Anything If…"
+     ========================================================= -->
+<section class="slide" data-index="3">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-24">The Psychology</div>
+    <div class="slide-content">
+      <div class="grid-2 reveal" style="grid-template-columns: 1.3fr 1fr; align-items:center;">
+        <div class="inset-image" style="height:460px;">
+          <img class="img-editable" src="file:///G:/Cristo%20Viene/Lessons/assets/frankl-scale.jpg" alt="A scale balancing a heavy stone against a light feather, symbolizing the weight of suffering measured against hope." data-img-id="img-2">
+        </div>
+        <div>
+          <h2 class="t-title editable" style="font-size:56px; margin-bottom:20px;" data-edit-id="el-25">You Can Survive Almost Anything If you have Faith.</h2>
+          <div class="pull-quote" style="margin-bottom:20px;">
+            <p class="t-quote editable" style="font-size:26px;" data-edit-id="el-26">"Those who have a 'why' to live, can bear almost any 'how.'"</p>
+            <p class="t-body-sm editable" data-edit-id="el-27">— Viktor Frankl</p>
+          </div>
+          <p class="t-body-sm editable" style="font-size:18px; color:var(--text);" data-edit-id="el-28"><span style="font-size: 28px;">Frankl survived Nazi concentration camps. The ones who made it weren't the strongest — they were the ones with a <strong style="">reason to keep going.</strong></span></p>
+        </div>
+      </div>
+      <div class="callout reveal" style="margin-top:24px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <p class="t-body-lg editable" data-edit-id="el-29">What breaks us usually isn't the size of the suffering — it's the loss of hope. Christianity hands you the most powerful "why" there is: this is temporary, and glory is coming.</p>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Suffering · Not Home Yet</span><span>04</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 4 — THE MISCONCEPTION: "Nobody Promised You Easy"
+     ========================================================= -->
+<section class="slide" data-index="4">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-30">The Misconception</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" data-edit-id="el-31">Nobody Promised You Easy</h2>
+      <div class="grid-3 reveal" style="gap:20px;">
+        <div class="outline-box">
+          <h4 class="editable" data-edit-id="el-32"><span style="font-size: 32px;">The Lie</span></h4>
+          <p class="editable" data-edit-id="el-33"><span style="font-size: 32px;">"If I'm suffering, something must be wrong with me or my faith."</span><div><span style="font-size: 32px;"><br></span></div><div><span style="font-size: 32px;">"God has abandoned me."</span></div></p>
+        </div>
+        <div class="outline-box">
+          <h4 class="editable" data-edit-id="el-34"><span style="font-size: 32px;">What Jesus Actually Said</span></h4>
+          <p class="editable" data-edit-id="el-35"><span style="font-size: 32px;">"In this world you will have trouble. But take heart! I have overcome the world." — John 16:33</span></p>
+        </div>
+        <div class="outline-box">
+          <h4 class="editable" data-edit-id="el-36"><span style="font-size: 32px;">The Reframe</span></h4>
+          <p class="editable" data-edit-id="el-37"><span style="font-size: 32px;">Suffering isn't a sign your faith failed. It's a sign you're still living on a broken planet — and heading somewhere unbroken.</span></p>
+        </div>
+      </div>
+      <p class="t-body reveal editable" data-edit-id="el-38">Jesus offers rest for your soul (Matthew 11:28–30) — but never a pain-free ride. He promised to be <strong>with you through it.</strong><div><span style="font-size: 20px;"><span id="en-NLT-23464" class="text Matt-11-28" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">28 </span>Then Jesus said, <span class="woj" style="">“Come to me, all of you who are weary and carry heavy burdens, and I will give you rest.</span></span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"> </span><span id="en-NLT-23465" class="text Matt-11-29" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">29 </span><span class="woj">Take my yoke upon you. Learn from me, for I am gentle and&nbsp;</span></span></span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; font-size: 20px;">humble </span><span style="font-size: 20px;"><span class="text Matt-11-29" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="woj">at heart, and you will find rest for your souls.</span></span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"> </span><span id="en-NLT-23466" class="text Matt-11-30" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">30 </span><span class="woj" style="">For my yoke is easy to bear, and the burden I give you is light.”</span></span></span></div></p>
+    </div>
+    <div class="chrome-footer reveal"><span>Suffering · Not Home Yet</span><span>05</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 5 — BIBLICAL EXAMPLE: "Singing at Midnight"
+     ========================================================= -->
+<section class="slide" data-index="5">
+  <div class="slide-inner">
+    <div class="split">
+      <div class="split-content">
+        <div class="chrome-label reveal editable" data-edit-id="el-39">Biblical Example</div>
+        <h2 class="t-title reveal editable" data-edit-id="el-40">Singing at Midnight</h2>
+        <p class="t-body reveal editable" data-edit-id="el-41"><strong>Acts 16:16-38</strong> Paul and Silas — beaten, chained, thrown in the worst cell. Every reason to be bitter.</p>
+        <div class="joined-boxes reveal">
+          <div>
+            <h4 class="editable" data-edit-id="el-42">The Situation</h4>
+            <p class="editable" data-edit-id="el-43">Bleeding, chained, midnight.</p>
+          </div>
+          <div>
+            <h4 class="editable" data-edit-id="el-44">The Decision</h4>
+            <p class="editable" data-edit-id="el-45">"Paul and Silas were praying and singing hymns to God." — Acts 16:25</p>
+          </div>
+          <div>
+            <h4 class="editable" data-edit-id="el-46">The Lesson</h4>
+            <p class="editable" data-edit-id="el-47">They worshipped before anything changed. This is the same Paul who wrote Romans 8:18.</p>
+          </div>
+        </div>
+      <p class="t-body reveal editable" data-edit-id="el-41"><span style="font-size: 24px;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; font-weight: 700; display: inline; color: rgb(0, 0, 0);">Romans 18:8&nbsp;</span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;">Yet what we suffer now is nothing compared to the glory he will reveal to us later.</span></span></p><p class="t-body reveal editable" data-edit-id="el-41"><span style="font-size: 24px;"><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;">Paul had faith in Jesus and instead sung songs and hymns to rest his heart in God. He didn't let his situation take away his faith.</span></span></p></div>
+      <div class="split-panel">
+        <div class="split-panel-img img-editable" style="background-image:url('assets/prison-cell-light.jpg')" data-img-id="img-3"></div>
+        <div class="split-panel-overlay"></div>
+        <div class="photo-credit">AI-generated image</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 6 — ETERNAL PERSPECTIVE: "Weightless vs. Weighty"
+     ========================================================= -->
+<section class="slide" data-index="6">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-48">The Eternal Perspective</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" data-edit-id="el-49">Weightless vs. Weighty</h2>
+      <div class="scripture-card reveal">
+        <p class="t-card-head editable" data-edit-id="el-50">2 Corinthians 4:17–18</p>
+        <p class="t-body-lg editable" data-edit-id="el-51">"Our light and momentary troubles are achieving for us an eternal glory that far outweighs them all. So we fix our eyes not on what is seen, but on what is unseen."</p>
+      </div>
+      <div class="grid-2 reveal" style="align-items:center; margin-top:8px;">
+        <svg viewBox="0 0 400 220" style="width:100%; max-width:420px;">
+          <line x1="60" y1="70" x2="340" y2="110" stroke="var(--border)" stroke-width="4" stroke-linecap="round"></line>
+          <polygon points="200,70 185,150 215,150" fill="var(--primary-surface)" stroke="var(--border)" stroke-width="2"></polygon>
+          <line x1="60" y1="70" x2="60" y2="112" stroke="var(--border)" stroke-width="2"></line>
+          <line x1="340" y1="110" x2="340" y2="150" stroke="var(--border)" stroke-width="2"></line>
+          <circle cx="60" cy="132" r="24" fill="var(--bg)" stroke="var(--border)" stroke-width="2.5"></circle>
+          <circle cx="340" cy="172" r="34" fill="var(--primary-surface)" stroke="var(--primary)" stroke-width="2.5"></circle>
+          <text x="60" y="180" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" fill="var(--muted)">Suffering</text>
+          <text x="340" y="222" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="var(--primary)">Eternity</text>
+        </svg>
+        <div>
+          <p class="t-body editable" data-edit-id="el-52">Paul isn't pretending suffering is small. Beatings and prison aren't "light." They feel light only when set on the scale <strong>next to eternity.</strong></p>
+          <div class="callout" style="margin-top:16px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <p class="editable" style="font-size:19px;" data-edit-id="el-53">"Your pain is real — but it's not the final weight. Eternity is heavier, and it tips the scale toward hope."</p>
+          </div>
+        </div>
+      </div>
+    <p class="t-body reveal editable" data-edit-id="el-41"><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span style="font-size: 18px;">Suffering is a real, heavy &amp; painful present burden but eternity can outweigh pain as you lean towards hope</span></span></p></div>
+    <div class="chrome-footer reveal"><span>Suffering · Not Home Yet</span><span>07</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 7 — MODERN EXAMPLES: "Where It Hits You"
+     ========================================================= -->
+<section class="slide" data-index="7">
+  <div class="slide-inner">
+    <div class="split">
+      <div class="split-panel">
+        <div class="split-panel-img img-editable" style="background-image:url('assets/stormy-ocean.jpg')" data-img-id="img-4"></div>
+        <div class="split-panel-overlay"></div>
+        <div class="photo-credit">AI-generated image</div>
+      </div>
+      <div class="split-content">
+        <div class="chrome-label reveal editable" data-edit-id="el-54">Modern Examples</div>
+        <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-55">Where It Hits You</h2>
+        <p class="t-body reveal editable" data-edit-id="el-56">Suffering that may be real for you today:</p>
+        <div class="grid-2 reveal" style="gap:24px;">
+          <div class="category-item">
+            <h4 class="editable" data-edit-id="el-57"><span style="font-size: 32px;">Grief &amp; Loss</span></h4>
+            <p class="editable" data-edit-id="el-58"><span style="font-size: 20px;">Losing someone you loved — and the grief that won't lift.</span></p>
+          </div>
+          <div class="category-item">
+            <h4 class="editable" data-edit-id="el-59"><span style="font-size: 32px;">Mental Health</span></h4>
+            <p class="editable" data-edit-id="el-60"><span style="font-size: 20px;">Depression or anxiety that makes getting up feel impossible.</span></p>
+          </div>
+          <div class="category-item">
+            <h4 class="editable" data-edit-id="el-61"><span style="font-size: 32px;">Separation &amp; Loneliness</span></h4>
+            <p class="editable" data-edit-id="el-62"><span style="font-size: 20px;">A home falling apart or you are feeling unseen even in a crowd.</span></p>
+          </div>
+          <div class="category-item">
+            <h4 class="editable" data-edit-id="el-63"><span style="font-size: 32px;">Injustice &amp; Exhaustion</span></h4>
+            <p class="editable" data-edit-id="el-64"><span style="font-size: 20px;">Watching injustice and feeling powerless. being worn down by a broken planet.</span></p>
+          </div>
+        </div>
+        <p class="t-body-sm reveal editable" data-edit-id="el-65"><b>The enemy's trap</b>: when hope wears thin, he ties to make us believe that we are on our own that he have no one to rely on or help relieve our burdens</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 8 — "What God Says"
+     ========================================================= -->
+<section class="slide" data-index="8">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-66">What God Says</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" data-edit-id="el-67">What the Bible Says</h2>
+      <div class="grid-2 reveal">
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-68"><span style="font-size: 28px;">Romans 8:18</span></h4>
+            <p class="editable" data-edit-id="el-69"><span style="font-size: 24px;">"Present sufferings are not worth comparing with the glory that will be revealed in us."</span></p>
+          </div>
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-70"><span style="font-size: 28px;">1 Peter 5:10</span></h4>
+            <p class="editable" data-edit-id="el-71"><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span style="font-size: 20px;">"In his kindness God called you to share in his eternal glory by means of Christ Jesus. So after you have suffered a little while, he will restore, support, and strengthen you, and he will place you on a firm foundation"</span></span></p>
+          </div>
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-72"><span style="font-size: 28px;">Revelation 21:4</span></h4>
+            <p class="editable" data-edit-id="el-73"><span style="font-size: 24px;">"He will wipe every tear from their eyes. There will be no more death or mourning or crying or pain."</span></p>
+          </div>
+        </div>
+        <div>
+          <p class="t-body-sm editable" style="font-weight:700; text-transform:uppercase; letter-spacing:0.08em; font-size:15px; color:var(--muted); margin-bottom:6px;" data-edit-id="el-74"><span style="font-size: 28px;">Culture Says</span></p>
+          <p class="t-body-lg editable" style="margin-bottom:20px;" data-edit-id="el-75">Numb it, escape it, or give up. This is all there is.</p>
+          <p class="t-body-sm editable" style="font-weight:700; text-transform:uppercase; letter-spacing:0.08em; font-size:15px; color:var(--primary); margin-bottom:6px;" data-edit-id="el-76"><span style="font-size: 28px;">God Says</span></p>
+          <p class="t-body-lg editable" style="margin-bottom:20px;" data-edit-id="el-77">This is not the end of your story — and I am making all things new.</p>
+          <div class="callout">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <p class="editable" style="font-size:17px;" data-edit-id="el-78"><span style="font-size: 20px;">Numbing pretends the pain isn't there. Despair pretends the future isn't there. God faces both with you and gives you a promise of freedom.</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Suffering · Not Home Yet</span><span>09</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 9 — IDENTITY SHIFT: "You're Not Home Yet"
+     ========================================================= -->
+<section class="slide" data-index="9">
+  <div class="slide-inner">
+    <div class="split">
+      <div class="split-content">
+        <div class="chrome-label reveal editable" data-edit-id="el-79">Identity Shift</div>
+        <h2 class="t-title reveal editable" data-edit-id="el-80">You're Not Home Yet</h2>
+        <div class="scripture-card reveal">
+          <p class="t-card-head editable" style="font-size:28px;" data-edit-id="el-81">Colossians 3:1–3</p>
+          <p class="t-body editable" data-edit-id="el-82"><span style="font-size: 20px;">&nbsp;<span class="text Col-3-1" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span style="font-weight: 700;">1&nbsp;</span>Since you have been raised to new life with Christ, set your sights on the realities of heaven, where Christ sits in the place of honor at God’s right hand.</span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"> </span><span id="en-NLT-29480" class="text Col-3-2" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">2 </span>Think about the things of heaven, not the things of earth.</span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"> </span><span id="en-NLT-29481" class="text Col-3-3" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">3 </span>For you died to this life, and your real life is hidden with Christ in God</span></span></p>
+        </div>
+        <p class="t-body-sm reveal editable" style="font-size:18px; color:var(--text);" data-edit-id="el-83"><span style="font-size: 20px;">When you remember that your true home is with Christ, your suffering looks different. Pain is still real, but it doesn't define your future. <b>You belong to God's Kingdom, and your best days are still ahead.</b></span></p>
+        <div class="callout reveal">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <p class="editable" style="font-size:17px;" data-edit-id="el-84"><span style="font-size: 18px;">Ever feel like something in life just isn't right? That's because this world isn't the way God intended it to be. As followers of Jesus, our real home is with Him. <b>Suffering is temporary, but our hope is eternal.</b></span></p>
+        </div>
+        
+      </div>
+      <div class="split-panel">
+        <div class="split-panel-img img-editable" style="background-image:url('assets/lighthouse-beam.jpg')" data-img-id="img-5"></div>
+        <div class="split-panel-overlay"></div>
+        <div class="photo-credit">AI-generated image</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 10 — ACTION STEPS: "How to Suffer With Hope"
+     ========================================================= -->
+<section class="slide" data-index="10">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-86">Action Steps</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" data-edit-id="el-87">How to Suffer With Hope</h2>
+      <div class="step-item reveal">
+        <div class="step-number">1</div>
+        <div><h4 class="editable" data-edit-id="el-88"><span style="font-size: 32px;">Anchor to a Promise</span></h4><p class="editable" data-edit-id="el-89">Pick one verse (<b>Romans 8:18</b>, Rev 21:4) and memorize it before you need it. - "Present sufferings are not worth comparing with the glory that will be revealed in us."</p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">2</div>
+        <div><h4 class="editable" data-edit-id="el-90"><span style="font-size: 32px;">Worship at Midnight</span></h4><p class="editable" data-edit-id="el-91"><span style="font-size: 20px;">Praise God in it, not just after. <b>Worship preaches hope to your own heart.</b></span></p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">3</div>
+        <div><h4 class="editable" data-edit-id="el-92"><span style="font-size: 32px;">Zoom Out to Eternity</span></h4><p class="editable" data-edit-id="el-93"><span style="font-size: 20px;">When it feels endless, remind yourself: <b>"momentary."</b> Measure pain against forever, not this week.</span></p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">4</div>
+        <div><h4 class="editable" data-edit-id="el-94"><span style="font-size: 32px;">Let the Spirit Carry You</span></h4><p class="editable" data-edit-id="el-95"><span style="font-size: 20px;">Romans 8:26 — when you don't have words, the Holy Spirit prays for you.</span></p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">5</div>
+        <div><h4 class="editable" data-edit-id="el-96"><span style="font-size: 32px;">Don't Isolate</span></h4><p class="editable" data-edit-id="el-97"><span style="font-size: 20px;">Let people in — and let God use the hard season to grow you and help someone else later.</span></p></div>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Suffering · Not Home Yet</span><span>11</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 11 — REFLECTION + CHALLENGE: "Momentary"
+     ========================================================= -->
+<section class="slide" data-index="11">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-98">Reflection</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" data-edit-id="el-99">Momentary</h2>
+      <div class="step-item reveal">
+        <div class="step-number">1</div>
+        <div><h4 class="editable" data-edit-id="el-100"><span style="font-size: 32px;">Be Honest</span></h4><p class="editable" data-edit-id="el-101"><span style="font-size: 24px;">Where are you suffering right now — facing it honestly, or numbing it?</span></p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">2</div>
+        <div><h4 class="editable" data-edit-id="el-102"><span style="font-size: 32px;">Check Your Basket</span></h4><p class="editable" data-edit-id="el-103"><span style="font-size: 24px;">What have you been putting your hope in that keeps letting you down?</span></p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">3</div>
+        <div><h4 class="editable" data-edit-id="el-104"><span style="font-size: 32px;">Believe "Momentary"</span></h4><p class="editable" data-edit-id="el-105"><span style="font-size: 24px;">What would change this week if you truly believed the hardest thing you are facing is temporary?</span></p></div>
+      </div>
+      <div class="callout reveal">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <p class="editable" data-edit-id="el-106"><span style="font-size: 20px;"><strong style="">This Week's Challenge:</strong> Memorize one promise from God's Word. Then, when the weight hits — worship before anything changes. Anchor to eternity.</span></p>
+      </div>
+      <div class="pull-quote reveal">
+        <p class="t-quote editable" data-edit-id="el-107">"The suffering is real. But it's not the final word — and it's not forever."</p>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Suffering · Not Home Yet</span><span>12</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 12 — SMALL GROUP DISCUSSION + CLOSING PRAYER
+     ========================================================= -->
+<section class="slide active visible" data-index="12">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-108">Small Group Discussion</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-109">Small Group Discussion</h2>
+      <ul class="bullets two-col reveal">
+        <li class="t-body editable" data-edit-id="el-110">Have you ever believed the lie that the Christian life should be easy?</li>
+        <li class="t-body editable" data-edit-id="el-111">How does thinking about eternity change the way you carry a hard thing today?</li>
+        <li class="t-body editable" data-edit-id="el-112">What does "worship at midnight" look like in your life?</li>
+        <li class="t-body editable" data-edit-id="el-113">What promise of God do you most need right now? (2 Cor 4:16–18; Rev 21:3–4)</li>
+        <li class="t-body editable" data-edit-id="el-114">How can this group help carry each other's suffering?</li>
+      </ul>
+      <div class="card-outline reveal" style="text-align:center;">
+        <p class="t-body-sm editable" style="font-style:italic; font-size:19px;" data-edit-id="el-115">Father, the suffering is real and heavy — but I trust it's not forever. Teach me to worship at midnight in my darkest hour, anchor to Your promises, and fix my eyes on what's eternal. In Jesus' name, Amen.</p>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Suffering · Not Home Yet</span><span>13</span></div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<div class="deck-controls">
+  <button class="nav-btn" id="prevBtn" title="Previous (←)">‹</button>
+  <div id="dots" style="display:flex; gap:8px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  <button class="nav-btn" id="nextBtn" title="Next (→)">›</button>
+</div>
+
+<div class="slide-manager-toolbar" id="slideManagerToolbar">
+  <button id="moveSlideLeft" title="Move slide earlier">◀ Move</button>
+  <button id="moveSlideRight" title="Move slide later" disabled="">Move ▶</button>
+  <div class="divider"></div>
+  <button id="duplicateSlideBtn" title="Duplicate this slide">⧉ Duplicate</button>
+  <button id="deleteSlideBtn" class="danger" title="Delete this slide">🗑 Delete</button>
+  <div class="divider"></div>
+  <button id="pasteBlockBtn" class="paste-btn has-clipboard" title="Paste the copied block into this slide">📋 Paste</button>
+</div>
+<div class="slide-manager-toast" id="slideManagerToast">Block deleted — press Ctrl+S to keep it</div>
+
+<div class="selection-toolbar" id="selectionToolbar" style="transform: translate(-50%, calc(-100% - 12px)); left: 807.415px; top: 581.022px;">
+  <button type="button" data-cmd="bold" title="Bold" class=""><b>B</b></button>
+  <button type="button" data-cmd="italic" title="Italic" class=""><i>I</i></button>
+  <button type="button" data-cmd="underline" title="Underline"><u>U</u></button>
+  <div class="sel-divider"></div>
+  <div class="sel-size-combo">
+    <input type="number" id="selSizeInput" min="6" max="400" step="1" title="Font size in px">
+    <button type="button" class="sel-size-toggle" id="selSizeToggle" title="Preset sizes">▾</button>
+    <div class="sel-size-menu" id="selSizeMenu">
+      <button type="button" data-size="14">14</button>
+      <button type="button" data-size="16">16</button>
+      <button type="button" data-size="18">18</button>
+      <button type="button" data-size="20">20</button>
+      <button type="button" data-size="24">24</button>
+      <button type="button" data-size="28">28</button>
+      <button type="button" data-size="32">32</button>
+      <button type="button" data-size="40">40</button>
+      <button type="button" data-size="54">54</button>
+      <button type="button" data-size="72">72</button>
+      <button type="button" data-size="96">96</button>
+      <button type="button" data-size="128">128</button>
+    </div>
+  </div>
+  <div class="sel-divider"></div>
+  <button type="button" data-align="left" title="Align left">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="16" height="2" fill="currentColor"></rect><rect x="0" y="5" width="10" height="2" fill="currentColor"></rect><rect x="0" y="10" width="13" height="2" fill="currentColor"></rect></svg>
+  </button>
+  <button type="button" data-align="center" title="Align center">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="16" height="2" fill="currentColor"></rect><rect x="3" y="5" width="10" height="2" fill="currentColor"></rect><rect x="1.5" y="10" width="13" height="2" fill="currentColor"></rect></svg>
+  </button>
+  <button type="button" data-align="right" title="Align right">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="16" height="2" fill="currentColor"></rect><rect x="6" y="5" width="10" height="2" fill="currentColor"></rect><rect x="3" y="10" width="13" height="2" fill="currentColor"></rect></svg>
+  </button>
+  <div class="sel-divider"></div>
+  <button type="button" data-cmd="insertUnorderedList" title="Bullet list">
+    <svg width="16" height="12" viewBox="0 0 16 12"><circle cx="1.5" cy="1" r="1.5" fill="currentColor"></circle><rect x="5" y="0" width="11" height="2" fill="currentColor"></rect><circle cx="1.5" cy="6" r="1.5" fill="currentColor"></circle><rect x="5" y="5" width="11" height="2" fill="currentColor"></rect><circle cx="1.5" cy="11" r="1.5" fill="currentColor"></circle><rect x="5" y="10" width="11" height="2" fill="currentColor"></rect></svg>
+  </button>
+  <div class="sel-divider"></div>
+  <div class="sel-colors">
+    <button type="button" class="sel-swatch" data-color="#000000" style="background:#000000" title="Black"></button>
+    <button type="button" class="sel-swatch" data-color="#494FBC" style="background:#494FBC" title="Indigo"></button>
+    <button type="button" class="sel-swatch" data-color="#6B6D7F" style="background:#6B6D7F" title="Muted grey"></button>
+    <label class="sel-swatch sel-swatch-custom" title="Custom color">
+      <input type="color" id="selColorInput">
+    </label>
+  </div>
+</div>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentSlide = 0;
+        this.stage = document.getElementById('deckStage');
+        this.dotsWrap = document.getElementById('dots');
+        this.buildDots();
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        this.setupButtons();
+        this.showSlide(0);
+    }
+
+    buildDots() {
+        this.slides.forEach((_, i) => {
+            const d = document.createElement('div');
+            d.className = 'dot' + (i === 0 ? ' active' : '');
+            d.addEventListener('click', () => this.showSlide(i));
+            this.dotsWrap.appendChild(d);
+        });
+        this.dots = this.dotsWrap.querySelectorAll('.dot');
+    }
+
+    setupStageScale() {
+        const scale = () => {
+            const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * factor) / 2;
+            const y = (window.innerHeight - 1080 * factor) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (editor.isActive && e.target.getAttribute('contenteditable')) return;
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); this.showSlide(this.currentSlide + 1); }
+            if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); this.showSlide(this.currentSlide - 1); }
+        });
+    }
+
+    setupTouchNav() {
+        let startX = 0;
+        this.stage.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+        this.stage.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 60) dx < 0 ? this.showSlide(this.currentSlide + 1) : this.showSlide(this.currentSlide - 1);
+        }, { passive: true });
+    }
+
+    setupWheelNav() {
+        let locked = false;
+        document.addEventListener('wheel', (e) => {
+            if (locked) return;
+            if (Math.abs(e.deltaY) < 30) return;
+            locked = true;
+            e.deltaY > 0 ? this.showSlide(this.currentSlide + 1) : this.showSlide(this.currentSlide - 1);
+            setTimeout(() => locked = false, 700);
+        }, { passive: true });
+    }
+
+    setupButtons() {
+        document.getElementById('nextBtn').addEventListener('click', () => this.showSlide(this.currentSlide + 1));
+        document.getElementById('prevBtn').addEventListener('click', () => this.showSlide(this.currentSlide - 1));
+    }
+
+    showSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === this.currentSlide);
+            slide.classList.toggle('visible', i === this.currentSlide);
+        });
+        this.dots.forEach((d, i) => d.classList.toggle('active', i === this.currentSlide));
+        this.updateToolbarState();
+    }
+
+    updateToolbarState() {
+        const moveLeft = document.getElementById('moveSlideLeft');
+        const moveRight = document.getElementById('moveSlideRight');
+        const deleteBtn = document.getElementById('deleteSlideBtn');
+        if (!moveLeft) return;
+        moveLeft.disabled = this.currentSlide === 0;
+        moveRight.disabled = this.currentSlide === this.slides.length - 1;
+        deleteBtn.disabled = this.slides.length <= 1;
+    }
+
+    /* ---- Structural updates (delete / duplicate / reorder slides) ---- */
+
+    renumberSlides() {
+        this.slides = document.querySelectorAll('.slide');
+        this.slides.forEach((slide, i) => {
+            slide.dataset.index = i;
+            const footerSpans = slide.querySelectorAll('.chrome-footer span');
+            if (footerSpans.length) {
+                footerSpans[footerSpans.length - 1].textContent = String(i + 1).padStart(2, '0');
+            }
+        });
+    }
+
+    refresh(focusIndex) {
+        this.renumberSlides();
+        this.dotsWrap.innerHTML = '';
+        this.buildDots();
+        this.showSlide(focusIndex !== undefined ? focusIndex : this.currentSlide);
+    }
+}
+
+/* ===========================================
+   INLINE EDITING (default-on, per frontend-slides skill)
+   =========================================== */
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.storageKey = 'gamma-suffering-6-4-edits';
+        this.toggle = document.getElementById('editToggle');
+        this.hotzone = document.querySelector('.edit-hotzone');
+        this.toast = document.getElementById('saveToast');
+        this.slideManagerToolbar = document.getElementById('slideManagerToolbar');
+        this.activeImageEl = null;
+        this._boundText = new WeakSet();
+        this._boundImg = new WeakSet();
+        this.clipboard = null;
+        this.clipboardLabel = null;
+        const clip = localStorage.getItem(this.storageKey + '-clipboard');
+        if (clip) { try { const c = JSON.parse(clip); this.clipboard = c.html; this.clipboardLabel = c.label; } catch (e) {} }
+        this.restore();
+        this.bindHover();
+        this.setupImagePicker();
+        this.setupHoverCopy();
+        this.toggle.addEventListener('click', () => this.toggleEditMode());
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'e' || e.key === 'E') && !e.target.getAttribute('contenteditable')) this.toggleEditMode();
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); this.exportHtml(); }
+            if (e.key === 'Escape') this.closeImagePicker();
+        });
+    }
+
+    bindHover() {
+        let hideTimeout = null;
+        const show = () => { clearTimeout(hideTimeout); this.toggle.classList.add('show'); };
+        const hide = () => { hideTimeout = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); };
+        this.hotzone.addEventListener('mouseenter', show);
+        this.hotzone.addEventListener('mouseleave', hide);
+        this.toggle.addEventListener('mouseenter', show);
+        this.toggle.addEventListener('mouseleave', hide);
+        this.hotzone.addEventListener('click', () => this.toggleEditMode());
+    }
+
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        this.toggle.classList.toggle('active', this.isActive);
+        this.slideManagerToolbar.classList.toggle('show', this.isActive);
+        document.body.classList.toggle('edit-mode', this.isActive);
+        this.applyEditableState();
+        if (!this.isActive) {
+            this.closeImagePicker();
+            if (window.selectionToolbar) selectionToolbar.hide();
+        }
+    }
+
+    /* Generates an id that can NEVER collide with the position-based 'el-N' / 'img-N'
+       ids that restore() assigns to the page's original elements on load. Elements
+       created later (duplicate/paste) get one of these instead of a position number —
+       see the class-level comment above for why position numbers are unsafe here. */
+    generateUniqueId(prefix) {
+        this._idCounter = (this._idCounter || 0) + 1;
+        return `${prefix}-new-${Date.now().toString(36)}-${this._idCounter}`;
+    }
+
+    /* Re-scans the DOM for editable text/images/copy-handles and (re)binds listeners.
+       Uses WeakSets so re-running this after a duplicate/delete/reorder/paste
+       only binds the elements that don't have listeners yet.
+
+       IMPORTANT: ids are only ever assigned once and never recomputed from live
+       position. restore() assigns the original page's elements stable 'el-N'/'img-N'
+       ids from their order in the *unmodified* file. Any element that still lacks an
+       id here (i.e. a brand-new duplicate/paste, since those have it stripped) gets a
+       generateUniqueId() value instead of a position number — reusing position numbers
+       for new elements let them collide with an unrelated original element's id
+       elsewhere in the document, which is what caused content to swap between slides
+       after a paste + edit + reload. */
+    applyEditableState() {
+        document.querySelectorAll('.editable').forEach((el) => {
+            el.setAttribute('contenteditable', this.isActive ? 'true' : 'false');
+            if (!el.dataset.editId) el.dataset.editId = this.generateUniqueId('el');
+            if (!this._boundText.has(el)) {
+                el.addEventListener('input', () => this.save());
+                this._boundText.add(el);
+            }
+        });
+        document.querySelectorAll('.img-editable').forEach((el) => {
+            if (!el.dataset.imgId) el.dataset.imgId = this.generateUniqueId('img');
+            el.classList.toggle('edit-active', this.isActive);
+            if (!this._boundImg.has(el)) {
+                el.addEventListener('click', (e) => {
+                    if (!this.isActive) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.openImagePicker(e.currentTarget);
+                });
+                this._boundImg.add(el);
+            }
+        });
+    }
+
+    /* ---- Copy / paste content blocks ----
+       The copy handle is a single floating button repositioned on hover,
+       never an element actually inserted inside the block it points at.
+       An earlier version prepended a real <button> into each block, which
+       silently broke on any block that was *also* the directly-editable
+       element (many headings/paragraphs have no wrapper div) — the button
+       ended up living inside contenteditable, so selecting/formatting/saving
+       that text could capture and persist the button's own markup. */
+    setupHoverCopy() {
+        this.hoverCopyBtn = document.getElementById('hoverCopyBtn');
+        this.hoverDeleteBtn = document.getElementById('hoverDeleteBtn');
+        this.hoverTarget = null;
+
+        [this.hoverCopyBtn, this.hoverDeleteBtn].forEach((btn) => {
+            btn.addEventListener('mousedown', (e) => e.preventDefault());
+        });
+        this.hoverCopyBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (this.hoverTarget) this.copyBlock(this.hoverTarget);
+        });
+        this.hoverDeleteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (this.hoverTarget) this.deleteBlock(this.hoverTarget);
+        });
+        document.addEventListener('mousemove', (e) => this.updateHoverCopy(e));
+        document.addEventListener('scroll', () => this.hideHoverCopy(), true);
+    }
+
+    updateHoverCopy(e) {
+        if (!this.isActive) { this.hideHoverCopy(); return; }
+        // Moving onto either floating button must NOT hide it — the buttons live
+        // outside the block they point at, so a naive "still over the block?"
+        // check fails right as the cursor reaches them, making them flicker
+        // away just before they can be clicked.
+        if (this.hoverCopyBtn.contains(e.target) || this.hoverDeleteBtn.contains(e.target)) return;
+        const target = e.target.closest('.slide.active .slide-content > .reveal, .slide.active .split-content > .reveal');
+        if (!target) { this.hideHoverCopy(); return; }
+        this.hoverTarget = target;
+        const rect = target.getBoundingClientRect();
+        this.hoverCopyBtn.style.left = rect.right + 'px';
+        this.hoverCopyBtn.style.top = rect.top + 'px';
+        this.hoverCopyBtn.classList.add('show');
+        this.hoverDeleteBtn.style.left = rect.right + 'px';
+        this.hoverDeleteBtn.style.top = (rect.top + 36) + 'px';
+        this.hoverDeleteBtn.classList.add('show');
+    }
+
+    hideHoverCopy() {
+        if (this.hoverCopyBtn) this.hoverCopyBtn.classList.remove('show');
+        if (this.hoverDeleteBtn) this.hoverDeleteBtn.classList.remove('show');
+        this.hoverTarget = null;
+    }
+
+    deleteBlock(el) {
+        const label = (el.textContent || '').trim().slice(0, 40) || 'block';
+        const ok = confirm(`Delete "${label}${label.length >= 40 ? '…' : ''}"? This can't be undone.`);
+        if (!ok) return;
+        el.remove();
+        this.hideHoverCopy();
+        slideManager.showToast('Block deleted — press Ctrl+S to keep it');
+    }
+
+    copyBlock(el) {
+        const clone = el.cloneNode(true);
+        this.clipboard = clone.outerHTML;
+        this.clipboardLabel = (el.textContent || '').replace(/⧉/g, '').trim().slice(0, 40) || 'block';
+        localStorage.setItem(this.storageKey + '-clipboard', JSON.stringify({ html: this.clipboard, label: this.clipboardLabel }));
+        const pasteBtn = document.getElementById('pasteBlockBtn');
+        pasteBtn.disabled = false;
+        pasteBtn.classList.add('has-clipboard');
+        slideManager.showToast(`Copied "${this.clipboardLabel}${this.clipboardLabel.length >= 40 ? '…' : ''}"`);
+    }
+
+    /* ---- Image upload / link picker ---- */
+
+    setupImagePicker() {
+        this.overlay = document.getElementById('imagePickerOverlay');
+        this.dropzone = document.getElementById('imageDropzone');
+        this.fileInput = document.getElementById('imageFileInput');
+        this.urlInput = document.getElementById('imageUrlInput');
+
+        this.dropzone.addEventListener('click', () => this.fileInput.click());
+        this.dropzone.addEventListener('dragover', (e) => { e.preventDefault(); this.dropzone.classList.add('drag-over'); });
+        this.dropzone.addEventListener('dragleave', () => this.dropzone.classList.remove('drag-over'));
+        this.dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            this.dropzone.classList.remove('drag-over');
+            if (e.dataTransfer.files[0]) this.readFile(e.dataTransfer.files[0]);
+        });
+        this.fileInput.addEventListener('change', () => {
+            if (this.fileInput.files[0]) this.readFile(this.fileInput.files[0]);
+        });
+        document.getElementById('imageUrlApply').addEventListener('click', () => {
+            const url = this.urlInput.value.trim();
+            if (url) this.applyImage(url);
+        });
+        this.urlInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); document.getElementById('imageUrlApply').click(); }
+        });
+        document.getElementById('imagePickerCancel').addEventListener('click', () => this.closeImagePicker());
+        this.overlay.addEventListener('click', (e) => { if (e.target === this.overlay) this.closeImagePicker(); });
+    }
+
+    openImagePicker(el) {
+        this.activeImageEl = el;
+        this.urlInput.value = '';
+        this.overlay.classList.add('show');
+    }
+
+    closeImagePicker() {
+        if (this.overlay) this.overlay.classList.remove('show');
+        this.activeImageEl = null;
+    }
+
+    readFile(file) {
+        const reader = new FileReader();
+        reader.onload = () => this.applyImage(reader.result);
+        reader.readAsDataURL(file);
+    }
+
+    applyImage(url) {
+        const el = this.activeImageEl;
+        if (!el) return;
+        if (el.tagName === 'IMG') {
+            el.src = url;
+        } else {
+            el.style.backgroundImage = `url('${url}')`;
+        }
+        this.closeImagePicker();
+        this.save();
+    }
+
+    save() {
+        const data = {};
+        document.querySelectorAll('.editable').forEach((el) => { data[el.dataset.editId] = el.innerHTML; });
+        document.querySelectorAll('.img-editable').forEach((el) => {
+            data[el.dataset.imgId] = el.tagName === 'IMG' ? el.src : el.style.backgroundImage;
+        });
+        localStorage.setItem(this.storageKey, JSON.stringify(data));
+        this.toast.classList.add('show');
+        clearTimeout(this._toastTimeout);
+        this._toastTimeout = setTimeout(() => this.toast.classList.remove('show'), 1200);
+    }
+
+    restore() {
+        const raw = localStorage.getItem(this.storageKey);
+        const data = raw ? JSON.parse(raw) : {};
+        document.querySelectorAll('.editable').forEach((el, i) => {
+            const id = 'el-' + i;
+            el.dataset.editId = id;
+            if (data[id] !== undefined) el.innerHTML = data[id];
+        });
+        document.querySelectorAll('.img-editable').forEach((el, i) => {
+            const id = 'img-' + i;
+            el.dataset.imgId = id;
+            if (data[id] === undefined) return;
+            if (el.tagName === 'IMG') { el.src = data[id]; } else { el.style.backgroundImage = data[id]; }
+        });
+    }
+
+    /* Ctrl+S must produce the same file no matter what happened to be visible
+       on screen at that exact moment — a stray hover, an open dropdown, or
+       edit mode being on shouldn't get permanently baked into the saved deck.
+       (That's exactly what happened once already: this deck's own file had a
+       "class='copy-btn show'" with a hardcoded position baked into it from an
+       export taken mid-hover.) So every transient/floating UI element gets its
+       runtime state stripped from the clone before it's written out. */
+    exportHtml() {
+        const clone = document.documentElement.cloneNode(true);
+        clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+        clone.querySelector('body').classList.remove('edit-mode');
+        const resetShow = [
+            '.edit-toggle', '.slide-manager-toolbar', '.copy-btn', '.delete-btn',
+            '.selection-toolbar', '.sel-size-menu', '.image-picker-overlay',
+            '.save-toast', '.slide-manager-toast'
+        ];
+        resetShow.forEach((sel) => {
+            const el = clone.querySelector(sel);
+            if (el) el.classList.remove('show', 'active', 'drag-over');
+        });
+        ['.copy-btn', '.delete-btn'].forEach((sel) => {
+            const el = clone.querySelector(sel);
+            if (el) el.removeAttribute('style');
+        });
+        const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+        const blob = new Blob([html], { type: 'text/html' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'Lesson_6.4_Suffering_Gamma.html';
+        a.click();
+    }
+}
+
+/* ===========================================
+   SLIDE MANAGER (delete / duplicate / reorder — edit-mode only)
+   =========================================== */
+class SlideManager {
+    constructor(presentation, editor) {
+        this.presentation = presentation;
+        this.editor = editor;
+        this.toast = document.getElementById('slideManagerToast');
+        document.getElementById('duplicateSlideBtn').addEventListener('click', () => this.duplicate());
+        document.getElementById('deleteSlideBtn').addEventListener('click', () => this.remove());
+        document.getElementById('moveSlideLeft').addEventListener('click', () => this.move(-1));
+        document.getElementById('moveSlideRight').addEventListener('click', () => this.move(1));
+        const pasteBtn = document.getElementById('pasteBlockBtn');
+        pasteBtn.addEventListener('click', () => this.pasteBlock());
+        if (editor.clipboard) { pasteBtn.disabled = false; pasteBtn.classList.add('has-clipboard'); }
+    }
+
+    pasteBlock() {
+        if (!this.editor.clipboard) return;
+        const slide = document.querySelectorAll('.slide')[this.presentation.currentSlide];
+        const container = slide.querySelector('.slide-content, .split-content');
+        if (!container) return;
+        const temp = document.createElement('div');
+        temp.innerHTML = this.editor.clipboard;
+        const node = temp.firstElementChild;
+        if (!node) return;
+        node.classList.add('reveal');
+        node.querySelectorAll('.editable').forEach(el => { el.removeAttribute('contenteditable'); delete el.dataset.editId; });
+        node.querySelectorAll('.img-editable').forEach(el => { el.classList.remove('edit-active'); delete el.dataset.imgId; });
+        container.appendChild(node);
+        this.editor.applyEditableState();
+        this.showToast('Pasted — press Ctrl+S to keep it');
+    }
+
+    showToast(msg) {
+        this.toast.textContent = msg;
+        this.toast.classList.add('show');
+        clearTimeout(this._t);
+        this._t = setTimeout(() => this.toast.classList.remove('show'), 1600);
+    }
+
+    duplicate() {
+        const slides = document.querySelectorAll('.slide');
+        const current = slides[this.presentation.currentSlide];
+        const clone = current.cloneNode(true);
+        clone.classList.remove('active', 'visible');
+        // Strip copied edit state so the clone gets fresh ids/listeners instead of
+        // silently sharing the original's saved text/image the next time it's edited.
+        clone.querySelectorAll('.editable').forEach(el => {
+            el.removeAttribute('contenteditable');
+            delete el.dataset.editId;
+        });
+        clone.querySelectorAll('.img-editable').forEach(el => {
+            el.classList.remove('edit-active');
+            delete el.dataset.imgId;
+        });
+        current.after(clone);
+        this.presentation.renumberSlides();
+        this.editor.applyEditableState();
+        this.presentation.refresh(this.presentation.currentSlide + 1);
+        this.showToast('Slide duplicated — press Ctrl+S to keep it');
+    }
+
+    remove() {
+        const slides = document.querySelectorAll('.slide');
+        if (slides.length <= 1) { this.showToast("Can't delete the only slide"); return; }
+        const index = this.presentation.currentSlide;
+        const ok = confirm('Delete this slide? This can\'t be undone.');
+        if (!ok) return;
+        slides[index].remove();
+        this.presentation.renumberSlides();
+        this.presentation.refresh(Math.min(index, document.querySelectorAll('.slide').length - 1));
+        this.showToast('Slide deleted — press Ctrl+S to keep it');
+    }
+
+    move(direction) {
+        const slides = document.querySelectorAll('.slide');
+        const index = this.presentation.currentSlide;
+        const targetIndex = index + direction;
+        if (targetIndex < 0 || targetIndex >= slides.length) return;
+        const current = slides[index];
+        const target = slides[targetIndex];
+        if (direction < 0) {
+            target.before(current);
+        } else {
+            target.after(current);
+        }
+        this.presentation.renumberSlides();
+        this.presentation.refresh(targetIndex);
+        this.showToast('Slide moved — press Ctrl+S to keep it');
+    }
+}
+
+/* ===========================================
+   SELECTION TOOLBAR — bold/italic/underline/size/align/list/color
+   for whatever text the user highlights inside an editable block.
+   =========================================== */
+class SelectionToolbar {
+    constructor(editorRef) {
+        this.editor = editorRef;
+        this.el = document.getElementById('selectionToolbar');
+        this.colorInput = document.getElementById('selColorInput');
+        this.sizeInput = document.getElementById('selSizeInput');
+        this.sizeToggle = document.getElementById('selSizeToggle');
+        this.sizeMenu = document.getElementById('selSizeMenu');
+        this.savedRange = null;
+
+        // Keep the text selection alive when clicking anywhere in the toolbar —
+        // without this, mousedown on a button collapses the selection first.
+        // The size input is the one exception: it needs real focus to be typable,
+        // so we let its mousedown behave normally and restore the selection
+        // (savedRange) manually when a size is actually applied.
+        this.el.addEventListener('mousedown', (e) => {
+            if (e.target === this.sizeInput) return;
+            e.preventDefault();
+        });
+
+        this.el.querySelectorAll('button[data-cmd]').forEach((btn) => {
+            btn.addEventListener('click', () => this.exec(btn.dataset.cmd));
+        });
+        this.el.querySelectorAll('button[data-align]').forEach((btn) => {
+            const cmd = 'justify' + btn.dataset.align.charAt(0).toUpperCase() + btn.dataset.align.slice(1);
+            btn.addEventListener('click', () => this.exec(cmd));
+        });
+        this.el.querySelectorAll('.sel-swatch[data-color]').forEach((btn) => {
+            btn.addEventListener('click', () => this.applyColor(btn.dataset.color));
+        });
+        this.colorInput.addEventListener('input', (e) => this.applyColor(e.target.value));
+
+        this.sizeToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.sizeMenu.classList.toggle('show');
+        });
+        this.sizeMenu.querySelectorAll('button[data-size]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const px = parseInt(btn.dataset.size, 10);
+                this.sizeInput.value = px;
+                this.sizeMenu.classList.remove('show');
+                this.applySizePx(px);
+            });
+        });
+        this.sizeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); this.sizeInput.blur(); }
+        });
+        this.sizeInput.addEventListener('change', () => {
+            this.applySizePx(parseInt(this.sizeInput.value, 10));
+        });
+        document.addEventListener('mousedown', (e) => {
+            if (e.target !== this.sizeToggle && !this.sizeMenu.contains(e.target)) {
+                this.sizeMenu.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('selectionchange', () => this.scheduleUpdate());
+        window.addEventListener('scroll', () => this.hide(), true);
+        window.addEventListener('resize', () => this.hide());
+    }
+
+    scheduleUpdate() {
+        clearTimeout(this._t);
+        this._t = setTimeout(() => this.update(), 60);
+    }
+
+    getCurrentFontSizePx(range) {
+        let node = range.commonAncestorContainer;
+        if (node.nodeType === 3) node = node.parentElement;
+        if (!node || node.nodeType !== 1) return null;
+        const size = parseFloat(getComputedStyle(node).fontSize);
+        return isNaN(size) ? null : Math.round(size);
+    }
+
+    update() {
+        if (!this.editor.isActive) { this.hide(); return; }
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) { this.hide(); return; }
+        const node = sel.anchorNode;
+        const el = node && (node.nodeType === 1 ? node : node.parentElement);
+        const editableRoot = el && el.closest && el.closest('[contenteditable="true"]');
+        if (!editableRoot) { this.hide(); return; }
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) { this.hide(); return; }
+        this.savedRange = range.cloneRange();
+        if (document.activeElement !== this.sizeInput) {
+            const size = this.getCurrentFontSizePx(range);
+            if (size !== null) this.sizeInput.value = size;
+        }
+        this.show(rect);
+    }
+
+    show(rect) {
+        this.el.classList.add('show');
+        const margin = 10;
+        let left = rect.left + rect.width / 2;
+        this.el.style.transform = 'translate(-50%, calc(-100% - 12px))';
+        this.el.style.left = left + 'px';
+        this.el.style.top = rect.top + 'px';
+        requestAnimationFrame(() => {
+            const tw = this.el.offsetWidth;
+            const th = this.el.offsetHeight;
+            left = Math.min(Math.max(left, tw / 2 + margin), window.innerWidth - tw / 2 - margin);
+            this.el.style.left = left + 'px';
+            if (rect.top - th - 12 < margin) {
+                this.el.style.transform = 'translate(-50%, 12px)';
+                this.el.style.top = rect.bottom + 'px';
+            } else {
+                this.el.style.transform = 'translate(-50%, calc(-100% - 12px))';
+                this.el.style.top = rect.top + 'px';
+            }
+        });
+        this.syncActiveStates();
+    }
+
+    hide() {
+        this.el.classList.remove('show');
+        this.sizeMenu.classList.remove('show');
+    }
+
+    syncActiveStates() {
+        this.el.querySelectorAll('button[data-cmd]').forEach((btn) => {
+            try { btn.classList.toggle('active', document.queryCommandState(btn.dataset.cmd)); } catch (e) {}
+        });
+    }
+
+    exec(cmd) {
+        document.execCommand(cmd, false, null);
+        this.syncActiveStates();
+        this.editor.save();
+    }
+
+    applyColor(color) {
+        document.execCommand('foreColor', false, color);
+        this.editor.save();
+    }
+
+    applySizePx(px) {
+        if (!px || isNaN(px) || px < 6) return;
+        // Focusing the size input to type a value collapses the live text
+        // selection, so restore it from savedRange before applying anything.
+        if (this.savedRange) {
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(this.savedRange);
+        }
+        document.execCommand('fontSize', false, '7');
+        document.querySelectorAll('font[size="7"]').forEach((f) => {
+            const span = document.createElement('span');
+            span.style.fontSize = px + 'px';
+            while (f.firstChild) span.appendChild(f.firstChild);
+            f.replaceWith(span);
+        });
+        this.editor.save();
+        const sel = window.getSelection();
+        if (sel.rangeCount) this.savedRange = sel.getRangeAt(0).cloneRange();
+    }
+}
+
+const editor = new InlineEditor();
+const presentation = new SlidePresentation();
+const slideManager = new SlideManager(presentation, editor);
+const selectionToolbar = new SelectionToolbar(editor);
+</script>
+
+
+</body></html>
