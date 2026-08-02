@@ -205,6 +205,15 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     0%   { transform: scale(1) translate(0, 0); }
     100% { transform: scale(1.09) translate(-1.5%, -1%); }
 }
+.scale-wobble {
+    transform-box: fill-box;
+    transform-origin: 50% 0%;
+    animation: scaleWobble 4s ease-in-out infinite;
+}
+@keyframes scaleWobble {
+    0%, 100% { transform: rotate(-1.5deg); }
+    50% { transform: rotate(1.5deg); }
+}
 .split-panel-overlay {
     position: absolute; inset: 0; pointer-events: none;
     background: linear-gradient(165deg, rgba(73,79,188,0.38) 0%, rgba(54,59,143,0.16) 55%, rgba(54,59,143,0) 100%);
@@ -226,8 +235,11 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 }
 .story-placeholder p { margin: 0; color: var(--muted); font-style: italic; font-size: 21px; }
 
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+/* auto-fit + empty-track collapse: when a card/box is deleted, the grid loses a
+   track and the remaining cards' 1fr shares recompute over the space that's left
+   — no JS needed to "resize the remaining boxes to fit" after a delete. */
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; }
 
 .contrast-card { border-radius: var(--radius-card); padding: 32px 36px; }
 .contrast-card.culture { background: var(--bg); border: 1px solid var(--border); }
@@ -251,7 +263,7 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 .outline-box.compact h4 { font-size: 19px; }
 .outline-box.compact p { font-size: 16.5px; }
 
-.joined-boxes { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; }
+.joined-boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; }
 .joined-boxes > div { padding: 28px 26px; border-left: 1px solid var(--border); }
 .joined-boxes > div:first-child { border-left: none; }
 .joined-boxes h4 { margin: 0 0 8px; font-size: 20px; font-weight: 700; color: var(--primary); }
@@ -260,7 +272,7 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
 .beat-item .tag { font-size: 16px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--primary); display: block; margin-bottom: 6px; }
 .beat-item p { margin: 0; font-size: 22px; color: var(--text); line-height: 1.4; }
 
-.arrow-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.arrow-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 40px; }
 .arrow-item .arrow-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
 .arrow-item .arrow-head svg { flex-shrink: 0; }
 .arrow-item h4 { margin: 0; font-size: 26px; font-weight: 700; color: var(--heading); }
@@ -316,6 +328,8 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
     width: 9px; height: 9px; border-radius: 50%; background: var(--border);
     cursor: pointer; transition: background 0.3s, transform 0.3s;
 }
+body.edit-mode .dot { cursor: grab; }
+.dot.dragging { cursor: grabbing; transform: scale(1.6); background: var(--primary); }
 .dot.active { background: var(--primary); transform: scale(1.3); }
 .nav-btn {
     background: none; border: none; color: var(--primary); font-size: 18px;
@@ -356,39 +370,97 @@ img, video, canvas, svg { max-width: 100%; max-height: 100%; }
    COPY / PASTE CONTENT BLOCKS (edit mode only)
    =========================================== */
 body.edit-mode .slide.active .slide-content > .reveal,
-body.edit-mode .slide.active .split-content > .reveal {
+body.edit-mode .slide.active .split-content > .reveal,
+body.edit-mode .slide.active .slide-content > .scripture-card,
+body.edit-mode .slide.active .split-content > .scripture-card,
+body.edit-mode .slide.active .solid-box,
+body.edit-mode .slide.active .outline-box,
+body.edit-mode .slide.active .category-item,
+body.edit-mode .slide.active .joined-boxes > div,
+body.edit-mode .slide.active .arrow-item,
+body.edit-mode .slide.active .content-block {
     position: relative;
     outline: 1px dashed transparent;
     outline-offset: 6px;
     transition: outline-color 0.15s ease;
 }
 body.edit-mode .slide.active .slide-content > .reveal:hover,
-body.edit-mode .slide.active .split-content > .reveal:hover {
+body.edit-mode .slide.active .split-content > .reveal:hover,
+body.edit-mode .slide.active .slide-content > .scripture-card:hover,
+body.edit-mode .slide.active .split-content > .scripture-card:hover {
     outline-color: var(--border);
 }
-/* Single floating button, repositioned on hover via JS — never a child of the
-   block it points at, so it can never end up inside contenteditable content. */
-.copy-btn {
+body.edit-mode .slide.active .solid-box:hover,
+body.edit-mode .slide.active .outline-box:hover,
+body.edit-mode .slide.active .category-item:hover,
+body.edit-mode .slide.active .joined-boxes > div:hover,
+body.edit-mode .slide.active .arrow-item:hover,
+body.edit-mode .slide.active .content-block:hover {
+    outline-color: var(--primary);
+}
+.dragging { opacity: 0.35; }
+/* Single floating buttons, repositioned on hover via JS — never a child of the
+   block they point at, so they can never end up inside contenteditable content. */
+.copy-btn, .delete-btn, .drag-btn {
     position: fixed; left: 0; top: 0; z-index: 10015;
     transform: translate(-50%, -50%);
-    width: 30px; height: 30px; border-radius: 50%; background: var(--primary); color: #fff;
+    width: 30px; height: 30px; border-radius: 50%; color: #fff;
     border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px;
     opacity: 0; pointer-events: none; transition: opacity 0.12s ease, transform 0.12s ease, left 0.06s linear, top 0.06s linear;
 }
+.copy-btn { background: var(--primary); }
 .copy-btn.show { opacity: 1; pointer-events: auto; }
 .copy-btn:hover { transform: translate(-50%, -50%) scale(1.12); background: var(--primary-deep); }
-.delete-btn {
-    position: fixed; left: 0; top: 0; z-index: 10015;
-    transform: translate(-50%, -50%);
-    width: 30px; height: 30px; border-radius: 50%; background: #C13B32; color: #fff;
-    border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px;
-    opacity: 0; pointer-events: none; transition: opacity 0.12s ease, transform 0.12s ease, left 0.06s linear, top 0.06s linear;
-}
+.delete-btn { background: #C13B32; font-size: 13px; }
 .delete-btn.show { opacity: 1; pointer-events: auto; }
 .delete-btn:hover { transform: translate(-50%, -50%) scale(1.12); background: #A32D25; }
+.drag-btn { background: var(--heading); cursor: grab; font-size: 15px; }
+.drag-btn.show { opacity: 1; pointer-events: auto; }
+.drag-btn:hover { transform: translate(-50%, -50%) scale(1.12); }
+.drag-btn:active { cursor: grabbing; }
 .slide-manager-toolbar button.paste-btn.has-clipboard { color: var(--primary); }
+
+/* ===========================================
+   ICON EDITOR (click any icon in edit mode — resize or swap it)
+   =========================================== */
+.icon-editable { cursor: pointer; }
+body.edit-mode .icon-editable { outline: 1px dashed transparent; outline-offset: 3px; border-radius: 4px; transition: outline-color 0.15s ease; }
+body.edit-mode .icon-editable:hover { outline-color: var(--primary); }
+.icon-picker-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 6px; }
+.icon-picker-grid button {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--border);
+    background: #fff; cursor: pointer; padding: 8px;
+}
+.icon-picker-grid button:hover, .icon-picker-grid button.active { background: var(--primary-surface); border-color: var(--primary); }
+.icon-picker-grid svg { width: 100%; height: 100%; }
+
+/* ===========================================
+   RESIZABLE SPLIT (drag the divider to trade space between two columns)
+   =========================================== */
+.resizable-split {
+    display: grid;
+    grid-template-columns: var(--split-pct, 50%) 36px 1fr;
+    align-items: center;
+}
+.resizable-split > *:first-child { padding-right: 4px; }
+.resizable-split > *:last-child { padding-left: 4px; }
+.split-handle {
+    height: 100%; min-height: 120px; cursor: col-resize;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.15s ease;
+}
+/* Usable in both modes; invisible-until-hover when just viewing, and given a
+   faint baseline visibility in edit mode so it's discoverable without hunting. */
+.split-handle:hover, .split-handle.dragging { opacity: 1; }
+body.edit-mode .split-handle { opacity: 0.5 !important; }
+body.edit-mode .split-handle:hover, .split-handle.dragging { opacity: 1 !important; }
+.split-handle::before {
+    content: ''; width: 4px; height: 70px; border-radius: 4px; background: var(--border);
+    transition: background 0.15s ease;
+}
+.split-handle:hover::before, .split-handle.dragging::before { background: var(--primary); }
 
 /* ===========================================
    SELECTION TOOLBAR (appears when text is highlighted in edit mode)
@@ -533,6 +605,26 @@ body.edit-mode .slide.active .split-content > .reveal:hover {
 
 <button type="button" class="copy-btn" id="hoverCopyBtn" title="Copy this block">⧉</button>
 <button type="button" class="delete-btn" id="hoverDeleteBtn" title="Delete this block">🗑</button>
+<button type="button" class="drag-btn" id="hoverDragBtn" title="Drag to reorder">⠿</button>
+
+<div class="image-picker-overlay" id="iconPickerOverlay">
+  <div class="image-picker-card">
+    <h3>Edit Icon</h3>
+    <div class="image-picker-section">
+      <label>Size (px)</label>
+      <div class="image-picker-row">
+        <input type="number" id="iconSizeInput" min="10" max="120" step="1">
+      </div>
+    </div>
+    <div class="image-picker-section">
+      <label>Swap icon</label>
+      <div class="icon-picker-grid" id="iconPickerGrid"></div>
+    </div>
+    <div class="image-picker-actions">
+      <button id="iconPickerDone">Done</button>
+    </div>
+  </div>
+</div>
 
 <div class="image-picker-overlay" id="imagePickerOverlay">
   <div class="image-picker-card">
@@ -596,9 +688,7 @@ body.edit-mode .slide.active .split-content > .reveal:hover {
     <div class="split">
       <div class="split-panel">
         <div class="split-panel-img img-editable" style="background-image:url('assets/big-idea-sunrise-road.jpg')" data-img-id="img-1"></div>
-        <div class="split-panel-overlay"></div>
-        <div class="photo-credit">.</div>
-      </div>
+        <div class="split-panel-overlay"></div>      </div>
       <div class="split-content">
         <div class="chrome-label reveal editable" data-edit-id="el-5">Big Idea</div>
         <h2 class="t-title reveal editable" data-edit-id="el-6">Suffering</h2>
@@ -673,17 +763,18 @@ body.edit-mode .slide.active .split-content > .reveal:hover {
   <div class="slide-inner">
     <div class="chrome-label reveal editable" data-edit-id="el-24">The Psychology</div>
     <div class="slide-content">
-      <div class="grid-2 reveal" style="grid-template-columns: 1.3fr 1fr; align-items:center;">
+      <div class="resizable-split reveal" style="--split-pct: 56%;">
         <div class="inset-image" style="height:460px;">
           <img class="img-editable" src="assets/frankl-scale.jpg" alt="A scale balancing a heavy stone against a light feather, symbolizing the weight of suffering measured against hope." data-img-id="img-2">
         </div>
+        <div class="split-handle"></div>
         <div>
-          <h2 class="t-title editable" style="font-size:56px; margin-bottom:20px;" data-edit-id="el-25">You Can Survive Almost Anything If you have Faith.</h2>
-          <div class="pull-quote" style="margin-bottom:20px;">
+          <h2 class="t-title editable content-block" style="font-size:56px; margin-bottom:20px;" data-edit-id="el-25">You Can Survive Almost Anything If you have Faith.</h2>
+          <div class="pull-quote content-block" style="margin-bottom:20px;">
             <p class="t-quote editable" style="font-size:26px;" data-edit-id="el-26">"Those who have a 'why' to live, can bear almost any 'how.'"</p>
             <p class="t-body-sm editable" data-edit-id="el-27">— Viktor Frankl</p>
           </div>
-          <p class="t-body-sm editable" style="font-size:18px; color:var(--text);" data-edit-id="el-28"><span style="font-size: 28px;">Frankl survived Nazi concentration camps. The ones who made it weren't the strongest — they were the ones with a <strong style="">reason to keep going.</strong></span></p>
+          <p class="t-body-sm editable content-block" style="font-size:18px; color:var(--text);" data-edit-id="el-28"><span style="font-size: 28px;">Frankl survived Nazi concentration camps. The ones who made it weren't the strongest — they were the ones with a <strong style="">reason to keep going.</strong></span></p>
         </div>
       </div>
       <div class="callout reveal" style="margin-top:24px;">
@@ -750,9 +841,7 @@ body.edit-mode .slide.active .split-content > .reveal:hover {
       <p class="t-body reveal editable" data-edit-id="el-41"><span style="font-size: 24px;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; font-weight: 700; display: inline; color: rgb(0, 0, 0);">Romans 18:8&nbsp;</span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;">Yet what we suffer now is nothing compared to the glory he will reveal to us later.</span></span></p><p class="t-body reveal editable" data-edit-id="el-41"><span style="font-size: 24px;"><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;">Paul had faith in Jesus and instead sung songs and hymns to rest his heart in God. He didn't let his situation take away his faith.</span></span></p></div>
       <div class="split-panel">
         <div class="split-panel-img img-editable" style="background-image:url('assets/prison-cell-light.jpg')" data-img-id="img-3"></div>
-        <div class="split-panel-overlay"></div>
-        <div class="photo-credit">.</div>
-      </div>
+        <div class="split-panel-overlay"></div>      </div>
     </div>
   </div>
 </section>
@@ -769,26 +858,30 @@ body.edit-mode .slide.active .split-content > .reveal:hover {
         <p class="t-card-head editable" data-edit-id="el-50">2 Corinthians 4:17–18</p>
         <p class="t-body-lg editable" data-edit-id="el-51">"Our light and momentary troubles are achieving for us an eternal glory that far outweighs them all. So we fix our eyes not on what is seen, but on what is unseen."</p>
       </div>
-      <div class="grid-2 reveal" style="align-items:center; margin-top:8px;">
-        <svg viewBox="0 0 400 220" style="width:100%; max-width:420px;">
-          <line x1="60" y1="70" x2="340" y2="110" stroke="var(--border)" stroke-width="4" stroke-linecap="round"></line>
-          <polygon points="200,70 185,150 215,150" fill="var(--primary-surface)" stroke="var(--border)" stroke-width="2"></polygon>
-          <line x1="60" y1="70" x2="60" y2="112" stroke="var(--border)" stroke-width="2"></line>
-          <line x1="340" y1="110" x2="340" y2="150" stroke="var(--border)" stroke-width="2"></line>
-          <circle cx="60" cy="132" r="24" fill="var(--bg)" stroke="var(--border)" stroke-width="2.5"></circle>
-          <circle cx="340" cy="172" r="34" fill="var(--primary-surface)" stroke="var(--primary)" stroke-width="2.5"></circle>
-          <text x="60" y="180" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" fill="var(--muted)">Suffering</text>
-          <text x="340" y="222" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="var(--primary)">Eternity</text>
+      <div class="resizable-split reveal" style="margin-top:8px; --split-pct: 52%;">
+        <svg class="scale-diagram" viewBox="0 0 400 225" style="width:100%; max-width:640px;">
+          <g class="scale-wobble">
+            <line x1="60" y1="70" x2="340" y2="110" stroke="var(--border)" stroke-width="4" stroke-linecap="round"></line>
+            <polygon points="200,70 185,150 215,150" fill="var(--primary-surface)" stroke="var(--border)" stroke-width="2"></polygon>
+            <line x1="60" y1="70" x2="60" y2="108" stroke="var(--border)" stroke-width="2"></line>
+            <line x1="340" y1="110" x2="340" y2="124" stroke="var(--border)" stroke-width="2"></line>
+            <circle cx="60" cy="132" r="24" fill="var(--bg)" stroke="var(--border)" stroke-width="2.5"></circle>
+            <circle cx="340" cy="158" r="34" fill="var(--primary-surface)" stroke="var(--primary)" stroke-width="2.5"></circle>
+            <text x="60" y="180" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" fill="var(--muted)">Suffering</text>
+            <text x="340" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="var(--primary)">Eternity</text>
+          </g>
         </svg>
+        <div class="split-handle"></div>
         <div>
-          <p class="t-body editable" data-edit-id="el-52">Paul isn't pretending suffering is small. Beatings and prison aren't "light." They feel light only when set on the scale <strong>next to eternity.</strong></p>
-          <div class="callout" style="margin-top:16px;">
+          <p class="t-body-lg editable" data-edit-id="el-52">Paul isn't pretending suffering is small. Beatings and prison aren't "light." They feel light only when set on the scale <strong>next to eternity.</strong></p>
+          <div class="callout" style="margin-top:20px;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-            <p class="editable" style="font-size:19px;" data-edit-id="el-53">"Your pain is real — but it's not the final weight. Eternity is heavier, and it tips the scale toward hope."</p>
+            <p class="editable" style="font-size:20px;" data-edit-id="el-53">"Your pain is real — but it's not the final weight. Eternity is heavier, and it tips the scale toward hope."</p>
           </div>
+          <p class="t-body-lg editable" style="margin-top:20px; color:var(--muted);" data-edit-id="el-41">Suffering is a real, heavy &amp; painful present burden — but eternity can outweigh pain as you lean toward hope.</p>
         </div>
       </div>
-    <p class="t-body reveal editable" data-edit-id="el-41"><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span style="font-size: 18px;">Suffering is a real, heavy &amp; painful present burden but eternity can outweigh pain as you lean towards hope</span></span></p></div>
+    </div>
     <div class="chrome-footer reveal"><span>Suffering · Not Home Yet</span><span>07</span></div>
   </div>
 </section>
@@ -801,9 +894,7 @@ body.edit-mode .slide.active .split-content > .reveal:hover {
     <div class="split">
       <div class="split-panel">
         <div class="split-panel-img img-editable" style="background-image:url('assets/stormy-ocean.jpg')" data-img-id="img-4"></div>
-        <div class="split-panel-overlay"></div>
-        <div class="photo-credit">.</div>
-      </div>
+        <div class="split-panel-overlay"></div>      </div>
       <div class="split-content">
         <div class="chrome-label reveal editable" data-edit-id="el-54">Modern Examples</div>
         <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-55">Where It Hits You</h2>
@@ -893,9 +984,7 @@ body.edit-mode .slide.active .split-content > .reveal:hover {
       </div>
       <div class="split-panel">
         <div class="split-panel-img img-editable" style="background-image:url('assets/lighthouse-beam.jpg')" data-img-id="img-5"></div>
-        <div class="split-panel-overlay"></div>
-        <div class="photo-credit">.</div>
-      </div>
+        <div class="split-panel-overlay"></div>      </div>
     </div>
   </div>
 </section>
@@ -910,7 +999,7 @@ body.edit-mode .slide.active .split-content > .reveal:hover {
       <h2 class="t-title reveal editable" data-edit-id="el-87">How to Suffer With Hope</h2>
       <div class="step-item reveal">
         <div class="step-number">1</div>
-        <div><h4 class="editable" data-edit-id="el-88"><span style="font-size: 32px;">Anchor to a Promise</span></h4><p class="editable" data-edit-id="el-89">Pick one verse (<b>Romans 8:18</b>, Rev 21:4) and memorize it before you need it. - "Present sufferings are not worth comparing with the glory that will be revealed in us."</p></div>
+        <div><h4 class="editable" data-edit-id="el-88"><span style="font-size: 32px;">Anchor to a Promise</span></h4><p class="editable" data-edit-id="el-89">Pick one verse (<b>Romans 8:18</b>, Rev 21:4) and memorize it before you need it.</p></div>
       </div>
       <div class="step-item reveal">
         <div class="step-number">2</div>
@@ -968,7 +1057,7 @@ body.edit-mode .slide.active .split-content > .reveal:hover {
 <!-- =========================================================
      SLIDE 12 — SMALL GROUP DISCUSSION + CLOSING PRAYER
      ========================================================= -->
-<section class="slide active visible" data-index="12">
+<section class="slide" data-index="12">
   <div class="slide-inner">
     <div class="chrome-label reveal editable" data-edit-id="el-108">Small Group Discussion</div>
     <div class="slide-content">
@@ -993,7 +1082,7 @@ body.edit-mode .slide.active .split-content > .reveal:hover {
 
 <div class="deck-controls">
   <button class="nav-btn" id="prevBtn" title="Previous (←)">‹</button>
-  <div id="dots" style="display:flex; gap:8px;"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+  <div id="dots" style="display:flex; gap:8px;"></div>
   <button class="nav-btn" id="nextBtn" title="Next (→)">›</button>
 </div>
 
@@ -1076,13 +1165,67 @@ class SlidePresentation {
     }
 
     buildDots() {
-        this.slides.forEach((_, i) => {
+        // Always rebuild from scratch. Without this, dots left over in the saved
+        // HTML from a previous export (see exportHtml) get appended to a SECOND
+        // time on load, doubling the count and leaving half of them dead (no
+        // click listener, since listeners don't survive serialization).
+        this.dotsWrap.innerHTML = '';
+        this.slides.forEach((slide, i) => {
             const d = document.createElement('div');
             d.className = 'dot' + (i === 0 ? ' active' : '');
-            d.addEventListener('click', () => this.showSlide(i));
+            d._slideEl = slide;
+            d.addEventListener('click', () => {
+                if (this._dotDragged) { this._dotDragged = false; return; }
+                this.showSlide([...this.dotsWrap.children].indexOf(d));
+            });
+            d.addEventListener('mousedown', (e) => this.startDotDrag(e, d));
             this.dotsWrap.appendChild(d);
         });
         this.dots = this.dotsWrap.querySelectorAll('.dot');
+    }
+
+    /* Dragging a dot reorders the actual slide it represents. During the drag we
+       only shuffle the dot elements themselves (cheap); on release we read the
+       dots' final order and move the real .slide elements to match in one go. */
+    startDotDrag(e, dotEl) {
+        if (!editor.isActive) return;
+        e.preventDefault();
+        this._dotDragged = false;
+        dotEl.classList.add('dragging');
+        const onMove = (ev) => {
+            this._dotDragged = true;
+            let nearest = null, nearestDist = Infinity;
+            [...this.dotsWrap.children].forEach((d) => {
+                if (d === dotEl) return;
+                const r = d.getBoundingClientRect();
+                const cx = r.left + r.width / 2;
+                const dist = Math.abs(ev.clientX - cx);
+                if (dist < nearestDist) { nearestDist = dist; nearest = { d, cx }; }
+            });
+            if (!nearest) return;
+            if (ev.clientX < nearest.cx) nearest.d.before(dotEl); else nearest.d.after(dotEl);
+        };
+        const onUp = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            dotEl.classList.remove('dragging');
+            if (this._dotDragged) this.finalizeDotOrder();
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
+    finalizeDotOrder() {
+        const activeEl = document.querySelector('.slide.active');
+        const newOrder = [...this.dotsWrap.children].map((d) => d._slideEl);
+        const stage = document.getElementById('deckStage');
+        newOrder.forEach((slide) => stage.appendChild(slide));
+        this.renumberSlides();
+        this.dotsWrap.innerHTML = '';
+        this.buildDots();
+        const newIndex = Math.max(0, newOrder.indexOf(activeEl));
+        this.showSlide(newIndex);
+        slideManager.showToast('Slide order changed — press Ctrl+S to keep it');
     }
 
     setupStageScale() {
@@ -1192,6 +1335,8 @@ class InlineEditor {
         this.bindHover();
         this.setupImagePicker();
         this.setupHoverCopy();
+        this.setupIconEditor();
+        this.setupSplitResizers();
         this.toggle.addEventListener('click', () => this.toggleEditMode());
         document.addEventListener('keydown', (e) => {
             if ((e.key === 'e' || e.key === 'E') && !e.target.getAttribute('contenteditable')) this.toggleEditMode();
@@ -1253,6 +1398,7 @@ class InlineEditor {
                 this._boundText.add(el);
             }
         });
+        document.querySelectorAll('.arrow-head svg, .callout > svg').forEach((svg) => this.bindIconEditable(svg));
         document.querySelectorAll('.img-editable').forEach((el) => {
             if (!el.dataset.imgId) el.dataset.imgId = this.generateUniqueId('img');
             el.classList.toggle('edit-active', this.isActive);
@@ -1276,50 +1422,78 @@ class InlineEditor {
        element (many headings/paragraphs have no wrapper div) — the button
        ended up living inside contenteditable, so selecting/formatting/saving
        that text could capture and persist the button's own markup. */
+    // Elements nested inside a shared grid/row (one card among several) — clicking
+    // copy on these duplicates just that card in place, rather than copying to the
+    // cross-slide clipboard. Everything else (step-item, beat-item, scripture-card,
+    // etc.) is already its own top-level block, so the group path handles it.
+    static ITEM_SELECTOR = '.solid-box, .outline-box, .category-item, .joined-boxes > div, .arrow-item, .content-block';
+    static GROUP_SELECTOR = '.slide.active .slide-content > .reveal, .slide.active .split-content > .reveal, .slide.active .slide-content > .scripture-card, .slide.active .split-content > .scripture-card';
+
     setupHoverCopy() {
         this.hoverCopyBtn = document.getElementById('hoverCopyBtn');
         this.hoverDeleteBtn = document.getElementById('hoverDeleteBtn');
+        this.hoverDragBtn = document.getElementById('hoverDragBtn');
         this.hoverTarget = null;
+        this.hoverMode = 'group';
+        this.dragState = null;
 
-        [this.hoverCopyBtn, this.hoverDeleteBtn].forEach((btn) => {
-            btn.addEventListener('mousedown', (e) => e.preventDefault());
+        [this.hoverCopyBtn, this.hoverDeleteBtn, this.hoverDragBtn].forEach((btn) => {
+            btn.addEventListener('mousedown', (e) => { if (btn !== this.hoverDragBtn) e.preventDefault(); });
         });
         this.hoverCopyBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (this.hoverTarget) this.copyBlock(this.hoverTarget);
+            if (!this.hoverTarget) return;
+            if (this.hoverMode === 'item') this.duplicateItemInPlace(this.hoverTarget);
+            else this.copyBlock(this.hoverTarget);
         });
         this.hoverDeleteBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             if (this.hoverTarget) this.deleteBlock(this.hoverTarget);
         });
+        this.hoverDragBtn.addEventListener('mousedown', (e) => this.startDrag(e));
+
         document.addEventListener('mousemove', (e) => this.updateHoverCopy(e));
         document.addEventListener('scroll', () => this.hideHoverCopy(), true);
     }
 
     updateHoverCopy(e) {
+        if (this.dragState) { this.onDragMove(e); return; }
         if (!this.isActive) { this.hideHoverCopy(); return; }
-        // Moving onto either floating button must NOT hide it — the buttons live
-        // outside the block they point at, so a naive "still over the block?"
-        // check fails right as the cursor reaches them, making them flicker
-        // away just before they can be clicked.
-        if (this.hoverCopyBtn.contains(e.target) || this.hoverDeleteBtn.contains(e.target)) return;
-        const target = e.target.closest('.slide.active .slide-content > .reveal, .slide.active .split-content > .reveal');
+        // Moving onto any of the three floating buttons must NOT hide them — they
+        // live outside the block they point at, so a naive "still over the block?"
+        // check fails right as the cursor reaches them, making them flicker away
+        // just before they can be clicked.
+        if (this.hoverCopyBtn.contains(e.target) || this.hoverDeleteBtn.contains(e.target) || this.hoverDragBtn.contains(e.target)) return;
+
+        let target = e.target.closest(InlineEditor.ITEM_SELECTOR);
+        let mode = 'item';
+        if (!target || !target.closest('.slide.active')) {
+            target = e.target.closest(InlineEditor.GROUP_SELECTOR);
+            mode = 'group';
+        }
         if (!target) { this.hideHoverCopy(); return; }
         this.hoverTarget = target;
+        this.hoverMode = mode;
         const rect = target.getBoundingClientRect();
+        this.hoverCopyBtn.title = mode === 'item' ? 'Duplicate this item' : 'Copy this block';
+        this.hoverCopyBtn.textContent = mode === 'item' ? '⧉' : '⧉';
         this.hoverCopyBtn.style.left = rect.right + 'px';
         this.hoverCopyBtn.style.top = rect.top + 'px';
         this.hoverCopyBtn.classList.add('show');
         this.hoverDeleteBtn.style.left = rect.right + 'px';
         this.hoverDeleteBtn.style.top = (rect.top + 36) + 'px';
         this.hoverDeleteBtn.classList.add('show');
+        this.hoverDragBtn.style.left = rect.right + 'px';
+        this.hoverDragBtn.style.top = (rect.top + 72) + 'px';
+        this.hoverDragBtn.classList.add('show');
     }
 
     hideHoverCopy() {
         if (this.hoverCopyBtn) this.hoverCopyBtn.classList.remove('show');
         if (this.hoverDeleteBtn) this.hoverDeleteBtn.classList.remove('show');
+        if (this.hoverDragBtn) this.hoverDragBtn.classList.remove('show');
         this.hoverTarget = null;
     }
 
@@ -1341,6 +1515,165 @@ class InlineEditor {
         pasteBtn.disabled = false;
         pasteBtn.classList.add('has-clipboard');
         slideManager.showToast(`Copied "${this.clipboardLabel}${this.clipboardLabel.length >= 40 ? '…' : ''}"`);
+    }
+
+    duplicateItemInPlace(el) {
+        const clone = el.cloneNode(true);
+        clone.querySelectorAll('[data-edit-id]').forEach((n) => delete n.dataset.editId);
+        clone.querySelectorAll('[data-img-id]').forEach((n) => delete n.dataset.imgId);
+        el.after(clone);
+        this.applyEditableState();
+        this.hideHoverCopy();
+        slideManager.showToast('Item duplicated — press Ctrl+S to keep it');
+    }
+
+    /* ---- Drag to reorder (works for both whole blocks and grid items) ---- */
+
+    startDrag(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!this.hoverTarget) return;
+        const el = this.hoverTarget;
+        const parent = el.parentElement;
+        const selector = this.hoverMode === 'item' ? InlineEditor.ITEM_SELECTOR : ':scope > .reveal, :scope > .scripture-card';
+        const siblings = [...parent.querySelectorAll(selector)].filter((s) => s.parentElement === parent);
+        this.dragState = { el, parent, siblings, mode: this.hoverMode };
+        el.classList.add('dragging');
+        this.hideHoverCopy();
+        document.addEventListener('mouseup', this._endDragBound = (ev) => this.endDrag(ev), { once: true });
+    }
+
+    onDragMove(e) {
+        const { el, siblings, parent } = this.dragState;
+        // Decide the reorder axis from the PARENT's actual layout, not from a
+        // sibling's own proportions — a paragraph is wide and short even inside
+        // a plain vertical stack, so guessing from its aspect ratio picks the
+        // wrong axis for the most common case (stacked slide content).
+        const style = getComputedStyle(parent);
+        const isGridRow = style.display.includes('grid') && style.gridTemplateColumns.trim().split(/\s+/).length > 1;
+        const isFlexRow = style.display.includes('flex') && style.flexDirection.startsWith('row');
+        const horizontal = isGridRow || isFlexRow;
+
+        let nearest = null, nearestDist = Infinity;
+        siblings.forEach((sib) => {
+            if (sib === el) return;
+            const r = sib.getBoundingClientRect();
+            const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+            const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+            if (dist < nearestDist) { nearestDist = dist; nearest = { sib, cx, cy }; }
+        });
+        if (!nearest) return;
+        const before = horizontal ? e.clientX < nearest.cx : e.clientY < nearest.cy;
+        if (before) nearest.sib.before(el); else nearest.sib.after(el);
+    }
+
+    endDrag() {
+        if (this.dragState) {
+            this.dragState.el.classList.remove('dragging');
+            slideManager.showToast('Reordered — press Ctrl+S to keep it');
+        }
+        this.dragState = null;
+    }
+
+    /* ---- Icon editor: click an icon in edit mode to resize or swap it ---- */
+
+    static ICON_LIBRARY = {
+        arrow: '<line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/>',
+        message: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+        check: '<polyline points="20 6 9 17 4 12"/>',
+        star: '<path d="M12 2 15 9 22 9.5 17 14.5 18.5 21.5 12 18 5.5 21.5 7 14.5 2 9.5 9 9 12 2"/>',
+        dot: '<circle cx="12" cy="12" r="6"/>',
+        plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+        heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/>',
+        anchor: '<circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="21"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/>'
+    };
+
+    setupIconEditor() {
+        this.iconPickerOverlay = document.getElementById('iconPickerOverlay');
+        this.iconSizeInput = document.getElementById('iconSizeInput');
+        this.iconPickerGrid = document.getElementById('iconPickerGrid');
+        this.activeIconEl = null;
+        this._boundIcons = new WeakSet();
+
+        Object.entries(InlineEditor.ICON_LIBRARY).forEach(([name, inner]) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.dataset.icon = name;
+            btn.title = name;
+            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+            btn.addEventListener('click', () => this.applyIconSwap(name));
+            this.iconPickerGrid.appendChild(btn);
+        });
+
+        this.iconSizeInput.addEventListener('input', () => this.applyIconSize(parseInt(this.iconSizeInput.value, 10)));
+        document.getElementById('iconPickerDone').addEventListener('click', () => this.closeIconPicker());
+        this.iconPickerOverlay.addEventListener('click', (e) => { if (e.target === this.iconPickerOverlay) this.closeIconPicker(); });
+    }
+
+    bindIconEditable(svg) {
+        if (this._boundIcons.has(svg)) return;
+        this._boundIcons.add(svg);
+        svg.classList.add('icon-editable');
+        svg.addEventListener('click', (e) => {
+            if (!this.isActive) return;
+            e.preventDefault();
+            e.stopPropagation();
+            this.openIconPicker(svg);
+        });
+    }
+
+    openIconPicker(svg) {
+        this.activeIconEl = svg;
+        const w = parseInt(svg.getAttribute('width'), 10) || 24;
+        this.iconSizeInput.value = w;
+        this.iconPickerOverlay.classList.add('show');
+    }
+
+    closeIconPicker() {
+        this.iconPickerOverlay.classList.remove('show');
+        this.activeIconEl = null;
+    }
+
+    applyIconSize(px) {
+        if (!this.activeIconEl || !px || isNaN(px) || px < 8) return;
+        this.activeIconEl.setAttribute('width', px);
+        this.activeIconEl.setAttribute('height', px);
+        this.save();
+    }
+
+    applyIconSwap(name) {
+        if (!this.activeIconEl) return;
+        const inner = InlineEditor.ICON_LIBRARY[name];
+        if (!inner) return;
+        this.activeIconEl.innerHTML = inner;
+        this.save();
+    }
+
+    /* ---- Resizable split divider (drag to trade space between two columns) ---- */
+
+    setupSplitResizers() {
+        document.querySelectorAll('.resizable-split > .split-handle').forEach((handle) => {
+            handle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const container = handle.parentElement;
+                handle.classList.add('dragging');
+                const onMove = (ev) => {
+                    const rect = container.getBoundingClientRect();
+                    let pct = ((ev.clientX - rect.left) / rect.width) * 100;
+                    pct = Math.min(Math.max(pct, 20), 80);
+                    container.style.setProperty('--split-pct', pct + '%');
+                };
+                const onUp = () => {
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                    handle.classList.remove('dragging');
+                    if (this.isActive) slideManager.showToast('Split adjusted — press Ctrl+S to keep it');
+                };
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
+            });
+        });
     }
 
     /* ---- Image upload / link picker ---- */
@@ -1454,6 +1787,14 @@ class InlineEditor {
             const el = clone.querySelector(sel);
             if (el) el.removeAttribute('style');
         });
+        // Reset navigation to a clean "slide 0" state: strip active/visible from every
+        // slide (rebuilt correctly by showSlide(0) on next load regardless) and empty
+        // the dots container. buildDots() re-populates it on load — leaving the current
+        // dots baked in here caused them to double up on the next open, since buildDots()
+        // used to append instead of replace.
+        clone.querySelectorAll('.slide').forEach(el => el.classList.remove('active', 'visible'));
+        const dotsEl = clone.querySelector('#dots');
+        if (dotsEl) dotsEl.innerHTML = '';
         const html = '<!DOCTYPE html>\n' + clone.outerHTML;
         const blob = new Blob([html], { type: 'text/html' });
         const a = document.createElement('a');
