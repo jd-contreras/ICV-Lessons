@@ -1,0 +1,2825 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Communion: The Table You Can't Earn</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+<style>
+/* ===========================================
+   GAMMA DESIGN SYSTEM — THEME TOKENS
+   Sourced from Cristo Viene's Sermon Slide System brand book.
+   =========================================== */
+:root {
+    --primary: #494FBC;
+    --primary-surface: #D9DAF1;
+    --primary-deep: #363B8F;
+    --border: #BFC1D6;
+    --heading: #000000;
+    --text: #262525;
+    --muted: #6B6D7F;
+    --bg: #FFFFFF;
+    --hairline: #EEEEF3;
+
+    --font: 'Inter', sans-serif;
+
+    --pad-outer: 96px;
+    --pad-top: 72px;
+    --pad-bottom: 64px;
+    --radius-card: 20px;
+    --radius-sm: 8px;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.7s;
+
+    --stage-bg: #FFFFFF;
+    --slide-bg: #FFFFFF;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); color: var(--text); }
+
+/* ===========================================
+   FIXED 16:9 STAGE: MANDATORY BASE STYLES
+   (viewport-base.css, included in full)
+   =========================================== */
+html, body {
+    width: 100%; height: 100%; margin: 0; overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+.deck-viewport {
+    position: fixed; inset: 0; overflow: hidden;
+    background: var(--stage-bg, #000);
+}
+.deck-stage {
+    position: absolute; left: 0; top: 0;
+    width: 1920px; height: 1080px; overflow: hidden;
+    transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
+}
+.slide {
+    position: absolute; inset: 0; width: 1920px; height: 1080px;
+    overflow: hidden; display: block;
+    visibility: hidden; opacity: 0; pointer-events: none;
+    background: var(--slide-bg, #fff);
+}
+.slide.active, .slide.visible {
+    visibility: visible; opacity: 1; pointer-events: auto; z-index: 1;
+}
+img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+.deck-controls {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+    z-index: 1000;
+}
+@media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide {
+        position: relative; display: block !important; visibility: visible !important;
+        opacity: 1 !important; pointer-events: auto !important;
+        width: 1920px; height: 1080px; break-after: page; page-break-after: always;
+    }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .deck-controls { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+    }
+}
+
+/* ===========================================
+   REVEAL ANIMATIONS — calm, quiet register
+   =========================================== */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                transform var(--duration-normal) var(--ease-out-expo);
+}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.reveal:nth-child(1) { transition-delay: 0.05s; }
+.reveal:nth-child(2) { transition-delay: 0.15s; }
+.reveal:nth-child(3) { transition-delay: 0.25s; }
+.reveal:nth-child(4) { transition-delay: 0.35s; }
+.reveal:nth-child(5) { transition-delay: 0.45s; }
+.reveal:nth-child(6) { transition-delay: 0.55s; }
+.reveal:nth-child(7) { transition-delay: 0.65s; }
+.reveal:nth-child(8) { transition-delay: 0.75s; }
+
+/* ===========================================
+   SLIDE SHELL / CHROME
+   =========================================== */
+.slide-inner { position: relative; width: 100%; height: 100%; }
+.slide-content {
+    position: absolute; left: var(--pad-outer); right: var(--pad-outer);
+    top: var(--pad-top); bottom: var(--pad-bottom);
+    display: flex; flex-direction: column; justify-content: center; gap: 28px;
+}
+.chrome-label {
+    position: absolute; top: 56px; left: var(--pad-outer);
+    font-size: 20px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--primary);
+}
+.chrome-footer {
+    position: absolute; left: var(--pad-outer); right: var(--pad-outer); bottom: 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 16px; font-weight: 300; color: var(--muted);
+    padding-top: 18px; border-top: 1px solid var(--hairline);
+}
+
+/* ===========================================
+   TYPOGRAPHY SCALE
+   =========================================== */
+.t-display { font-size: 108px; font-weight: 800; line-height: 1.05; letter-spacing: -0.01em; color: var(--heading); }
+.t-title   { font-size: 80px;  font-weight: 800; line-height: 1.08; letter-spacing: -0.01em; color: var(--heading); }
+.t-subtitle{ font-size: 44px;  font-weight: 700; line-height: 1.2; color: var(--heading); }
+.t-card-head { font-size: 40px; font-weight: 700; line-height: 1.2; color: var(--primary); }
+.t-quote   { font-size: 36px;  font-weight: 400; font-style: italic; line-height: 1.45; color: var(--text); }
+.t-body-lg { font-size: 30px;  font-weight: 400; line-height: 1.55; color: var(--text); }
+.t-body    { font-size: 25px;  font-weight: 400; line-height: 1.6; color: var(--text); }
+.t-body-sm { font-size: 21px;  font-weight: 400; line-height: 1.55; color: var(--muted); }
+.t-checklist { font-size: 25px; font-weight: 600; line-height: 1.4; color: var(--text); }
+.t-hook    { font-size: 34px; font-weight: 400; font-style: italic; color: var(--muted); }
+
+/* ===========================================
+   GAMMA COMPONENTS
+   =========================================== */
+.card-outline {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 40px 44px;
+}
+.scripture-card {
+    background: var(--bg); border-left: 4px solid var(--primary);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    padding: 36px 44px; display: flex; flex-direction: column; gap: 14px;
+}
+.scripture-card--compact { padding: 26px 32px; gap: 8px; }
+.scripture-card--compact .t-card-head { font-size: 28px; }
+.scripture-card--compact .t-body { font-size: 21px; }
+
+.callout {
+    background: var(--primary-surface); border-radius: var(--radius-card);
+    padding: 36px 40px; display: flex; gap: 20px; align-items: flex-start;
+}
+.callout svg { flex-shrink: 0; margin-top: 6px; }
+.callout p { margin: 0; }
+
+.pull-quote {
+    border-left: 3px solid var(--primary); padding-left: 32px;
+}
+
+.checklist-item { display: flex; gap: 20px; align-items: flex-start; }
+.checklist-box {
+    width: 32px; height: 32px; border-radius: var(--radius-sm);
+    background: var(--primary-surface); flex-shrink: 0; margin-top: 4px;
+}
+.checklist-item p { margin: 0; }
+
+.bullets { list-style: none; margin: 0; padding: 0; }
+.bullets li {
+    position: relative; padding-left: 30px; margin-bottom: 18px;
+}
+.bullets li::before {
+    content: ''; position: absolute; left: 0; top: 14px;
+    width: 9px; height: 9px; border-radius: 50%; background: var(--text);
+}
+.bullets.two-col { columns: 2; column-gap: 56px; }
+.bullets.two-col li { break-inside: avoid; }
+
+.split { display: grid; grid-template-columns: 44% 56%; height: 100%; }
+.split-panel {
+    position: relative; overflow: hidden; background: var(--primary-deep);
+}
+.split-panel-img {
+    position: absolute; top: -5%; left: -5%; width: 110%; height: 110%;
+    background-size: cover; background-position: center;
+    animation: kenBurns 22s ease-in-out infinite alternate;
+}
+@keyframes kenBurns {
+    0%   { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.09) translate(-1.5%, -1%); }
+}
+.split-panel-overlay {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(165deg, rgba(73,79,188,0.38) 0%, rgba(54,59,143,0.16) 55%, rgba(54,59,143,0) 100%);
+}
+.photo-credit {
+    position: absolute; bottom: 20px; left: 24px; pointer-events: none;
+    font-size: 12px; color: rgba(255,255,255,0.75); letter-spacing: 0.02em;
+}
+.split-content { display: flex; flex-direction: column; justify-content: center; padding: 0 var(--pad-outer); gap: 24px; }
+.split-content .chrome-label { position: static; top: auto; left: auto; margin-bottom: 4px; }
+
+.story-placeholder {
+    border: 1.5px dashed var(--border); border-radius: var(--radius-card);
+    padding: 26px 32px; display: flex; gap: 16px; align-items: flex-start;
+}
+.story-placeholder .tag {
+    font-size: 15px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--primary); white-space: nowrap; margin-top: 3px;
+}
+.story-placeholder p { margin: 0; color: var(--muted); font-style: italic; font-size: 21px; }
+
+/* auto-fit + empty-track collapse: when a card/box is deleted, the grid loses a
+   track and the remaining cards' 1fr shares recompute over the space that's left
+   — no JS needed to "resize the remaining boxes to fit" after a delete. */
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; }
+
+.contrast-card { border-radius: var(--radius-card); padding: 32px 36px; }
+.contrast-card.culture { background: var(--bg); border: 1px solid var(--border); }
+.contrast-card.god { background: var(--primary-surface); }
+.contrast-card .tag {
+    font-size: 17px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--primary); margin-bottom: 12px; display: block;
+}
+
+/* ===========================================
+   GAMMA-PARITY COMPONENTS
+   =========================================== */
+.solid-box { background: var(--primary-surface); border-radius: var(--radius-card); padding: 28px 30px; }
+.solid-box h4 { margin: 0 0 8px; font-size: 22px; font-weight: 700; color: var(--primary); }
+.solid-box p { margin: 0; font-size: 18px; color: var(--text); line-height: 1.45; }
+
+.outline-box { background: var(--bg); border-left: 3px solid var(--primary); border-radius: 0 16px 16px 0; padding: 24px 28px; }
+.outline-box h4 { margin: 0 0 8px; font-size: 21px; font-weight: 700; color: var(--heading); }
+.outline-box p { margin: 0; font-size: 18px; color: var(--text); line-height: 1.5; }
+.outline-box .bullets { margin-top: 10px; }
+.outline-box .bullets li { font-size: 17px; margin-bottom: 10px; }
+.outline-box.compact { padding: 20px 24px; }
+.outline-box.compact h4 { font-size: 19px; }
+.outline-box.compact p { font-size: 16.5px; }
+
+.joined-boxes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border: 1px solid var(--border); border-radius: var(--radius-card); overflow: hidden; }
+.joined-boxes > div { padding: 28px 26px; border-left: 1px solid var(--border); }
+.joined-boxes > div:first-child { border-left: none; }
+.joined-boxes h4 { margin: 0 0 8px; font-size: 20px; font-weight: 700; color: var(--primary); }
+.joined-boxes p { margin: 0; font-size: 17px; color: var(--text); line-height: 1.45; }
+
+.beat-item .tag { font-size: 16px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--primary); display: block; margin-bottom: 6px; }
+.beat-item p { margin: 0; font-size: 22px; color: var(--text); line-height: 1.4; }
+
+.arrow-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 40px; }
+.arrow-item .arrow-head { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.arrow-item .arrow-head svg { flex-shrink: 0; }
+.arrow-item h4 { margin: 0; font-size: 26px; font-weight: 700; color: var(--heading); }
+.arrow-item p { margin: 0; font-size: 19px; color: var(--text); line-height: 1.5; }
+
+.category-item h4 { margin: 0 0 6px; font-size: 21px; font-weight: 700; color: var(--heading); }
+.category-item p { margin: 0; font-size: 18px; color: var(--muted); line-height: 1.45; }
+
+.step-item { display: flex; gap: 22px; align-items: flex-start; }
+.step-number {
+    width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;
+    flex-shrink: 0;
+}
+.step-item h4 { margin: 0 0 4px; font-size: 22px; font-weight: 700; color: var(--heading); }
+.step-item p { margin: 0; font-size: 19px; color: var(--text); line-height: 1.45; }
+
+.inset-image { border-radius: var(--radius-card); overflow: hidden; }
+.inset-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ===========================================
+   TITLE SLIDE SPECIFIC
+   =========================================== */
+.title-slide .chrome-label { color: var(--primary); }
+
+/* Animated scripture-card variant — accent bar draws in, text settles behind it.
+   Opt-in via .anim; other scripture-cards in the deck keep the static border-left. */
+.scripture-card.anim { border-left: none; padding: 0; display: flex; flex-direction: row; gap: 0; }
+.scripture-card.anim .scripture-bar {
+    width: 4px; background: var(--primary); flex-shrink: 0;
+    transform: scaleY(0); transform-origin: top;
+    transition: transform 0.9s var(--ease-out-expo);
+}
+.scripture-card.anim .scripture-body { padding: 36px 44px; display: flex; flex-direction: column; gap: 14px; }
+.scripture-card.anim .scripture-body p {
+    opacity: 0; transform: translateY(14px);
+    transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+}
+.scripture-card.anim .scripture-body p:nth-child(1) { transition-delay: 0.55s; }
+.scripture-card.anim .scripture-body p:nth-child(2) { transition-delay: 0.7s; }
+.slide.visible .scripture-card.anim .scripture-bar { transform: scaleY(1); }
+.slide.visible .scripture-card.anim .scripture-body p { opacity: 1; transform: translateY(0); }
+
+/* ===========================================
+   DECK CONTROLS (outside slide design system)
+   =========================================== */
+.deck-controls {
+    display: flex; gap: 10px; align-items: center;
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(6px);
+    padding: 10px 16px; border-radius: 999px; border: 1px solid var(--border);
+}
+.dot {
+    width: 9px; height: 9px; border-radius: 50%; background: var(--border);
+    cursor: pointer; transition: background 0.3s, transform 0.3s;
+}
+body.edit-mode .dot { cursor: grab; }
+/* transition: none avoids a visible fade-through-grey while dragging — the
+   dragged dot should read as unambiguously "picked up" the instant you grab it. */
+.dot.dragging {
+    cursor: grabbing; transition: none; z-index: 5;
+    transform: scale(1.8) !important; background: var(--primary) !important;
+    box-shadow: 0 0 0 4px var(--primary-surface);
+}
+.dot.active { background: var(--primary); transform: scale(1.3); }
+/* Marks the dot the dragged one would land next to if dropped now. */
+.dot.drop-target { background: var(--primary-deep) !important; transform: scale(1.4); }
+.nav-btn {
+    background: none; border: none; color: var(--primary); font-size: 18px;
+    cursor: pointer; padding: 0 6px; line-height: 1;
+}
+
+/* ===========================================
+   SLIDE MANAGER TOOLBAR (visible only in edit mode)
+   =========================================== */
+.slide-manager-toolbar {
+    position: fixed; top: 18px; right: 18px; z-index: 10001;
+    display: flex; gap: 6px; align-items: center;
+    background: #fff; border: 1px solid var(--border); border-radius: 999px;
+    padding: 8px 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    opacity: 0; pointer-events: none; transform: translateY(-8px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.slide-manager-toolbar.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.slide-manager-toolbar button {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: none; color: var(--text); font-family: 'Inter', sans-serif;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    padding: 8px 12px; border-radius: 999px; transition: background 0.2s, color 0.2s;
+}
+.slide-manager-toolbar button:hover { background: var(--primary-surface); color: var(--primary); }
+.slide-manager-toolbar button.danger:hover { background: #F6DADA; color: #B3352E; }
+.slide-manager-toolbar button:disabled { opacity: 0.35; cursor: not-allowed; background: none !important; color: var(--text) !important; }
+.slide-manager-toolbar .divider { width: 1px; height: 22px; background: var(--hairline); margin: 0 2px; }
+.slide-manager-toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--heading); color: #fff; padding: 10px 18px; border-radius: 999px;
+    font-size: 14px; font-family: 'Inter', sans-serif; opacity: 0;
+    transition: opacity 0.3s, transform 0.3s; z-index: 10002; pointer-events: none;
+}
+.slide-manager-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===========================================
+   COPY / PASTE / DRAG CONTENT BLOCKS (edit mode only)
+   =========================================== */
+body.edit-mode .slide.active .slide-content > .reveal,
+body.edit-mode .slide.active .split-content > .reveal,
+body.edit-mode .slide.active .slide-content > .scripture-card,
+body.edit-mode .slide.active .split-content > .scripture-card,
+body.edit-mode .slide.active .solid-box,
+body.edit-mode .slide.active .outline-box,
+body.edit-mode .slide.active .category-item,
+body.edit-mode .slide.active .joined-boxes > div,
+body.edit-mode .slide.active .arrow-item,
+body.edit-mode .slide.active .content-block {
+    position: relative;
+    outline: 1px dashed transparent;
+    outline-offset: 6px;
+    transition: outline-color 0.15s ease;
+}
+body.edit-mode .slide.active .slide-content > .reveal:hover,
+body.edit-mode .slide.active .split-content > .reveal:hover,
+body.edit-mode .slide.active .slide-content > .scripture-card:hover,
+body.edit-mode .slide.active .split-content > .scripture-card:hover {
+    outline-color: var(--border);
+}
+body.edit-mode .slide.active .solid-box:hover,
+body.edit-mode .slide.active .outline-box:hover,
+body.edit-mode .slide.active .category-item:hover,
+body.edit-mode .slide.active .joined-boxes > div:hover,
+body.edit-mode .slide.active .arrow-item:hover,
+body.edit-mode .slide.active .content-block:hover {
+    outline-color: var(--primary);
+}
+.dragging { opacity: 0.35; }
+/* Single floating buttons, repositioned on hover via JS — never a child of the
+   block they point at, so they can never end up inside contenteditable content. */
+.copy-btn, .delete-btn, .drag-btn {
+    position: fixed; left: 0; top: 0; z-index: 10015;
+    transform: translate(-50%, -50%);
+    width: 30px; height: 30px; border-radius: 50%; color: #fff;
+    border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px;
+    opacity: 0; pointer-events: none; transition: opacity 0.12s ease, transform 0.12s ease, left 0.06s linear, top 0.06s linear;
+}
+.copy-btn { background: var(--primary); }
+.copy-btn.show { opacity: 1; pointer-events: auto; }
+.copy-btn:hover { transform: translate(-50%, -50%) scale(1.12); background: var(--primary-deep); }
+.delete-btn { background: #C13B32; font-size: 13px; }
+.delete-btn.show { opacity: 1; pointer-events: auto; }
+.delete-btn:hover { transform: translate(-50%, -50%) scale(1.12); background: #A32D25; }
+.drag-btn { background: var(--heading); cursor: grab; font-size: 15px; }
+.drag-btn.show { opacity: 1; pointer-events: auto; }
+.drag-btn:hover { transform: translate(-50%, -50%) scale(1.12); }
+.drag-btn:active { cursor: grabbing; }
+.slide-manager-toolbar button.paste-btn.has-clipboard { color: var(--primary); }
+
+/* ===========================================
+   ICON EDITOR (click any icon in edit mode — resize or swap it)
+   =========================================== */
+.icon-editable { cursor: pointer; }
+body.edit-mode .icon-editable { outline: 1px dashed transparent; outline-offset: 3px; border-radius: 4px; transition: outline-color 0.15s ease; }
+body.edit-mode .icon-editable:hover { outline-color: var(--primary); }
+.icon-picker-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 6px; }
+.icon-picker-grid button {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--border);
+    background: #fff; cursor: pointer; padding: 8px;
+}
+.icon-picker-grid button:hover, .icon-picker-grid button.active { background: var(--primary-surface); border-color: var(--primary); }
+.icon-picker-grid svg { width: 100%; height: 100%; }
+
+/* ===========================================
+   RESIZABLE SPLIT (drag the divider to trade space between two columns)
+   =========================================== */
+.resizable-split {
+    display: grid;
+    grid-template-columns: var(--split-pct, 50%) 36px 1fr;
+    align-items: center;
+}
+.resizable-split > *:first-child { padding-right: 4px; }
+.resizable-split > *:last-child { padding-left: 4px; }
+.split-handle {
+    height: 100%; min-height: 120px; cursor: col-resize;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.15s ease;
+}
+/* Usable in both modes; invisible-until-hover when just viewing, and given a
+   faint baseline visibility in edit mode so it's discoverable without hunting. */
+.split-handle:hover, .split-handle.dragging { opacity: 1; }
+body.edit-mode .split-handle { opacity: 0.5 !important; }
+body.edit-mode .split-handle:hover, .split-handle.dragging { opacity: 1 !important; }
+.split-handle::before {
+    content: ''; width: 4px; height: 70px; border-radius: 4px; background: var(--border);
+    transition: background 0.15s ease;
+}
+.split-handle:hover::before, .split-handle.dragging::before { background: var(--primary); }
+
+/* ===========================================
+   SELECTION TOOLBAR (appears when text is highlighted in edit mode)
+   =========================================== */
+.selection-toolbar {
+    position: fixed; z-index: 10020; left: 0; top: 0;
+    transform: translate(-50%, calc(-100% - 12px));
+    display: flex; align-items: center; gap: 2px;
+    background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 6px 8px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+    opacity: 0; pointer-events: none; transition: opacity 0.12s ease;
+    font-family: 'Inter', sans-serif;
+}
+.selection-toolbar.show { opacity: 1; pointer-events: auto; }
+.selection-toolbar button {
+    background: none; border: none; color: var(--text); cursor: pointer;
+    width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Inter', sans-serif; font-size: 15px; flex-shrink: 0;
+}
+.selection-toolbar button:hover { background: var(--primary-surface); color: var(--primary); }
+.selection-toolbar button.active { background: var(--primary); color: #fff; }
+.sel-divider { width: 1px; height: 20px; background: var(--hairline); margin: 0 4px; flex-shrink: 0; }
+.sel-size-combo { position: relative; display: flex; align-items: center; }
+.sel-size-combo input[type="number"] {
+    width: 40px; text-align: right; border: none; background: none; color: var(--text);
+    font-family: 'Inter', sans-serif; font-size: 13px; padding: 4px 0 4px 6px; border-radius: 7px 0 0 7px;
+    -moz-appearance: textfield;
+}
+.sel-size-combo input[type="number"]:focus { background: var(--primary-surface); outline: none; }
+.sel-size-combo input[type="number"]::-webkit-inner-spin-button,
+.sel-size-combo input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.sel-size-toggle {
+    background: none; border: none; color: var(--muted); cursor: pointer; font-size: 10px;
+    padding: 6px 6px; border-radius: 0 7px 7px 0;
+}
+.sel-size-toggle:hover { background: var(--primary-surface); color: var(--primary); }
+.sel-size-menu {
+    position: absolute; top: calc(100% + 8px); left: 0; z-index: 10021;
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18); padding: 4px;
+    display: none; flex-direction: column; max-height: 220px; overflow-y: auto; min-width: 60px;
+}
+.sel-size-menu.show { display: flex; }
+.sel-size-menu button {
+    background: none; border: none; text-align: left; padding: 6px 10px; border-radius: 6px;
+    font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text); cursor: pointer; width: 100%; flex-shrink: 0;
+}
+.sel-size-menu button:hover { background: var(--primary-surface); color: var(--primary); }
+.sel-colors { display: flex; gap: 5px; align-items: center; padding: 0 4px; }
+.sel-swatch {
+    width: 18px; height: 18px; border-radius: 50%; padding: 0; border: 1.5px solid var(--border);
+    cursor: pointer; transition: transform 0.15s;
+}
+.sel-swatch:hover { transform: scale(1.15); }
+.sel-swatch-custom {
+    position: relative; overflow: hidden;
+    background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
+    display: flex;
+}
+.sel-swatch-custom input[type="color"] {
+    position: absolute; inset: -6px; opacity: 0; cursor: pointer; width: 30px; height: 30px; border: none; padding: 0;
+}
+
+/* ===========================================
+   INLINE EDITING
+   =========================================== */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle {
+    position: fixed; top: 18px; left: 18px; z-index: 10001;
+    width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border);
+    background: #fff; font-size: 18px; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: var(--primary); color: #fff; }
+[contenteditable="true"] { outline: 1px dashed var(--primary); outline-offset: 4px; cursor: text; }
+.save-toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--heading); color: #fff; padding: 10px 18px; border-radius: 999px;
+    font-size: 14px; opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 10002;
+}
+.save-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ===========================================
+   IMAGE EDITING (upload or link, while in edit mode)
+   =========================================== */
+.img-editable.edit-active { cursor: grab; -webkit-user-drag: none; user-select: none; }
+.img-editable.edit-active:active,
+.img-editable.edit-active.img-dragging { cursor: grabbing; }
+.img-editable.edit-active::after {
+    content: '⇕ Drag to reposition · Click to change image';
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.4); color: #fff; font-size: 15px; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s ease; pointer-events: none; text-align: center; padding: 20px;
+}
+.img-editable.edit-active:hover::after { opacity: 1; }
+.img-editable.edit-active.img-dragging::after { opacity: 0 !important; }
+
+.image-picker-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 10010;
+    display: none; align-items: center; justify-content: center;
+}
+.image-picker-overlay.show { display: flex; }
+.image-picker-card {
+    background: #fff; border-radius: 20px; padding: 32px 36px; width: 440px; max-width: 90vw;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.28); font-family: 'Inter', sans-serif;
+}
+.image-picker-card h3 { margin: 0 0 22px; font-size: 20px; font-weight: 800; color: var(--heading); }
+.image-picker-card label {
+    display: block; font-size: 12px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+}
+.image-picker-section { margin-bottom: 22px; }
+.image-picker-dropzone {
+    border: 1.5px dashed var(--border); border-radius: 14px; padding: 20px;
+    text-align: center; font-size: 14px; color: var(--muted); cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+}
+.image-picker-dropzone:hover, .image-picker-dropzone.drag-over { border-color: var(--primary); background: var(--primary-surface); }
+.image-picker-dropzone input[type="file"] { display: none; }
+.image-picker-or { text-align: center; font-size: 12px; color: var(--muted); margin: 18px 0; text-transform: uppercase; letter-spacing: 0.08em; }
+.image-picker-row { display: flex; gap: 10px; }
+.image-picker-row input[type="text"] {
+    flex: 1; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--border);
+    font-size: 14px; font-family: inherit; color: var(--text);
+}
+.image-picker-row button {
+    padding: 11px 20px; border-radius: 10px; border: none; background: var(--primary); color: #fff;
+    font-weight: 700; font-size: 14px; cursor: pointer; flex-shrink: 0;
+}
+.image-picker-row button:hover { background: var(--primary-deep); }
+.image-picker-actions { display: flex; justify-content: flex-end; margin-top: 24px; }
+.image-picker-actions button {
+    padding: 10px 18px; border-radius: 10px; border: 1px solid var(--border); background: none;
+    color: var(--muted); font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit;
+}
+.image-picker-actions button:hover { background: var(--hairline); }
+
+/* ===========================================
+   ADD-BLOCK PANEL (drag or click a block into the current slide)
+   =========================================== */
+.slide-manager-toolbar button.block-panel-toggle.active { background: var(--primary-surface); color: var(--primary); }
+.block-panel {
+    position: fixed; top: 0; right: -340px; width: 320px; height: 100vh; z-index: 10012;
+    background: #fff; border-left: 1px solid var(--border); box-shadow: -12px 0 32px rgba(0,0,0,0.12);
+    transition: right 0.25s var(--ease-out-expo);
+    display: flex; flex-direction: column; font-family: 'Inter', sans-serif;
+}
+.block-panel.show { right: 0; }
+.block-panel-header {
+    padding: 20px 20px 14px; border-bottom: 1px solid var(--hairline);
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.block-panel-header h3 { font-size: 16px; font-weight: 800; color: var(--heading); }
+.block-panel-header button { background: none; border: none; font-size: 16px; color: var(--muted); cursor: pointer; padding: 4px; }
+.block-panel-header button:hover { color: var(--primary); }
+.block-panel-body { flex: 1; overflow-y: auto; padding: 16px 20px 32px; }
+.block-panel-section { margin-bottom: 22px; }
+.block-panel-section h4 {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--muted); margin: 0 0 10px;
+}
+.block-panel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.block-card {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 14px 8px; border: 1px solid var(--border); border-radius: 12px;
+    background: #fff; cursor: grab; transition: border-color 0.15s, background 0.15s;
+}
+.block-card:hover { border-color: var(--primary); background: var(--primary-surface); }
+.block-card:active { cursor: grabbing; }
+.block-card-icon {
+    width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+    color: var(--primary); font-weight: 800; font-size: 15px; line-height: 1;
+}
+.block-card-label { font-size: 12px; font-weight: 600; color: var(--text); text-align: center; }
+.block-drop-indicator {
+    position: fixed; height: 3px; border-radius: 3px; background: var(--primary);
+    z-index: 10014; opacity: 0; pointer-events: none; transition: opacity 0.1s ease;
+}
+.block-drop-indicator.show { opacity: 1; }
+body.block-dragging .slide.active .slide-content,
+body.block-dragging .slide.active .split-content {
+    outline: 1px dashed var(--primary); outline-offset: 8px;
+}
+
+/* ===========================================
+   SLIDE THUMBNAIL RAIL (opens alongside the Add-a-Slide panel)
+   =========================================== */
+.slide-thumb-panel {
+    position: fixed; top: 90px; left: -220px; width: 200px; height: calc(100vh - 90px); z-index: 10012;
+    background: #fff; border-right: 1px solid var(--border); box-shadow: 12px 0 32px rgba(0,0,0,0.12);
+    transition: left 0.25s var(--ease-out-expo);
+    display: flex; flex-direction: column; font-family: 'Inter', sans-serif;
+}
+.slide-thumb-panel.show { left: 0; }
+.slide-thumb-panel-header { padding: 16px 16px 12px; border-bottom: 1px solid var(--hairline); flex-shrink: 0; }
+.slide-thumb-panel-header h3 { font-size: 14px; font-weight: 800; color: var(--heading); }
+.slide-thumb-selection-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 8px; font-size: 11px; font-weight: 700; color: var(--primary);
+}
+.slide-thumb-selection-bar button {
+    background: none; border: none; color: var(--muted); font-size: 11px;
+    font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: underline; padding: 0;
+}
+.slide-thumb-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.slide-thumb {
+    position: relative; width: 100%; aspect-ratio: 1920 / 1080; border-radius: 8px; overflow: hidden;
+    border: 2px solid var(--border); cursor: grab; background: #fff; transition: border-color 0.15s, opacity 0.15s; flex-shrink: 0;
+}
+.slide-thumb:hover { border-color: var(--primary); }
+.slide-thumb.active { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-surface); }
+.slide-thumb.selected { outline: 2px solid var(--primary); outline-offset: 2px; }
+.slide-thumb.thumb-dragging { opacity: 0.4; cursor: grabbing; }
+.slide-thumb-number {
+    position: absolute; top: 4px; left: 4px; z-index: 2;
+    width: 16px; height: 16px; border-radius: 50%; background: rgba(0,0,0,0.55); color: #fff;
+    font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.slide-thumb-selected-badge {
+    position: absolute; top: 4px; right: 4px; z-index: 2;
+    width: 16px; height: 16px; border-radius: 50%; background: var(--primary); color: #fff;
+    font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.slide-thumb-inner {
+    position: absolute; top: 0; left: 0; width: 1920px; height: 1080px;
+    transform-origin: top left; pointer-events: none; background: var(--slide-bg, #fff);
+}
+/* Force every entrance/settle animation into its finished state — thumbnails
+   render outside any .slide.visible/.scripture-card.anim trigger, so without
+   this every .reveal element would sit frozen at its pre-animation opacity:0. */
+.slide-thumb-inner .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+.slide-thumb-inner .scripture-card.anim .scripture-bar { transform: scaleY(1) !important; transition: none !important; }
+.slide-thumb-inner .scripture-card.anim .scripture-body p { opacity: 1 !important; transform: none !important; transition: none !important; }
+.slide-thumb-inner * { animation: none !important; }
+.slide-thumb-insert-marker {
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    font-size: 10.5px; font-weight: 700; color: var(--primary); line-height: 1.3;
+    background: var(--primary-surface); border-radius: 999px; padding: 5px 10px; flex-shrink: 0;
+}
+</style>
+</head>
+<body class="">
+
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏️</button>
+<div class="save-toast" id="saveToast">Saved locally</div>
+
+<button type="button" class="copy-btn" id="hoverCopyBtn" title="Copy this block">⧉</button>
+<button type="button" class="delete-btn" id="hoverDeleteBtn" title="Delete this block">🗑</button>
+<button type="button" class="drag-btn" id="hoverDragBtn" title="Drag to reorder" style="left: 1544.8px; top: 542.058px;">⠿</button>
+
+<div class="image-picker-overlay" id="iconPickerOverlay">
+  <div class="image-picker-card">
+    <h3>Edit Icon</h3>
+    <div class="image-picker-section">
+      <label>Size (px)</label>
+      <div class="image-picker-row">
+        <input type="number" id="iconSizeInput" min="10" max="120" step="1">
+      </div>
+    </div>
+    <div class="image-picker-section">
+      <label>Swap icon</label>
+      <div class="icon-picker-grid" id="iconPickerGrid"><button type="button" data-icon="arrow" title="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"></line><polyline points="14 6 20 12 14 18"></polyline></svg></button><button type="button" data-icon="message" title="message"><svg viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></button><button type="button" data-icon="check" title="check"><svg viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></button><button type="button" data-icon="star" title="star"><svg viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 15 9 22 9.5 17 14.5 18.5 21.5 12 18 5.5 21.5 7 14.5 2 9.5 9 9 12 2"></path></svg></button><button type="button" data-icon="dot" title="dot"><svg viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6"></circle></svg></button><button type="button" data-icon="plus" title="plus"><svg viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></button><button type="button" data-icon="heart" title="heart"><svg viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"></path></svg></button><button type="button" data-icon="anchor" title="anchor"><svg viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"></circle><line x1="12" y1="8" x2="12" y2="21"></line><path d="M5 12H2a10 10 0 0 0 20 0h-3"></path></svg></button></div>
+    </div>
+    <div class="image-picker-actions">
+      <button id="iconPickerDone">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="image-picker-overlay" id="imagePickerOverlay">
+  <div class="image-picker-card">
+    <h3>Change Image</h3>
+    <div class="image-picker-section">
+      <label>Upload from your device</label>
+      <div class="image-picker-dropzone" id="imageDropzone">
+        Click to choose a file, or drag one here
+        <input type="file" id="imageFileInput" accept="image/*">
+      </div>
+    </div>
+    <div class="image-picker-or">or</div>
+    <div class="image-picker-section">
+      <label>Paste an image link</label>
+      <div class="image-picker-row">
+        <input type="text" id="imageUrlInput" placeholder="https://...">
+        <button id="imageUrlApply">Use link</button>
+      </div>
+    </div>
+    <div class="image-picker-actions">
+      <button id="imagePickerCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="deck-viewport">
+<main class="deck-stage" id="deckStage" style="transform: translate(56.8889px, 0px) scale(0.815741);">
+
+<!-- =========================================================
+     SLIDE 0 — TITLE & BIG IDEA
+     ========================================================= -->
+<section class="slide title-slide" data-index="0">
+  <div class="slide-inner">
+    <div class="split">
+      <div class="split-panel">
+        <div class="split-panel-img img-editable edit-active" style="background-image: url(&quot;https://abundant-life.com/wp-content/uploads/2023/08/AdobeStock_23801636-scaled.jpeg&quot;); background-position: 86.9339% 56.3499%;" data-img-id="img-0"></div>
+        <div class="split-panel-overlay"></div>
+        <div class="photo-credit">Photo — Tommaso Urli / Unsplash</div>
+      </div>
+      <div class="split-content">
+        <div class="chrome-label reveal editable" data-edit-id="el-0">Communion · Cristo Viene</div>
+        <h1 class="t-display reveal editable" data-edit-id="el-1">COMMUNION<br>The Table You Can't Earn</h1>
+        <p class="t-hook reveal editable" data-edit-id="el-2">"The table isn't a reward for the clean. It's a meal for the forgiven."</p>
+        <p class="t-body-lg reveal editable" data-edit-id="el-3"><strong>Big Idea:</strong> You don't come to the table because you're good enough — you come because Jesus made you worthy.</p>
+        <div class="scripture-card anim">
+          <div class="scripture-bar"></div>
+          <div class="scripture-body">
+            <p class="t-body editable" data-edit-id="el-4">"This is my body, which is for you; do this in remembrance of me... This cup is the new covenant in my blood; do this, whenever you drink it, in remembrance of me."</p>
+            <p class="t-body-sm editable" data-edit-id="el-5">— 1 Corinthians 11:24–25</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 1 — HOOK: "Do I Even Belong Here?"
+     ========================================================= -->
+<section class="slide" data-index="1">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-6">Hook</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" data-edit-id="el-7">Do I Even Belong Here?</h2>
+      <p class="t-body reveal editable" data-edit-id="el-8">Be honest for a second:</p>
+      <ul class="bullets reveal">
+        <li class="t-body editable" data-edit-id="el-9">Have you ever passed on communion because you felt like a hypocrite — like you'd messed up too much that week?</li>
+        <li class="t-body editable" data-edit-id="el-10">Have you ever taken the bread and cup while your mind was a thousand miles away, just going through the motions?</li>
+        <li class="t-body editable" data-edit-id="el-11">Have you ever felt like everyone else at church has it together and you're the fraud?</li>
+      </ul>
+      <p class="t-body reveal editable" data-edit-id="el-12">Today we deal with two opposite mistakes: feeling too unworthy to come to the table, and coming to it carelessly like it's nothing. There's a better way — and it runs straight through the cross.</p>
+      
+    </div>
+    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>02</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 2 — THE PSYCHOLOGY: "Guilt Says 'Oops.' Shame Says 'I'm Ruined.'"
+     ========================================================= -->
+<section class="slide" data-index="2">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-14">The Psychology</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" data-edit-id="el-15">Guilt Says "Oops." Shame Says "I'm not worthy."</h2>
+      <p class="t-body reveal editable" data-edit-id="el-16">Psychologists draw a sharp line between two feelings:</p>
+      <div class="grid-2 reveal">
+        <div class="outline-box">
+          <h4 class="editable" data-edit-id="el-17">Guilt</h4>
+          <p class="editable" data-edit-id="el-18">"I did something bad." It points at the behavior — and it can actually move you to fix things.</p>
+        </div>
+        <div class="outline-box">
+          <h4 class="editable" data-edit-id="el-19">Shame</h4>
+          <p class="editable" data-edit-id="el-20">"I am bad." It points at you — and it makes you want to hide, disappear, and pull away.</p>
+        </div>
+      </div>
+      <div class="callout reveal">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <p class="editable" data-edit-id="el-21">Here's the key: shame makes us hide. It's the exact instinct Adam and Eve had — mess up, then run and cover. So when we feel unworthy, our gut says pull back from God, skip the table, avoid the very place that could heal us.</p>
+      </div>
+      <div class="pull-quote reveal">
+        <p class="t-quote editable" data-edit-id="el-22">Shame tells you to run from the table when the table is the one place designed to remind you that you're already accepted.</p>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>03</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 3 — THE MISCONCEPTION: "Not Good Enough? Exactly."
+     ========================================================= -->
+<section class="slide" data-index="3">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-23">The Misconception</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" data-edit-id="el-24">Not Good Enough? Exactly.</h2>
+      <div class="outline-box reveal">
+        <h4 class="editable" data-edit-id="el-25"><span style="font-size: 28px;">The Lie</span></h4>
+        <p class="editable" data-edit-id="el-26"><span style="font-size: 20px;">"I can't take communion — I'm not good enough." Here's the twist: nobody is good enough. That's the whole point.</span></p>
+      </div>
+      <div class="grid-2 reveal">
+        <div class="scripture-card scripture-card--compact">
+          <p class="t-card-head editable" data-edit-id="el-27">1 John 1:8</p>
+          <p class="t-body editable" data-edit-id="el-28">"If we claim to be without sin, we deceive ourselves and the truth is not in us."</p>
+        </div>
+        <div class="scripture-card scripture-card--compact">
+          <p class="t-card-head editable" data-edit-id="el-29">Romans 8:1</p>
+          <p class="t-body editable" data-edit-id="el-30">"Therefore, there is now no condemnation for those who are in Christ Jesus."</p>
+        </div>
+      </div>
+      <p class="t-body reveal editable" data-edit-id="el-31">The table was never for people who cleaned themselves up. It's for people who admit they couldn't — and trust that Jesus did it for them.</p>
+      <div class="callout reveal">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <p class="editable" data-edit-id="el-32"><span style="font-size: 20px;"><strong>The reframe:</strong> You don't earn a seat at this table with your goodness. Jesus bought your seat with His blood. "Not good enough" isn't a reason to stay away — it's the reason communion exists.</span></p>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>04</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 4 — BIBLICAL EXAMPLE: "The Man Who Denied Him — At the Table" (Peter)
+     ========================================================= -->
+<section class="slide" data-index="4">
+  <div class="slide-inner">
+    <div class="split">
+      <div class="split-panel">
+        <div class="split-panel-img img-editable edit-active" style="background-image: url(&quot;https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3WCUDp8PMaat9KrQMot9jHn50-RG096sbuafEPPcc89G8j5OIaNMfkm0&amp;s=10&quot;); background-position: 62.7875% 100%;" data-img-id="img-1"></div>
+        <div class="split-panel-overlay"></div>
+        <div class="photo-credit">Photo — Sies Kranen / Unsplash</div>
+      </div>
+      <div class="split-content">
+        <div class="chrome-label reveal editable" data-edit-id="el-33">Biblical Example</div>
+        <h2 class="t-title reveal editable" style="font-size:56px;" data-edit-id="el-34">The Man Who Denied Him — At the Table</h2>
+        <div class="grid-2 reveal" style="gap:20px;">
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-35">Situation</h4>
+            <p class="editable" data-edit-id="el-36">At the Last Supper, Jesus handed the bread and cup to His disciples — including Peter, who would swear loyalty that very night.</p>
+          </div>
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-37">Struggle</h4>
+            <p class="editable" data-edit-id="el-38">Hours later, Peter denied even knowing Jesus — three times, to save his own skin — then wept bitterly. If anyone ever felt disqualified, it was Peter.</p>
+          </div>
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-39">Decision</h4>
+            <p class="editable" data-edit-id="el-40">Peter could have run for good. Instead, after the resurrection, when Jesus came looking for him, Peter let himself be found — and Jesus restored him over breakfast: "Do you love me? ... Feed my sheep." (John 21)</p>
+          </div>
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-41">The Lesson</h4>
+            <p class="editable" data-edit-id="el-42">Jesus served the first communion to the very people who were about to fail Him — and then came back for them. The table has always been for failures who let grace find them.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 5 — WHAT COMMUNION IS: "What You're Actually Holding"
+     ========================================================= -->
+<section class="slide" data-index="5">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-43">What Communion Is</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" data-edit-id="el-44">What You're Actually Holding</h2>
+      <p class="t-body reveal editable" data-edit-id="el-45">Communion isn't a snack and it isn't a fancy ritual. It's a remembrance Jesus Himself gave us:</p>
+      <div class="grid-2 reveal">
+        <div class="solid-box">
+          <h4 class="editable" data-edit-id="el-46"><span style="font-size: 28px;">The Bread</span></h4>
+          <p class="editable" data-edit-id="el-47"><span style="font-size: 24px;">His body, broken for you</span></p>
+        </div>
+        <div class="solid-box">
+          <h4 class="editable" data-edit-id="el-48"><span style="font-size: 28px;">The Cup</span></h4>
+          <p class="editable" data-edit-id="el-49"><span style="font-size: 20px;">His blood, poured out to start a whole new covenant, a new relationship with God</span></p>
+        </div>
+      </div>
+      <div class="scripture-card reveal">
+        <p class="t-card-head editable" data-edit-id="el-50">&nbsp;1 Corinthians 11:24-26</p>
+        <p class="t-body editable" data-edit-id="el-51"><span style="font-size: 24px;"><span id="en-NIV-28625" class="text 1Cor-11-24" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;">This is my body, which is for you; do this in remembrance of me.”</span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"> </span><span id="en-NIV-28626" class="text 1Cor-11-25" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">25 </span>In the same way, after supper he took the cup, saying, <span class="woj">“This cup is the new covenant in my blood; do this, whenever you drink it, in remembrance of me.”</span></span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"> </span><span id="en-NIV-28627" class="text 1Cor-11-26" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">26 </span>For whenever you eat this bread and drink this cup, you proclaim the Lord’s death until he comes.</span></span></p>
+      </div>
+      <div class="callout reveal">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <p class="editable" data-edit-id="el-52"><span style="font-size: 24px;">Why a physical, repeated ritual? Because your heart forgets. Every time you taste it, your body preaches the gospel back to you: <strong>I was that broken, I am that loved.</strong> And you don't do it alone — the whole church declares together, we all needed the same cross.</span></p>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>06</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 6 — MODERN EXAMPLES: "Where This Trips Us Up"
+     ========================================================= -->
+<section class="slide" data-index="6">
+  <div class="slide-inner">
+    <div class="split">
+      <div class="split-panel">
+        <div class="split-panel-img img-editable edit-active" style="background-image:url('assets/empty-church-pew.jpg');" data-img-id="img-2"></div>
+        <div class="split-panel-overlay"></div>
+        <div class="photo-credit">Photo — Stefan Kunze / Unsplash</div>
+      </div>
+      <div class="split-content">
+        <div class="chrome-label reveal editable" data-edit-id="el-53">Modern Examples</div>
+        <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-54">Where This Trips Us Up</h2>
+        <p class="t-body reveal editable" data-edit-id="el-55">For us right now, it usually goes one of two ways:</p>
+        <div class="grid-2 reveal" style="gap:20px;">
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-56">Hiding (Shame)</h4>
+            <ul class="bullets">
+              <li class="editable" data-edit-id="el-57">Skipping communion because you sinned this week and feel like a fraud</li>
+              <li class="editable" data-edit-id="el-58">Avoiding church after a big mess-up</li>
+              <li class="editable" data-edit-id="el-59">Believing your secret makes you the one person grace doesn't cover</li>
+            </ul>
+          </div>
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-60">Going Through the Motions (Careless)</h4>
+            <ul class="bullets">
+              <li class="editable" data-edit-id="el-61">Taking the bread and cup while scrolling in your head</li>
+              <li class="editable" data-edit-id="el-62">Treating it like a routine snack, zero thought</li>
+              <li class="editable" data-edit-id="el-63">Showing up to church to be seen, not to meet God — like the Corinthians who made it all about themselves</li>
+            </ul>
+          </div>
+        </div>
+        <p class="t-body-sm reveal editable" data-edit-id="el-64">Both miss it. One runs from the table; the other sleepwalks through it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 7 — WHAT GOD SAYS
+     ========================================================= -->
+<section class="slide" data-index="7">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-65">What God Says</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" data-edit-id="el-66">What God Says</h2>
+      <div class="grid-2 reveal">
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-67"><span style="font-size: 24px;">1 Corinthians 11:28</span></h4>
+            <p class="editable" data-edit-id="el-68"><span style="font-size: 24px;">"Everyone ought to examine themselves before they eat of the bread and drink from the cup."</span></p>
+          </div>
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-69"><span style="font-size: 24px;">1 John 1:9</span></h4>
+            <p class="editable" data-edit-id="el-70"><span style="font-size: 24px;">"If we confess our sins, he is faithful and just and will forgive us our sins."</span></p>
+          </div>
+          <div class="outline-box compact">
+            <h4 class="editable" data-edit-id="el-71"><span style="font-size: 24px;">Romans 3:23–24</span></h4>
+            <p class="editable" data-edit-id="el-72"><span style="font-size: 24px;">"All have sinned and fall short... and are justified freely by his grace through the redemption that came by Christ Jesus."</span></p>
+          </div>
+        </div>
+        <div>
+          <p class="t-body-sm editable" style="font-weight:700; text-transform:uppercase; letter-spacing:0.08em; font-size:15px; color:var(--muted); margin-bottom:6px;" data-edit-id="el-73"><span style="font-size: 24px;">Culture Says</span></p>
+          <p class="t-body-lg editable" style="margin-bottom:20px;" data-edit-id="el-74">"Clean yourself up first, then maybe you'll be worthy."</p>
+          <p class="t-body-sm editable" style="font-weight:700; text-transform:uppercase; letter-spacing:0.08em; font-size:15px; color:var(--primary); margin-bottom:6px;" data-edit-id="el-75"><span style="font-size: 24px;">God Says</span></p>
+          <p class="t-body-lg editable" style="margin-bottom:20px;" data-edit-id="el-76">"Come honestly, examine your heart, and receive what I already made you — worthy."</p>
+          <div class="callout">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <p class="editable" style="font-size:17px;" data-edit-id="el-77"><span style="font-size: 24px;"><strong>The balance:</strong> Paul's warning about taking communion "in an unworthy manner" (1 Cor 11:27) is about how you come — carelessly, selfishly, with no thought for Christ — not about whether you are worthy enough. So examine your heart honestly, confess what's there... then come freely.</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>08</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 8 — IDENTITY SHIFT: "From Fraud to Family"
+     ========================================================= -->
+<section class="slide" data-index="8">
+  <div class="slide-inner">
+    <div class="split">
+      <div class="split-content" style="gap:18px;">
+        <div class="chrome-label reveal editable" data-edit-id="el-78">Identity Shift</div>
+        <h2 class="t-title reveal editable" style="font-size:56px;" data-edit-id="el-79">From Fraud to Family</h2>
+        <div class="pull-quote reveal">
+          <p class="t-quote editable" style="font-size:28px;" data-edit-id="el-80">Stop asking: "Am I good enough to be at this table?" Start believing: "Jesus made me worthy — I belong at this table."</p>
+        </div>
+        <p class="t-body reveal editable" style="font-size:21px;" data-edit-id="el-81">Self-examination isn't a shame spiral where you dig until you feel awful enough to earn forgiveness. It's honest confession — and then freedom. Once you've named it and handed it to God, the examination is over. You're not a guest hoping not to get caught; you're family, invited by name.</p>
+        <div class="callout reveal">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <p class="editable" style="font-size:17px;" data-edit-id="el-82"><span style="font-size: 24px;"><strong>Insight:</strong> Shame says "clean yourself up before you come." Grace says "come, and I'll clean you up." Only one of those is the gospel.</span></p>
+        </div>
+        <div class="story-placeholder reveal">
+          <span class="tag">Your story</span>
+          <p class="editable" style="font-size:18px;" data-edit-id="el-83">I've walked in times of when I thought I wasn't worthy or that my time is over but God called out to me saying that there is so much more to you than what you think. (Drumming-&gt;Teaching)</p>
+        </div>
+      </div>
+      <div class="split-panel">
+        <div class="split-panel-img img-editable edit-active" style="background-image:url('assets/hand-light-rays.jpg');" data-img-id="img-3"></div>
+        <div class="split-panel-overlay"></div>
+        <div class="photo-credit">Photo — Mishal Ibrahim / Unsplash</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 9 — ACTION STEPS: "How to Come to the Table"
+     ========================================================= -->
+<section class="slide" data-index="9">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-84">Action Steps</div>
+    <div class="slide-content" style="gap:22px;">
+      <h2 class="t-title reveal editable" data-edit-id="el-85">How to Come to the Table</h2>
+      <div class="step-item reveal">
+        <div class="step-number">1</div>
+        <div><h4 class="editable" data-edit-id="el-86"><span style="font-size: 32px;">Examine — Don't Obsess</span></h4><p class="editable" data-edit-id="el-87">Ask God to show you what's really there. Be honest, not brutal.</p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">2</div>
+        <div><h4 class="editable" data-edit-id="el-88"><span style="font-size: 32px;">Confess, Then Stop</span></h4><p class="editable" data-edit-id="el-89">Name your sin, receive forgiveness (1 John 1:9), and let the examination be over. Don't keep paying a debt Jesus already covered.<div><span class="versenum" style="font-size: 1.2rem; line-height: normal; position: relative; vertical-align: text-top; top: auto; font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; font-weight: 700; display: inline; color: rgb(0, 0, 0);">9 </span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; font-size: 16px;">If we confess our sins, he is faithful and just and will forgive us our sins</span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; font-size: 16px;"> and purify us from all unrighteousness.</span></div></p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">3</div>
+        <div><h4 class="editable" data-edit-id="el-90"><span style="font-size: 32px;">Don't Skip Out of Shame</span></h4><p class="editable" data-edit-id="el-91">Feeling unworthy is the reason to come, not a reason to hide.</p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">4</div>
+        <div><h4 class="editable" data-edit-id="el-92"><span style="font-size: 32px;">Don't Sleepwalk Through It</span></h4><p class="editable" data-edit-id="el-93">Slow down. Actually picture the cross. Let the bread and cup mean something.</p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">5</div>
+        <div><h4 class="editable" data-edit-id="el-94"><span style="font-size: 32px;">Remember, Out Loud If You Can</span></h4><p class="editable" data-edit-id="el-95">Thank Jesus specifically for what His body and blood bought you.</p></div>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>10</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 10 — REFLECTION & CHALLENGE: "Remember Me"
+     ========================================================= -->
+<section class="slide" data-index="10">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-96">Reflection</div>
+    <div class="slide-content" style="gap:20px;">
+      <h2 class="t-title reveal editable" data-edit-id="el-97">Remember Me</h2>
+      <div class="step-item reveal">
+        <div class="step-number">1</div>
+        <div><h4 class="editable" data-edit-id="el-98"><span style="font-size: 28px;">Which Mistake Is More You?</span></h4><p class="editable" data-edit-id="el-99">Hiding from the table in shame, or sleepwalking through it?</p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">2</div>
+        <div><h4 class="editable" data-edit-id="el-100"><span style="font-size: 28px;">Still Carrying It?</span></h4><p class="editable" data-edit-id="el-101">Is there sin you've confessed but never let go of?</p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">3</div>
+        <div><h4 class="editable" data-edit-id="el-102"><span style="font-size: 28px;">What Would Change?</span></h4><p class="editable" data-edit-id="el-103">What would change if you truly believed Jesus already made you worthy?</p></div>
+      </div>
+      <div class="step-item reveal">
+        <div class="step-number">4</div>
+        <div><h4 class="editable" data-edit-id="el-104"><span style="font-size: 28px;">Where's Your Mind?</span></h4><p class="editable" data-edit-id="el-105">When you take communion, what are you actually thinking about?</p></div>
+      </div>
+      <div class="callout reveal">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        <p class="editable" data-edit-id="el-106"><span style="font-size: 20px;"><strong style="">This Week's Challenge:</strong> Before the next communion (or even today), do the two-step: honestly examine your heart, confess what's there to God — and then receive His forgiveness and come freely. Practice letting the examination be over.</span></p>
+      </div>
+      <div class="pull-quote reveal">
+        <p class="t-quote editable" data-edit-id="el-107">"You'll never be good enough for the table. That's exactly why He set it for you."</p>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>11</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 11 — BONUS: SMALL GROUP DISCUSSION
+     ========================================================= -->
+<section class="slide" data-index="11">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-108">Bonus · Small Group Discussion</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-109">Small Group Discussion</h2>
+      <ul class="bullets two-col reveal">
+        <li class="t-body editable" data-edit-id="el-110">Have you ever skipped or dreaded communion because you felt unworthy? What was going on?</li>
+        <li class="t-body editable" data-edit-id="el-111">What's the difference between guilt ("I did something bad") and shame ("I am bad") — and which do you feel more?</li>
+        <li class="t-body editable" data-edit-id="el-112">Why do you think Jesus gave communion to disciples He knew would fail Him that very night? (Grace over Failure)</li>
+        <li class="t-body editable" data-edit-id="el-113">What does it look like to "examine yourself" without spiraling into shame?</li>
+        <li class="t-body editable" data-edit-id="el-114">How can we take communion meaningfully instead of just going through the motions?</li>
+      </ul>
+    </div>
+    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>12</span></div>
+  </div>
+</section>
+
+<!-- =========================================================
+     SLIDE 12 — BONUS: MIC-DROP QUOTES + CLOSING PRAYER
+     ========================================================= -->
+<section class="slide" data-index="12">
+  <div class="slide-inner">
+    <div class="chrome-label reveal editable" data-edit-id="el-115">Bonus · Mic Drop &amp; Closing Prayer</div>
+    <div class="slide-content">
+      <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-116">Remember</h2>
+      <div class="grid-3 reveal">
+        <div class="solid-box">
+          <p class="editable" style="font-size:20px; font-style:italic;" data-edit-id="el-117">"The table isn't a reward for the clean. It's a meal for the forgiven."</p>
+        </div>
+        <div class="solid-box">
+          <p class="editable" style="font-size:20px; font-style:italic;" data-edit-id="el-118">"Shame says clean yourself up before you come. Grace says come, and I'll clean you up."</p>
+        </div>
+        <div class="solid-box">
+          <p class="editable" style="font-size:20px; font-style:italic;" data-edit-id="el-119">"You'll never be good enough for the table. That's exactly why He set it for you."</p>
+        </div>
+      </div>
+      <div class="card-outline reveal" style="text-align:center;">
+        <p class="t-body-sm editable" style="font-style:italic; font-size:19px;" data-edit-id="el-120">Jesus, thank You that Your body was broken and Your blood was poured out for me — before I ever cleaned myself up. When shame tells me to hide, remind me the table is where I belong. Teach me to examine my heart honestly, confess freely, and then rest in the fact that You already made me worthy. Help me never take this lightly, and never stay away. I remember You. Amen.</p>
+      </div>
+    </div>
+    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>13</span></div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<div class="deck-controls">
+  <button class="nav-btn" id="prevBtn" title="Previous (←)">‹</button>
+  <div id="dots" style="display:flex; gap:8px;"></div>
+  <button class="nav-btn" id="nextBtn" title="Next (→)">›</button>
+</div>
+
+<div class="slide-thumb-panel" id="slideThumbPanel">
+  <div class="slide-thumb-panel-header">
+    <h3>Slides</h3>
+    <div class="slide-thumb-selection-bar" id="slideThumbSelectionBar" style="display:none;">
+      <span id="slideThumbSelectionCount"></span>
+      <button type="button" id="slideThumbClearSelection">Clear</button>
+    </div>
+  </div>
+  <div class="slide-thumb-list" id="slideThumbList"></div>
+</div>
+
+<div class="slide-manager-toolbar" id="slideManagerToolbar">
+  <button id="addSlideBtn" class="block-panel-toggle" title="Add a new slide">Slides+</button>
+  <div class="divider"></div>
+  <button id="moveSlideLeft" title="Move slide earlier">◀ Move</button>
+  <button id="moveSlideRight" title="Move slide later" disabled="">Move ▶</button>
+  <div class="divider"></div>
+  <button id="duplicateSlideBtn" title="Duplicate this slide">⧉ Duplicate</button>
+  <button id="deleteSlideBtn" class="danger" title="Delete this slide">🗑 Delete</button>
+  <div class="divider"></div>
+  <button id="pasteBlockBtn" class="paste-btn has-clipboard" title="Paste the copied block into this slide">📋 Paste</button>
+  <div class="divider"></div>
+  <button id="addBlockBtn" class="block-panel-toggle" title="Add a block">+ Block</button>
+</div>
+<div class="slide-manager-toast" id="slideManagerToast">Block deleted — press Ctrl+S to keep it</div>
+
+<div class="block-panel" id="slideLayoutPanel">
+  <div class="block-panel-header">
+    <h3>Add a slide</h3>
+    <button id="slideLayoutPanelClose" title="Close">✕</button>
+  </div>
+  <div class="block-panel-body" id="slideLayoutPanelBody"><div class="block-panel-section"><h4>Basic</h4><div class="block-panel-grid"><div class="block-card" title="Add a &quot;Blank&quot; slide after this one"><div class="block-card-icon">▭</div><div class="block-card-label">Blank</div></div><div class="block-card" title="Add a &quot;Title + Bullets&quot; slide after this one"><div class="block-card-icon">☰</div><div class="block-card-label">Title + Bullets</div></div></div></div><div class="block-panel-section"><h4>Image Layouts</h4><div class="block-panel-grid"><div class="block-card" title="Add a &quot;Image + Text&quot; slide after this one"><div class="block-card-icon">◧</div><div class="block-card-label">Image + Text</div></div><div class="block-card" title="Add a &quot;Text + Image&quot; slide after this one"><div class="block-card-icon">◨</div><div class="block-card-label">Text + Image</div></div><div class="block-card" title="Add a &quot;Full Image&quot; slide after this one"><div class="block-card-icon">▨</div><div class="block-card-label">Full Image</div></div><div class="block-card" title="Add a &quot;Accent Top&quot; slide after this one"><div class="block-card-icon">⬒</div><div class="block-card-label">Accent Top</div></div></div></div><div class="block-panel-section"><h4>Grids</h4><div class="block-panel-grid"><div class="block-card" title="Add a &quot;Two Columns&quot; slide after this one"><div class="block-card-icon">▥</div><div class="block-card-label">Two Columns</div></div><div class="block-card" title="Add a &quot;Three Columns&quot; slide after this one"><div class="block-card-icon">▦</div><div class="block-card-label">Three Columns</div></div><div class="block-card" title="Add a &quot;Four Columns&quot; slide after this one"><div class="block-card-icon">▧</div><div class="block-card-label">Four Columns</div></div><div class="block-card" title="Add a &quot;Resizable Split&quot; slide after this one"><div class="block-card-icon">◫</div><div class="block-card-label">Resizable Split</div></div></div></div><div class="block-panel-section"><h4>Quotes &amp; Scripture</h4><div class="block-panel-grid"><div class="block-card" title="Add a &quot;Scripture / Quote&quot; slide after this one"><div class="block-card-icon">❝</div><div class="block-card-label">Scripture / Quote</div></div></div></div><div class="block-panel-section"><h4>Images</h4><div class="block-panel-grid"><div class="block-card" title="Add a &quot;2 Image Columns&quot; slide after this one"><div class="block-card-icon">▥</div><div class="block-card-label">2 Image Columns</div></div><div class="block-card" title="Add a &quot;3 Image Columns&quot; slide after this one"><div class="block-card-icon">▦</div><div class="block-card-label">3 Image Columns</div></div><div class="block-card" title="Add a &quot;4 Image Columns&quot; slide after this one"><div class="block-card-icon">▧</div><div class="block-card-label">4 Image Columns</div></div><div class="block-card" title="Add a &quot;Images + Text&quot; slide after this one"><div class="block-card-icon">▤</div><div class="block-card-label">Images + Text</div></div></div></div></div>
+</div>
+
+<div class="block-panel" id="blockPanel">
+  <div class="block-panel-header">
+    <h3>Add a block</h3>
+    <button id="blockPanelClose" title="Close">✕</button>
+  </div>
+  <div class="block-panel-body" id="blockPanelBody"><div class="block-panel-section"><h4>Text</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="heading" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">H2</div><div class="block-card-label">Heading</div></div><div class="block-card" draggable="true" data-block-key="label" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">Aa</div><div class="block-card-label">Label</div></div><div class="block-card" draggable="true" data-block-key="paragraph" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">¶</div><div class="block-card-label">Paragraph</div></div></div></div><div class="block-panel-section"><h4>Quotes &amp; Scripture</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="scripture" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">❝</div><div class="block-card-label">Scripture Card</div></div><div class="block-card" draggable="true" data-block-key="pullquote" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">"</div><div class="block-card-label">Pull Quote</div></div></div></div><div class="block-panel-section"><h4>Callouts &amp; Lists</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="callout" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">✦</div><div class="block-card-label">Callout</div></div><div class="block-card" draggable="true" data-block-key="bullets" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">☰</div><div class="block-card-label">Bullet List</div></div><div class="block-card" draggable="true" data-block-key="step" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">①</div><div class="block-card-label">Numbered Step</div></div></div></div><div class="block-panel-section"><h4>Cards &amp; Grids</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="grid3" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">▦</div><div class="block-card-label">3-Card Row</div></div><div class="block-card" draggable="true" data-block-key="grid2" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">▤</div><div class="block-card-label">2-Card Row</div></div><div class="block-card" draggable="true" data-block-key="category" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">▥</div><div class="block-card-label">Category Grid</div></div></div></div><div class="block-panel-section"><h4>Layout &amp; Media</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="split" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">◫</div><div class="block-card-label">Two-Column Split</div></div><div class="block-card" draggable="true" data-block-key="image" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">🖼</div><div class="block-card-label">Image</div></div></div></div></div>
+</div>
+<div class="block-drop-indicator" id="blockDropIndicator"></div>
+
+<div class="selection-toolbar" id="selectionToolbar" style="transform: translate(-50%, calc(-100% - 12px)); left: 462.86px; top: 532.997px;">
+  <button type="button" data-cmd="bold" title="Bold" class=""><b>B</b></button>
+  <button type="button" data-cmd="italic" title="Italic" class=""><i>I</i></button>
+  <button type="button" data-cmd="underline" title="Underline"><u>U</u></button>
+  <div class="sel-divider"></div>
+  <div class="sel-size-combo">
+    <input type="number" id="selSizeInput" min="6" max="400" step="1" title="Font size in px">
+    <button type="button" class="sel-size-toggle" id="selSizeToggle" title="Preset sizes">▾</button>
+    <div class="sel-size-menu" id="selSizeMenu">
+      <button type="button" data-size="14">14</button>
+      <button type="button" data-size="16">16</button>
+      <button type="button" data-size="18">18</button>
+      <button type="button" data-size="20">20</button>
+      <button type="button" data-size="24">24</button>
+      <button type="button" data-size="28">28</button>
+      <button type="button" data-size="32">32</button>
+      <button type="button" data-size="40">40</button>
+      <button type="button" data-size="54">54</button>
+      <button type="button" data-size="72">72</button>
+      <button type="button" data-size="96">96</button>
+      <button type="button" data-size="128">128</button>
+    </div>
+  </div>
+  <div class="sel-divider"></div>
+  <button type="button" data-align="left" title="Align left">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="16" height="2" fill="currentColor"></rect><rect x="0" y="5" width="10" height="2" fill="currentColor"></rect><rect x="0" y="10" width="13" height="2" fill="currentColor"></rect></svg>
+  </button>
+  <button type="button" data-align="center" title="Align center">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="16" height="2" fill="currentColor"></rect><rect x="3" y="5" width="10" height="2" fill="currentColor"></rect><rect x="1.5" y="10" width="13" height="2" fill="currentColor"></rect></svg>
+  </button>
+  <button type="button" data-align="right" title="Align right">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="0" width="16" height="2" fill="currentColor"></rect><rect x="6" y="5" width="10" height="2" fill="currentColor"></rect><rect x="3" y="10" width="13" height="2" fill="currentColor"></rect></svg>
+  </button>
+  <div class="sel-divider"></div>
+  <button type="button" data-cmd="insertUnorderedList" title="Bullet list">
+    <svg width="16" height="12" viewBox="0 0 16 12"><circle cx="1.5" cy="1" r="1.5" fill="currentColor"></circle><rect x="5" y="0" width="11" height="2" fill="currentColor"></rect><circle cx="1.5" cy="6" r="1.5" fill="currentColor"></circle><rect x="5" y="5" width="11" height="2" fill="currentColor"></rect><circle cx="1.5" cy="11" r="1.5" fill="currentColor"></circle><rect x="5" y="10" width="11" height="2" fill="currentColor"></rect></svg>
+  </button>
+  <div class="sel-divider"></div>
+  <div class="sel-colors">
+    <button type="button" class="sel-swatch" data-color="#000000" style="background:#000000" title="Black"></button>
+    <button type="button" class="sel-swatch" data-color="#494FBC" style="background:#494FBC" title="Indigo"></button>
+    <button type="button" class="sel-swatch" data-color="#6B6D7F" style="background:#6B6D7F" title="Muted grey"></button>
+    <label class="sel-swatch sel-swatch-custom" title="Custom color">
+      <input type="color" id="selColorInput">
+    </label>
+  </div>
+</div>
+
+<script>
+/* ===========================================
+   SLIDE PRESENTATION CONTROLLER
+   =========================================== */
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentSlide = 0;
+        this.stage = document.getElementById('deckStage');
+        this.dotsWrap = document.getElementById('dots');
+        this.buildDots();
+        this.setupStageScale();
+        this.setupKeyboardNav();
+        this.setupTouchNav();
+        this.setupWheelNav();
+        this.setupButtons();
+        this.showSlide(0);
+    }
+
+    buildDots() {
+        this.dotsWrap.innerHTML = '';
+        this.slides.forEach((slide, i) => {
+            const d = document.createElement('div');
+            d.className = 'dot' + (i === 0 ? ' active' : '');
+            d._slideEl = slide;
+            d.addEventListener('click', () => {
+                if (this._dotDragged) { this._dotDragged = false; return; }
+                this.showSlide([...this.dotsWrap.children].indexOf(d));
+            });
+            d.addEventListener('mousedown', (e) => this.startDotDrag(e, d));
+            this.dotsWrap.appendChild(d);
+        });
+        this.dots = this.dotsWrap.querySelectorAll('.dot');
+    }
+
+    startDotDrag(e, dotEl) {
+        if (!editor.isActive) return;
+        e.preventDefault();
+        this._dotDragged = false;
+        dotEl.classList.add('dragging');
+        let lastTarget = null;
+        const onMove = (ev) => {
+            this._dotDragged = true;
+            let nearest = null, nearestDist = Infinity;
+            [...this.dotsWrap.children].forEach((d) => {
+                if (d === dotEl) return;
+                const r = d.getBoundingClientRect();
+                const cx = r.left + r.width / 2;
+                const dist = Math.abs(ev.clientX - cx);
+                if (dist < nearestDist) { nearestDist = dist; nearest = { d, cx }; }
+            });
+            if (!nearest) return;
+            // Highlight whichever dot the drag would land next to — the dragged
+            // dot's own color already makes it obvious which one is moving, but
+            // without this there's no cue for exactly where it will drop.
+            if (lastTarget && lastTarget !== nearest.d) lastTarget.classList.remove('drop-target');
+            nearest.d.classList.add('drop-target');
+            lastTarget = nearest.d;
+            if (ev.clientX < nearest.cx) nearest.d.before(dotEl); else nearest.d.after(dotEl);
+        };
+        const onUp = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            dotEl.classList.remove('dragging');
+            if (lastTarget) lastTarget.classList.remove('drop-target');
+            if (this._dotDragged) this.finalizeDotOrder();
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
+    finalizeDotOrder() {
+        const activeEl = document.querySelector('.slide.active');
+        const newOrder = [...this.dotsWrap.children].map((d) => d._slideEl);
+        const stage = document.getElementById('deckStage');
+        newOrder.forEach((slide) => stage.appendChild(slide));
+        this.renumberSlides();
+        this.dotsWrap.innerHTML = '';
+        this.buildDots();
+        const newIndex = Math.max(0, newOrder.indexOf(activeEl));
+        this.showSlide(newIndex);
+        slideManager.showToast('Slide order changed — press Ctrl+S to keep it');
+    }
+
+    setupStageScale() {
+        const scale = () => {
+            const factor = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+            const x = (window.innerWidth - 1920 * factor) / 2;
+            const y = (window.innerHeight - 1080 * factor) / 2;
+            this.stage.style.transform = `translate(${x}px, ${y}px) scale(${factor})`;
+        };
+        scale();
+        window.addEventListener('resize', scale);
+    }
+
+    setupKeyboardNav() {
+        document.addEventListener('keydown', (e) => {
+            if (editor.isActive && e.target.getAttribute('contenteditable')) return;
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); this.showSlide(this.currentSlide + 1); }
+            if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); this.showSlide(this.currentSlide - 1); }
+        });
+    }
+
+    setupTouchNav() {
+        let startX = 0;
+        this.stage.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+        this.stage.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 60) dx < 0 ? this.showSlide(this.currentSlide + 1) : this.showSlide(this.currentSlide - 1);
+        }, { passive: true });
+    }
+
+    setupWheelNav() {
+        let locked = false;
+        document.addEventListener('wheel', (e) => {
+            // Scrolling inside a side panel (block/slide-layout/thumbnail rail, an
+            // image picker, the selection toolbar) should only scroll that panel —
+            // never also flip the deck to the next/previous slide underneath it.
+            if (e.target.closest('.block-panel, .slide-thumb-panel, .image-picker-overlay, .selection-toolbar, .slide-manager-toolbar')) return;
+            if (locked) return;
+            if (Math.abs(e.deltaY) < 30) return;
+            locked = true;
+            e.deltaY > 0 ? this.showSlide(this.currentSlide + 1) : this.showSlide(this.currentSlide - 1);
+            setTimeout(() => locked = false, 700);
+        }, { passive: true });
+    }
+
+    setupButtons() {
+        document.getElementById('nextBtn').addEventListener('click', () => this.showSlide(this.currentSlide + 1));
+        document.getElementById('prevBtn').addEventListener('click', () => this.showSlide(this.currentSlide - 1));
+    }
+
+    showSlide(index) {
+        this.currentSlide = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slides.forEach((slide, i) => {
+            slide.classList.toggle('active', i === this.currentSlide);
+            slide.classList.toggle('visible', i === this.currentSlide);
+        });
+        this.dots.forEach((d, i) => d.classList.toggle('active', i === this.currentSlide));
+        this.updateToolbarState();
+        if (slideThumbPanel) slideThumbPanel.updateActive();
+    }
+
+    updateToolbarState() {
+        const moveLeft = document.getElementById('moveSlideLeft');
+        const moveRight = document.getElementById('moveSlideRight');
+        const deleteBtn = document.getElementById('deleteSlideBtn');
+        if (!moveLeft) return;
+        moveLeft.disabled = this.currentSlide === 0;
+        moveRight.disabled = this.currentSlide === this.slides.length - 1;
+        deleteBtn.disabled = this.slides.length <= 1;
+    }
+
+    renumberSlides() {
+        this.slides = document.querySelectorAll('.slide');
+        this.slides.forEach((slide, i) => {
+            slide.dataset.index = i;
+            const footerSpans = slide.querySelectorAll('.chrome-footer span');
+            if (footerSpans.length) {
+                footerSpans[footerSpans.length - 1].textContent = String(i + 1).padStart(2, '0');
+            }
+        });
+    }
+
+    refresh(focusIndex) {
+        this.renumberSlides();
+        this.dotsWrap.innerHTML = '';
+        this.buildDots();
+        if (slideThumbPanel) slideThumbPanel.rebuild();
+        this.showSlide(focusIndex !== undefined ? focusIndex : this.currentSlide);
+    }
+}
+
+/* ===========================================
+   INLINE EDITING (default-on, per frontend-slides skill)
+   =========================================== */
+class InlineEditor {
+    constructor() {
+        this.isActive = false;
+        this.storageKey = 'gamma-communion-table-edits';
+        this.toggle = document.getElementById('editToggle');
+        this.hotzone = document.querySelector('.edit-hotzone');
+        this.toast = document.getElementById('saveToast');
+        this.slideManagerToolbar = document.getElementById('slideManagerToolbar');
+        this.activeImageEl = null;
+        this._boundText = new WeakSet();
+        this._boundImg = new WeakSet();
+        this.clipboard = null;
+        this.clipboardLabel = null;
+        const clip = localStorage.getItem(this.storageKey + '-clipboard');
+        if (clip) { try { const c = JSON.parse(clip); this.clipboard = c.html; this.clipboardLabel = c.label; } catch (e) {} }
+        this.restore();
+        this.bindHover();
+        this.setupImagePicker();
+        this.setupHoverCopy();
+        this.setupIconEditor();
+        this.setupSplitResizers();
+        this.toggle.addEventListener('click', () => this.toggleEditMode());
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'e' || e.key === 'E') && !e.target.getAttribute('contenteditable')) this.toggleEditMode();
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); this.exportHtml(); }
+            if (e.key === 'Escape') this.closeImagePicker();
+        });
+    }
+
+    bindHover() {
+        let hideTimeout = null;
+        const show = () => { clearTimeout(hideTimeout); this.toggle.classList.add('show'); };
+        const hide = () => { hideTimeout = setTimeout(() => { if (!this.isActive) this.toggle.classList.remove('show'); }, 400); };
+        this.hotzone.addEventListener('mouseenter', show);
+        this.hotzone.addEventListener('mouseleave', hide);
+        this.toggle.addEventListener('mouseenter', show);
+        this.toggle.addEventListener('mouseleave', hide);
+        this.hotzone.addEventListener('click', () => this.toggleEditMode());
+    }
+
+    toggleEditMode() {
+        this.isActive = !this.isActive;
+        this.toggle.classList.toggle('active', this.isActive);
+        this.slideManagerToolbar.classList.toggle('show', this.isActive);
+        document.body.classList.toggle('edit-mode', this.isActive);
+        this.applyEditableState();
+        if (!this.isActive) {
+            this.closeImagePicker();
+            if (selectionToolbar) selectionToolbar.hide();
+            if (blockPanel) blockPanel.close();
+            if (slideLayoutPanel) slideLayoutPanel.close();
+        }
+    }
+
+    generateUniqueId(prefix) {
+        this._idCounter = (this._idCounter || 0) + 1;
+        return `${prefix}-new-${Date.now().toString(36)}-${this._idCounter}`;
+    }
+
+    applyEditableState() {
+        document.querySelectorAll('.editable').forEach((el) => {
+            el.setAttribute('contenteditable', this.isActive ? 'true' : 'false');
+            if (!el.dataset.editId) el.dataset.editId = this.generateUniqueId('el');
+            if (!this._boundText.has(el)) {
+                el.addEventListener('input', () => this.save());
+                this._boundText.add(el);
+            }
+        });
+        document.querySelectorAll('.arrow-head svg, .callout > svg').forEach((svg) => this.bindIconEditable(svg));
+        document.querySelectorAll('.img-editable').forEach((el) => {
+            if (!el.dataset.imgId) el.dataset.imgId = this.generateUniqueId('img');
+            el.classList.toggle('edit-active', this.isActive);
+            if (el.tagName === 'IMG') el.draggable = false;
+            if (!this._boundImg.has(el)) {
+                el.addEventListener('mousedown', (e) => this.startImageDrag(e, el));
+                el.addEventListener('click', (e) => {
+                    if (!this.isActive) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (this._imgDragMoved) { this._imgDragMoved = false; return; }
+                    this.openImagePicker(e.currentTarget);
+                });
+                this._boundImg.add(el);
+            }
+        });
+    }
+
+    /* ---- Drag-to-reposition: pan the crop point of an image within its frame ----
+       A mousedown starts tracking; if the pointer moves past a small threshold
+       before mouseup, it's treated as a reposition drag and the trailing click
+       (which always fires after mouseup) is suppressed via _imgDragMoved so it
+       doesn't also pop open the image picker. */
+    startImageDrag(e, el) {
+        if (!this.isActive) return;
+        e.preventDefault();
+        const rect = el.getBoundingClientRect();
+        const isImgTag = el.tagName === 'IMG';
+        const cs = getComputedStyle(el);
+        const current = (isImgTag ? cs.objectPosition : cs.backgroundPosition) || '50% 50%';
+        const parts = current.split(' ').map((p) => parseFloat(p));
+        const startPctX = isNaN(parts[0]) ? 50 : parts[0];
+        const startPctY = isNaN(parts[1]) ? 50 : parts[1];
+        const startX = e.clientX, startY = e.clientY;
+        this._imgDragMoved = false;
+        el.classList.add('img-dragging');
+        const onMove = (ev) => {
+            const dx = ev.clientX - startX, dy = ev.clientY - startY;
+            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) this._imgDragMoved = true;
+            // Dragging the pointer right should visually move the image right (reveal
+            // more of its left side), which is a DECREASE in background/object-position
+            // X% — the opposite sign of the pointer delta.
+            let newX = startPctX - (dx / rect.width) * 100;
+            let newY = startPctY - (dy / rect.height) * 100;
+            newX = Math.min(100, Math.max(0, newX));
+            newY = Math.min(100, Math.max(0, newY));
+            if (isImgTag) el.style.objectPosition = `${newX}% ${newY}%`;
+            else el.style.backgroundPosition = `${newX}% ${newY}%`;
+        };
+        const onUp = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            el.classList.remove('img-dragging');
+            if (this._imgDragMoved) {
+                this.save();
+                slideManager.showToast('Image repositioned');
+            }
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
+    static ITEM_SELECTOR = '.solid-box, .outline-box, .category-item, .joined-boxes > div, .arrow-item, .content-block';
+    static GROUP_SELECTOR = '.slide.active .slide-content > .reveal, .slide.active .split-content > .reveal, .slide.active .slide-content > .scripture-card, .slide.active .split-content > .scripture-card';
+
+    setupHoverCopy() {
+        this.hoverCopyBtn = document.getElementById('hoverCopyBtn');
+        this.hoverDeleteBtn = document.getElementById('hoverDeleteBtn');
+        this.hoverDragBtn = document.getElementById('hoverDragBtn');
+        this.hoverTarget = null;
+        this.hoverMode = 'group';
+        this.dragState = null;
+
+        [this.hoverCopyBtn, this.hoverDeleteBtn, this.hoverDragBtn].forEach((btn) => {
+            btn.addEventListener('mousedown', (e) => { if (btn !== this.hoverDragBtn) e.preventDefault(); });
+        });
+        this.hoverCopyBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!this.hoverTarget) return;
+            if (this.hoverMode === 'item') this.duplicateItemInPlace(this.hoverTarget);
+            else this.copyBlock(this.hoverTarget);
+        });
+        this.hoverDeleteBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (this.hoverTarget) this.deleteBlock(this.hoverTarget);
+        });
+        this.hoverDragBtn.addEventListener('mousedown', (e) => this.startDrag(e));
+
+        document.addEventListener('mousemove', (e) => this.updateHoverCopy(e));
+        document.addEventListener('scroll', () => this.hideHoverCopy(), true);
+    }
+
+    updateHoverCopy(e) {
+        if (this.dragState) { this.onDragMove(e); return; }
+        if (!this.isActive) { this.hideHoverCopy(); return; }
+        // e.target is occasionally a non-Element (e.g. the Document itself) for
+        // synthetic mousemove events some automation/extension tooling dispatches —
+        // guard rather than let .closest() throw and kill this listener permanently.
+        if (!e.target || typeof e.target.closest !== 'function') return;
+        if (this.hoverCopyBtn.contains(e.target) || this.hoverDeleteBtn.contains(e.target) || this.hoverDragBtn.contains(e.target)) return;
+
+        let target = e.target.closest(InlineEditor.ITEM_SELECTOR);
+        let mode = 'item';
+        if (!target || !target.closest('.slide.active')) {
+            target = e.target.closest(InlineEditor.GROUP_SELECTOR);
+            mode = 'group';
+        }
+        if (!target) { this.hideHoverCopy(); return; }
+        this.hoverTarget = target;
+        this.hoverMode = mode;
+        const rect = target.getBoundingClientRect();
+        this.hoverCopyBtn.title = mode === 'item' ? 'Duplicate this item' : 'Copy this block';
+        this.hoverCopyBtn.style.left = rect.right + 'px';
+        this.hoverCopyBtn.style.top = rect.top + 'px';
+        this.hoverCopyBtn.classList.add('show');
+        this.hoverDeleteBtn.style.left = rect.right + 'px';
+        this.hoverDeleteBtn.style.top = (rect.top + 36) + 'px';
+        this.hoverDeleteBtn.classList.add('show');
+        this.hoverDragBtn.style.left = rect.right + 'px';
+        this.hoverDragBtn.style.top = (rect.top + 72) + 'px';
+        this.hoverDragBtn.classList.add('show');
+    }
+
+    hideHoverCopy() {
+        if (this.hoverCopyBtn) this.hoverCopyBtn.classList.remove('show');
+        if (this.hoverDeleteBtn) this.hoverDeleteBtn.classList.remove('show');
+        if (this.hoverDragBtn) this.hoverDragBtn.classList.remove('show');
+        this.hoverTarget = null;
+    }
+
+    deleteBlock(el) {
+        const label = (el.textContent || '').trim().slice(0, 40) || 'block';
+        const ok = confirm(`Delete "${label}${label.length >= 40 ? '…' : ''}"? This can't be undone.`);
+        if (!ok) return;
+        el.remove();
+        this.hideHoverCopy();
+        slideManager.showToast('Block deleted — press Ctrl+S to keep it');
+    }
+
+    copyBlock(el) {
+        const clone = el.cloneNode(true);
+        this.clipboard = clone.outerHTML;
+        this.clipboardLabel = (el.textContent || '').replace(/⧉/g, '').trim().slice(0, 40) || 'block';
+        localStorage.setItem(this.storageKey + '-clipboard', JSON.stringify({ html: this.clipboard, label: this.clipboardLabel }));
+        const pasteBtn = document.getElementById('pasteBlockBtn');
+        pasteBtn.disabled = false;
+        pasteBtn.classList.add('has-clipboard');
+        slideManager.showToast(`Copied "${this.clipboardLabel}${this.clipboardLabel.length >= 40 ? '…' : ''}"`);
+    }
+
+    duplicateItemInPlace(el) {
+        const clone = el.cloneNode(true);
+        clone.querySelectorAll('[data-edit-id]').forEach((n) => delete n.dataset.editId);
+        clone.querySelectorAll('[data-img-id]').forEach((n) => delete n.dataset.imgId);
+        el.after(clone);
+        this.applyEditableState();
+        this.hideHoverCopy();
+        slideManager.showToast('Item duplicated — press Ctrl+S to keep it');
+    }
+
+    startDrag(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!this.hoverTarget) return;
+        const el = this.hoverTarget;
+        const parent = el.parentElement;
+        const selector = this.hoverMode === 'item' ? InlineEditor.ITEM_SELECTOR : ':scope > .reveal, :scope > .scripture-card';
+        const siblings = [...parent.querySelectorAll(selector)].filter((s) => s.parentElement === parent);
+        this.dragState = { el, parent, siblings, mode: this.hoverMode };
+        el.classList.add('dragging');
+        this.hideHoverCopy();
+        document.addEventListener('mouseup', this._endDragBound = (ev) => this.endDrag(ev), { once: true });
+    }
+
+    onDragMove(e) {
+        const { el, siblings, parent } = this.dragState;
+        const style = getComputedStyle(parent);
+        const isGridRow = style.display.includes('grid') && style.gridTemplateColumns.trim().split(/\s+/).length > 1;
+        const isFlexRow = style.display.includes('flex') && style.flexDirection.startsWith('row');
+        const horizontal = isGridRow || isFlexRow;
+
+        let nearest = null, nearestDist = Infinity;
+        siblings.forEach((sib) => {
+            if (sib === el) return;
+            const r = sib.getBoundingClientRect();
+            const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+            const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+            if (dist < nearestDist) { nearestDist = dist; nearest = { sib, cx, cy }; }
+        });
+        if (!nearest) return;
+        const before = horizontal ? e.clientX < nearest.cx : e.clientY < nearest.cy;
+        if (before) nearest.sib.before(el); else nearest.sib.after(el);
+    }
+
+    endDrag() {
+        if (this.dragState) {
+            this.dragState.el.classList.remove('dragging');
+            slideManager.showToast('Reordered — press Ctrl+S to keep it');
+        }
+        this.dragState = null;
+    }
+
+    static ICON_LIBRARY = {
+        arrow: '<line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/>',
+        message: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+        check: '<polyline points="20 6 9 17 4 12"/>',
+        star: '<path d="M12 2 15 9 22 9.5 17 14.5 18.5 21.5 12 18 5.5 21.5 7 14.5 2 9.5 9 9 12 2"/>',
+        dot: '<circle cx="12" cy="12" r="6"/>',
+        plus: '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+        heart: '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8z"/>',
+        anchor: '<circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="21"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/>'
+    };
+
+    setupIconEditor() {
+        this.iconPickerOverlay = document.getElementById('iconPickerOverlay');
+        this.iconSizeInput = document.getElementById('iconSizeInput');
+        this.iconPickerGrid = document.getElementById('iconPickerGrid');
+        this.activeIconEl = null;
+        this._boundIcons = new WeakSet();
+
+        Object.entries(InlineEditor.ICON_LIBRARY).forEach(([name, inner]) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.dataset.icon = name;
+            btn.title = name;
+            btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${inner}</svg>`;
+            btn.addEventListener('click', () => this.applyIconSwap(name));
+            this.iconPickerGrid.appendChild(btn);
+        });
+
+        this.iconSizeInput.addEventListener('input', () => this.applyIconSize(parseInt(this.iconSizeInput.value, 10)));
+        document.getElementById('iconPickerDone').addEventListener('click', () => this.closeIconPicker());
+        this.iconPickerOverlay.addEventListener('click', (e) => { if (e.target === this.iconPickerOverlay) this.closeIconPicker(); });
+    }
+
+    bindIconEditable(svg) {
+        if (this._boundIcons.has(svg)) return;
+        this._boundIcons.add(svg);
+        svg.classList.add('icon-editable');
+        svg.addEventListener('click', (e) => {
+            if (!this.isActive) return;
+            e.preventDefault();
+            e.stopPropagation();
+            this.openIconPicker(svg);
+        });
+    }
+
+    openIconPicker(svg) {
+        this.activeIconEl = svg;
+        const w = parseInt(svg.getAttribute('width'), 10) || 24;
+        this.iconSizeInput.value = w;
+        this.iconPickerOverlay.classList.add('show');
+    }
+
+    closeIconPicker() {
+        this.iconPickerOverlay.classList.remove('show');
+        this.activeIconEl = null;
+    }
+
+    applyIconSize(px) {
+        if (!this.activeIconEl || !px || isNaN(px) || px < 8) return;
+        this.activeIconEl.setAttribute('width', px);
+        this.activeIconEl.setAttribute('height', px);
+        this.save();
+    }
+
+    applyIconSwap(name) {
+        if (!this.activeIconEl) return;
+        const inner = InlineEditor.ICON_LIBRARY[name];
+        if (!inner) return;
+        this.activeIconEl.innerHTML = inner;
+        this.save();
+    }
+
+    setupSplitResizers() {
+        this._boundHandles = this._boundHandles || new WeakSet();
+        document.querySelectorAll('.resizable-split > .split-handle').forEach((handle) => {
+            if (this._boundHandles.has(handle)) return;
+            this._boundHandles.add(handle);
+            handle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const container = handle.parentElement;
+                handle.classList.add('dragging');
+                const onMove = (ev) => {
+                    const rect = container.getBoundingClientRect();
+                    let pct = ((ev.clientX - rect.left) / rect.width) * 100;
+                    pct = Math.min(Math.max(pct, 20), 80);
+                    container.style.setProperty('--split-pct', pct + '%');
+                };
+                const onUp = () => {
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                    handle.classList.remove('dragging');
+                    if (this.isActive) slideManager.showToast('Split adjusted — press Ctrl+S to keep it');
+                };
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
+            });
+        });
+    }
+
+    rebindSplitHandles() { this.setupSplitResizers(); }
+
+    setupImagePicker() {
+        this.overlay = document.getElementById('imagePickerOverlay');
+        this.dropzone = document.getElementById('imageDropzone');
+        this.fileInput = document.getElementById('imageFileInput');
+        this.urlInput = document.getElementById('imageUrlInput');
+
+        this.dropzone.addEventListener('click', () => this.fileInput.click());
+        this.dropzone.addEventListener('dragover', (e) => { e.preventDefault(); this.dropzone.classList.add('drag-over'); });
+        this.dropzone.addEventListener('dragleave', () => this.dropzone.classList.remove('drag-over'));
+        this.dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            this.dropzone.classList.remove('drag-over');
+            if (e.dataTransfer.files[0]) this.readFile(e.dataTransfer.files[0]);
+        });
+        this.fileInput.addEventListener('change', () => {
+            if (this.fileInput.files[0]) this.readFile(this.fileInput.files[0]);
+        });
+        document.getElementById('imageUrlApply').addEventListener('click', () => {
+            const url = this.urlInput.value.trim();
+            if (url) this.applyImage(url);
+        });
+        this.urlInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); document.getElementById('imageUrlApply').click(); }
+        });
+        document.getElementById('imagePickerCancel').addEventListener('click', () => this.closeImagePicker());
+        this.overlay.addEventListener('click', (e) => { if (e.target === this.overlay) this.closeImagePicker(); });
+    }
+
+    openImagePicker(el) {
+        this.activeImageEl = el;
+        this.urlInput.value = '';
+        this.overlay.classList.add('show');
+    }
+
+    closeImagePicker() {
+        if (this.overlay) this.overlay.classList.remove('show');
+        this.activeImageEl = null;
+    }
+
+    readFile(file) {
+        const reader = new FileReader();
+        reader.onload = () => this.applyImage(reader.result);
+        reader.readAsDataURL(file);
+    }
+
+    applyImage(url) {
+        const el = this.activeImageEl;
+        if (!el) return;
+        // A brand-new image shouldn't inherit the previous photo's crop offset.
+        if (el.tagName === 'IMG') {
+            el.src = url;
+            el.style.objectPosition = '50% 50%';
+        } else {
+            el.style.backgroundImage = `url('${url}')`;
+            el.style.backgroundPosition = '50% 50%';
+        }
+        this.closeImagePicker();
+        this.save();
+    }
+
+    save() {
+        const data = {};
+        document.querySelectorAll('.editable').forEach((el) => { data[el.dataset.editId] = el.innerHTML; });
+        document.querySelectorAll('.img-editable').forEach((el) => {
+            const isImgTag = el.tagName === 'IMG';
+            data[el.dataset.imgId] = {
+                src: isImgTag ? el.src : el.style.backgroundImage,
+                pos: isImgTag ? el.style.objectPosition : el.style.backgroundPosition
+            };
+        });
+        localStorage.setItem(this.storageKey, JSON.stringify(data));
+        this.toast.classList.add('show');
+        clearTimeout(this._toastTimeout);
+        this._toastTimeout = setTimeout(() => this.toast.classList.remove('show'), 1200);
+    }
+
+    restore() {
+        const raw = localStorage.getItem(this.storageKey);
+        const data = raw ? JSON.parse(raw) : {};
+        document.querySelectorAll('.editable').forEach((el, i) => {
+            const id = 'el-' + i;
+            el.dataset.editId = id;
+            if (data[id] !== undefined) el.innerHTML = data[id];
+        });
+        document.querySelectorAll('.img-editable').forEach((el, i) => {
+            const id = 'img-' + i;
+            el.dataset.imgId = id;
+            const entry = data[id];
+            if (entry === undefined) return;
+            // Older saves (from before drag-to-reposition existed) stored a plain
+            // src/background string instead of {src, pos} — support both shapes.
+            const src = typeof entry === 'string' ? entry : entry.src;
+            const pos = typeof entry === 'string' ? null : entry.pos;
+            if (el.tagName === 'IMG') { if (src) el.src = src; if (pos) el.style.objectPosition = pos; }
+            else { if (src) el.style.backgroundImage = src; if (pos) el.style.backgroundPosition = pos; }
+        });
+    }
+
+    exportHtml() {
+        const clone = document.documentElement.cloneNode(true);
+        clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+        clone.querySelector('body').classList.remove('edit-mode');
+        const resetShow = [
+            '.edit-toggle', '.slide-manager-toolbar', '.copy-btn', '.delete-btn',
+            '.selection-toolbar', '.sel-size-menu', '.image-picker-overlay',
+            '.save-toast', '.slide-manager-toast', '#blockPanel', '#slideLayoutPanel',
+            '#slideThumbPanel', '.block-drop-indicator', '#addBlockBtn', '#addSlideBtn'
+        ];
+        const thumbList = clone.querySelector('#slideThumbList');
+        if (thumbList) thumbList.innerHTML = '';
+        resetShow.forEach((sel) => {
+            const el = clone.querySelector(sel);
+            if (el) el.classList.remove('show', 'active', 'drag-over');
+        });
+        clone.querySelector('body').classList.remove('block-dragging');
+        ['.copy-btn', '.delete-btn'].forEach((sel) => {
+            const el = clone.querySelector(sel);
+            if (el) el.removeAttribute('style');
+        });
+        clone.querySelectorAll('.slide').forEach(el => el.classList.remove('active', 'visible'));
+        const dotsEl = clone.querySelector('#dots');
+        if (dotsEl) dotsEl.innerHTML = '';
+        const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+        const blob = new Blob([html], { type: 'text/html' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'Communion_The_Table_You_Cant_Earn_Gamma.html';
+        a.click();
+    }
+}
+
+/* ===========================================
+   SLIDE MANAGER (delete / duplicate / reorder — edit-mode only)
+   =========================================== */
+class SlideManager {
+    constructor(presentation, editor) {
+        this.presentation = presentation;
+        this.editor = editor;
+        this.toast = document.getElementById('slideManagerToast');
+        document.getElementById('duplicateSlideBtn').addEventListener('click', () => this.duplicate());
+        document.getElementById('deleteSlideBtn').addEventListener('click', () => this.remove());
+        document.getElementById('moveSlideLeft').addEventListener('click', () => this.move(-1));
+        document.getElementById('moveSlideRight').addEventListener('click', () => this.move(1));
+        const pasteBtn = document.getElementById('pasteBlockBtn');
+        pasteBtn.addEventListener('click', () => this.pasteBlock());
+        if (editor.clipboard) { pasteBtn.disabled = false; pasteBtn.classList.add('has-clipboard'); }
+    }
+
+    pasteBlock() {
+        if (!this.editor.clipboard) return;
+        const slide = document.querySelectorAll('.slide')[this.presentation.currentSlide];
+        const container = slide.querySelector('.slide-content, .split-content');
+        if (!container) return;
+        const temp = document.createElement('div');
+        temp.innerHTML = this.editor.clipboard;
+        const node = temp.firstElementChild;
+        if (!node) return;
+        node.classList.add('reveal');
+        node.querySelectorAll('.editable').forEach(el => { el.removeAttribute('contenteditable'); delete el.dataset.editId; });
+        node.querySelectorAll('.img-editable').forEach(el => { el.classList.remove('edit-active'); delete el.dataset.imgId; });
+        container.appendChild(node);
+        this.editor.applyEditableState();
+        this.showToast('Pasted — press Ctrl+S to keep it');
+    }
+
+    showToast(msg) {
+        this.toast.textContent = msg;
+        this.toast.classList.add('show');
+        clearTimeout(this._t);
+        this._t = setTimeout(() => this.toast.classList.remove('show'), 1600);
+    }
+
+    duplicate() {
+        const slides = document.querySelectorAll('.slide');
+        const current = slides[this.presentation.currentSlide];
+        const clone = current.cloneNode(true);
+        clone.classList.remove('active', 'visible');
+        clone.querySelectorAll('.editable').forEach(el => {
+            el.removeAttribute('contenteditable');
+            delete el.dataset.editId;
+        });
+        clone.querySelectorAll('.img-editable').forEach(el => {
+            el.classList.remove('edit-active');
+            delete el.dataset.imgId;
+        });
+        current.after(clone);
+        this.presentation.renumberSlides();
+        this.editor.applyEditableState();
+        this.presentation.refresh(this.presentation.currentSlide + 1);
+        this.showToast('Slide duplicated — press Ctrl+S to keep it');
+    }
+
+    remove() {
+        const slides = document.querySelectorAll('.slide');
+        if (slides.length <= 1) { this.showToast("Can't delete the only slide"); return; }
+        const index = this.presentation.currentSlide;
+        const ok = confirm('Delete this slide? This can\'t be undone.');
+        if (!ok) return;
+        slides[index].remove();
+        this.presentation.renumberSlides();
+        this.presentation.refresh(Math.min(index, document.querySelectorAll('.slide').length - 1));
+        this.showToast('Slide deleted — press Ctrl+S to keep it');
+    }
+
+    move(direction) {
+        const slides = document.querySelectorAll('.slide');
+        const index = this.presentation.currentSlide;
+        const targetIndex = index + direction;
+        if (targetIndex < 0 || targetIndex >= slides.length) return;
+        const current = slides[index];
+        const target = slides[targetIndex];
+        if (direction < 0) {
+            target.before(current);
+        } else {
+            target.after(current);
+        }
+        this.presentation.renumberSlides();
+        this.presentation.refresh(targetIndex);
+        this.showToast('Slide moved — press Ctrl+S to keep it');
+    }
+}
+
+/* ===========================================
+   SELECTION TOOLBAR
+   =========================================== */
+class SelectionToolbar {
+    constructor(editorRef) {
+        this.editor = editorRef;
+        this.el = document.getElementById('selectionToolbar');
+        this.colorInput = document.getElementById('selColorInput');
+        this.sizeInput = document.getElementById('selSizeInput');
+        this.sizeToggle = document.getElementById('selSizeToggle');
+        this.sizeMenu = document.getElementById('selSizeMenu');
+        this.savedRange = null;
+
+        this.el.addEventListener('mousedown', (e) => {
+            if (e.target === this.sizeInput) return;
+            e.preventDefault();
+        });
+
+        this.el.querySelectorAll('button[data-cmd]').forEach((btn) => {
+            btn.addEventListener('click', () => this.exec(btn.dataset.cmd));
+        });
+        this.el.querySelectorAll('button[data-align]').forEach((btn) => {
+            const cmd = 'justify' + btn.dataset.align.charAt(0).toUpperCase() + btn.dataset.align.slice(1);
+            btn.addEventListener('click', () => this.exec(cmd));
+        });
+        this.el.querySelectorAll('.sel-swatch[data-color]').forEach((btn) => {
+            btn.addEventListener('click', () => this.applyColor(btn.dataset.color));
+        });
+        this.colorInput.addEventListener('input', (e) => this.applyColor(e.target.value));
+
+        this.sizeToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.sizeMenu.classList.toggle('show');
+        });
+        this.sizeMenu.querySelectorAll('button[data-size]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const px = parseInt(btn.dataset.size, 10);
+                this.sizeInput.value = px;
+                this.sizeMenu.classList.remove('show');
+                this.applySizePx(px);
+            });
+        });
+        this.sizeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); this.sizeInput.blur(); }
+        });
+        this.sizeInput.addEventListener('change', () => {
+            this.applySizePx(parseInt(this.sizeInput.value, 10));
+        });
+        document.addEventListener('mousedown', (e) => {
+            if (e.target !== this.sizeToggle && !this.sizeMenu.contains(e.target)) {
+                this.sizeMenu.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('selectionchange', () => this.scheduleUpdate());
+        window.addEventListener('scroll', () => this.hide(), true);
+        window.addEventListener('resize', () => this.hide());
+    }
+
+    scheduleUpdate() {
+        clearTimeout(this._t);
+        this._t = setTimeout(() => this.update(), 60);
+    }
+
+    getCurrentFontSizePx(range) {
+        let node = range.commonAncestorContainer;
+        if (node.nodeType === 3) node = node.parentElement;
+        if (!node || node.nodeType !== 1) return null;
+        const size = parseFloat(getComputedStyle(node).fontSize);
+        return isNaN(size) ? null : Math.round(size);
+    }
+
+    update() {
+        if (!this.editor.isActive) { this.hide(); return; }
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) { this.hide(); return; }
+        const node = sel.anchorNode;
+        const el = node && (node.nodeType === 1 ? node : node.parentElement);
+        const editableRoot = el && el.closest && el.closest('[contenteditable="true"]');
+        if (!editableRoot) { this.hide(); return; }
+        const range = sel.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        if (!rect || (rect.width === 0 && rect.height === 0)) { this.hide(); return; }
+        this.savedRange = range.cloneRange();
+        if (document.activeElement !== this.sizeInput) {
+            const size = this.getCurrentFontSizePx(range);
+            if (size !== null) this.sizeInput.value = size;
+        }
+        this.show(rect);
+    }
+
+    show(rect) {
+        this.el.classList.add('show');
+        const margin = 10;
+        let left = rect.left + rect.width / 2;
+        this.el.style.transform = 'translate(-50%, calc(-100% - 12px))';
+        this.el.style.left = left + 'px';
+        this.el.style.top = rect.top + 'px';
+        requestAnimationFrame(() => {
+            const tw = this.el.offsetWidth;
+            const th = this.el.offsetHeight;
+            left = Math.min(Math.max(left, tw / 2 + margin), window.innerWidth - tw / 2 - margin);
+            this.el.style.left = left + 'px';
+            if (rect.top - th - 12 < margin) {
+                this.el.style.transform = 'translate(-50%, 12px)';
+                this.el.style.top = rect.bottom + 'px';
+            } else {
+                this.el.style.transform = 'translate(-50%, calc(-100% - 12px))';
+                this.el.style.top = rect.top + 'px';
+            }
+        });
+        this.syncActiveStates();
+    }
+
+    hide() {
+        this.el.classList.remove('show');
+        this.sizeMenu.classList.remove('show');
+    }
+
+    syncActiveStates() {
+        this.el.querySelectorAll('button[data-cmd]').forEach((btn) => {
+            try { btn.classList.toggle('active', document.queryCommandState(btn.dataset.cmd)); } catch (e) {}
+        });
+    }
+
+    exec(cmd) {
+        document.execCommand(cmd, false, null);
+        this.syncActiveStates();
+        this.editor.save();
+    }
+
+    applyColor(color) {
+        document.execCommand('foreColor', false, color);
+        this.editor.save();
+    }
+
+    applySizePx(px) {
+        if (!px || isNaN(px) || px < 6) return;
+        if (this.savedRange) {
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(this.savedRange);
+        }
+        document.execCommand('fontSize', false, '7');
+        document.querySelectorAll('font[size="7"]').forEach((f) => {
+            const span = document.createElement('span');
+            span.style.fontSize = px + 'px';
+            while (f.firstChild) span.appendChild(f.firstChild);
+            f.replaceWith(span);
+        });
+        this.editor.save();
+        const sel = window.getSelection();
+        if (sel.rangeCount) this.savedRange = sel.getRangeAt(0).cloneRange();
+    }
+}
+
+/* ===========================================
+   BLOCK PANEL — drag or click a template block onto the active slide.
+   =========================================== */
+class BlockPanel {
+    static PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='100%25' height='100%25' fill='%23EEEEF3'/%3E%3C/svg%3E";
+
+    static LIBRARY = [
+        { key: 'heading', category: 'Text', label: 'Heading', icon: 'H2',
+          html: () => `<h2 class="t-title reveal editable">New Heading</h2>` },
+        { key: 'label', category: 'Text', label: 'Label', icon: 'Aa',
+          html: () => `<div class="chrome-label reveal editable">Label</div>` },
+        { key: 'paragraph', category: 'Text', label: 'Paragraph', icon: '¶',
+          html: () => `<p class="t-body reveal editable">New paragraph text. Click to edit.</p>` },
+        { key: 'scripture', category: 'Quotes & Scripture', label: 'Scripture Card', icon: '❝',
+          html: () => `<div class="scripture-card reveal"><p class="t-card-head editable">Reference</p><p class="t-body-lg editable">"Scripture text goes here."</p></div>` },
+        { key: 'pullquote', category: 'Quotes & Scripture', label: 'Pull Quote', icon: '"',
+          html: () => `<div class="pull-quote reveal"><p class="t-quote editable">"Quote goes here."</p></div>` },
+        { key: 'callout', category: 'Callouts & Lists', label: 'Callout', icon: '✦',
+          html: () => `<div class="callout reveal"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><p class="editable">Callout text goes here.</p></div>` },
+        { key: 'bullets', category: 'Callouts & Lists', label: 'Bullet List', icon: '☰',
+          html: () => `<ul class="bullets reveal"><li class="t-body editable">First point</li><li class="t-body editable">Second point</li><li class="t-body editable">Third point</li></ul>` },
+        { key: 'step', category: 'Callouts & Lists', label: 'Numbered Step', icon: '①',
+          html: (slide) => {
+              const n = (slide ? slide.querySelectorAll('.step-item').length : 0) + 1;
+              return `<div class="step-item reveal"><div class="step-number">${n}</div><div><h4 class="editable">Step title</h4><p class="editable">Step description.</p></div></div>`;
+          } },
+        { key: 'grid3', category: 'Cards & Grids', label: '3-Card Row', icon: '▦',
+          html: () => `<div class="grid-3 reveal" style="gap:16px;">${'<div class="solid-box"><h4 class="editable">Title</h4><p class="editable">Description.</p></div>'.repeat(3)}</div>` },
+        { key: 'grid2', category: 'Cards & Grids', label: '2-Card Row', icon: '▤',
+          html: () => `<div class="grid-2 reveal" style="gap:20px;">${'<div class="outline-box"><h4 class="editable">Title</h4><p class="editable">Description.</p></div>'.repeat(2)}</div>` },
+        { key: 'category', category: 'Cards & Grids', label: 'Category Grid', icon: '▥',
+          html: () => `<div class="grid-2 reveal" style="gap:24px;">${'<div class="category-item"><h4 class="editable">Category</h4><p class="editable">Description.</p></div>'.repeat(2)}</div>` },
+        { key: 'split', category: 'Layout & Media', label: 'Two-Column Split', icon: '◫',
+          html: () => `<div class="resizable-split reveal" style="--split-pct: 50%;"><div class="inset-image" style="height:380px;"><img class="img-editable" src="${BlockPanel.PLACEHOLDER_IMG}" alt=""></div><div class="split-handle"></div><div><h3 class="t-title content-block editable" style="font-size:44px;">Heading</h3><p class="t-body content-block editable">Supporting text goes here.</p></div></div>` },
+        { key: 'image', category: 'Layout & Media', label: 'Image', icon: '🖼',
+          html: () => `<div class="inset-image reveal" style="height:400px;"><img class="img-editable" src="${BlockPanel.PLACEHOLDER_IMG}" alt=""></div>` }
+    ];
+
+    constructor(editor, presentation, slideManager) {
+        this.editor = editor;
+        this.presentation = presentation;
+        this.slideManager = slideManager;
+        this.panel = document.getElementById('blockPanel');
+        this.body = document.getElementById('blockPanelBody');
+        this.indicator = document.getElementById('blockDropIndicator');
+        this.toggleBtn = document.getElementById('addBlockBtn');
+        this.closeBtn = document.getElementById('blockPanelClose');
+        this.dragging = null;
+        this.dropTarget = null;
+
+        this.renderLibrary();
+        this.toggleBtn.addEventListener('click', () => this.toggle());
+        this.closeBtn.addEventListener('click', () => this.close());
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') this.close(); });
+
+        document.addEventListener('dragover', (e) => this.onDragOver(e));
+        document.addEventListener('drop', (e) => this.onDrop(e));
+        document.addEventListener('dragend', () => this.onDragEnd());
+    }
+
+    renderLibrary() {
+        const categories = [...new Set(BlockPanel.LIBRARY.map((b) => b.category))];
+        this.body.innerHTML = '';
+        categories.forEach((cat) => {
+            const section = document.createElement('div');
+            section.className = 'block-panel-section';
+            const h4 = document.createElement('h4');
+            h4.textContent = cat;
+            section.appendChild(h4);
+            const grid = document.createElement('div');
+            grid.className = 'block-panel-grid';
+            BlockPanel.LIBRARY.filter((b) => b.category === cat).forEach((block) => {
+                const card = document.createElement('div');
+                card.className = 'block-card';
+                card.draggable = true;
+                card.dataset.blockKey = block.key;
+                card.title = 'Drag onto a slide, or click to add to the end';
+                card.innerHTML = `<div class="block-card-icon">${block.icon}</div><div class="block-card-label">${block.label}</div>`;
+                card.addEventListener('dragstart', (e) => {
+                    this.dragging = block;
+                    document.body.classList.add('block-dragging');
+                    e.dataTransfer.effectAllowed = 'copy';
+                    e.dataTransfer.setData('text/plain', block.key);
+                });
+                card.addEventListener('click', () => this.appendToActiveSlide(block));
+                grid.appendChild(card);
+            });
+            section.appendChild(grid);
+            this.body.appendChild(section);
+        });
+    }
+
+    toggle() {
+        if (slideLayoutPanel) slideLayoutPanel.close();
+        this.panel.classList.toggle('show');
+        this.toggleBtn.classList.toggle('active', this.panel.classList.contains('show'));
+    }
+
+    close() {
+        this.panel.classList.remove('show');
+        this.toggleBtn.classList.remove('active');
+    }
+
+    activeSlide() { return document.querySelector('.slide.active'); }
+
+    primaryContainer(slide) {
+        return slide.querySelector('.slide-content') || slide.querySelector('.split-content') || slide.querySelector('.slide-inner');
+    }
+
+    findDropSpot(clientY) {
+        const slide = this.activeSlide();
+        if (!slide) return null;
+        const candidates = [...slide.querySelectorAll(InlineEditor.GROUP_SELECTOR)];
+        if (!candidates.length) {
+            const container = this.primaryContainer(slide);
+            return container ? { container, before: null } : null;
+        }
+        let nearest = null, nearestDist = Infinity;
+        candidates.forEach((el) => {
+            const r = el.getBoundingClientRect();
+            const cy = r.top + r.height / 2;
+            const dist = Math.abs(clientY - cy);
+            if (dist < nearestDist) { nearestDist = dist; nearest = { el, cy, r }; }
+        });
+        if (!nearest) return null;
+        const before = clientY < nearest.cy;
+        return { container: nearest.el.parentElement, before: before ? nearest.el : nearest.el.nextSibling };
+    }
+
+    onDragOver(e) {
+        if (!this.dragging) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        const spot = this.findDropSpot(e.clientY);
+        this.dropTarget = spot;
+        if (!spot) { this.indicator.classList.remove('show'); return; }
+        const rect = spot.before ? spot.before.getBoundingClientRect() : spot.container.getBoundingClientRect();
+        const y = spot.before ? rect.top : rect.bottom;
+        this.indicator.style.top = y + 'px';
+        this.indicator.style.left = rect.left + 'px';
+        this.indicator.style.width = rect.width + 'px';
+        this.indicator.classList.add('show');
+    }
+
+    onDrop(e) {
+        if (!this.dragging) return;
+        e.preventDefault();
+        if (this.dropTarget) this.insertBlock(this.dragging, this.dropTarget.container, this.dropTarget.before);
+        this.onDragEnd();
+    }
+
+    onDragEnd() {
+        this.dragging = null;
+        this.dropTarget = null;
+        document.body.classList.remove('block-dragging');
+        this.indicator.classList.remove('show');
+    }
+
+    appendToActiveSlide(block) {
+        const slide = this.activeSlide();
+        if (!slide) return;
+        const container = this.primaryContainer(slide);
+        if (!container) return;
+        this.insertBlock(block, container, null);
+    }
+
+    insertBlock(block, container, before) {
+        const slide = this.activeSlide();
+        const temp = document.createElement('div');
+        temp.innerHTML = block.html(slide).trim();
+        const node = temp.firstElementChild;
+        if (!node) return;
+        if (before) container.insertBefore(node, before); else container.appendChild(node);
+        this.editor.applyEditableState();
+        this.editor.rebindSplitHandles();
+        this.slideManager.showToast(`${block.label} added — press Ctrl+S to keep it`);
+        this.close();
+    }
+}
+
+/* ===========================================
+   SLIDE LAYOUT PANEL — pick a starting layout for a brand-new slide,
+   inserted right after the current one. Reuses the same .block-panel /
+   .block-card CSS as BlockPanel (a generic "side panel with card grid"
+   component) rather than duplicating styles for a second panel.
+   =========================================== */
+class SlideLayoutPanel {
+    static LIBRARY = [
+        { key: 'blank', category: 'Basic', label: 'Blank', icon: '▭',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <h2 class="t-title reveal editable">New Slide</h2>
+                <p class="t-body reveal editable">Click to edit this text.</p>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'bullets', category: 'Basic', label: 'Title + Bullets', icon: '☰',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <h2 class="t-title reveal editable">New Slide</h2>
+                <ul class="bullets reveal">
+                  <li class="t-body editable">First point</li>
+                  <li class="t-body editable">Second point</li>
+                  <li class="t-body editable">Third point</li>
+                </ul>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'image-left', category: 'Image Layouts', label: 'Image + Text', icon: '◧',
+          html: () => `<div class="slide-inner">
+              <div class="split">
+                <div class="split-panel">
+                  <div class="split-panel-img img-editable" style="background-color:var(--hairline);"></div>
+                  <div class="split-panel-overlay"></div>
+                </div>
+                <div class="split-content">
+                  <div class="chrome-label reveal editable">Label</div>
+                  <h2 class="t-title reveal editable">New Slide</h2>
+                  <p class="t-body reveal editable">Click to edit this text.</p>
+                </div>
+              </div>
+            </div>` },
+        { key: 'image-right', category: 'Image Layouts', label: 'Text + Image', icon: '◨',
+          html: () => `<div class="slide-inner">
+              <div class="split">
+                <div class="split-content">
+                  <div class="chrome-label reveal editable">Label</div>
+                  <h2 class="t-title reveal editable">New Slide</h2>
+                  <p class="t-body reveal editable">Click to edit this text.</p>
+                </div>
+                <div class="split-panel">
+                  <div class="split-panel-img img-editable" style="background-color:var(--hairline);"></div>
+                  <div class="split-panel-overlay"></div>
+                </div>
+              </div>
+            </div>` },
+        { key: 'full-image', category: 'Image Layouts', label: 'Full Image', icon: '▨',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <div class="inset-image reveal" style="height:760px;"><img class="img-editable" src="${BlockPanel.PLACEHOLDER_IMG}" alt=""></div>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'accent-top', category: 'Image Layouts', label: 'Accent Top', icon: '⬒',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <div class="inset-image img-editable reveal" style="height:340px; background-color:var(--hairline);"></div>
+                <h2 class="t-title reveal editable">New Slide</h2>
+                <p class="t-body reveal editable">Click to edit this text.</p>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'two-col', category: 'Grids', label: 'Two Columns', icon: '▥',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <h2 class="t-title reveal editable">New Slide</h2>
+                <div class="grid-2 reveal">
+                  <div class="outline-box"><h4 class="editable">Title</h4><p class="editable">Description.</p></div>
+                  <div class="outline-box"><h4 class="editable">Title</h4><p class="editable">Description.</p></div>
+                </div>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'three-col', category: 'Grids', label: 'Three Columns', icon: '▦',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <h2 class="t-title reveal editable">New Slide</h2>
+                <div class="grid-3 reveal">
+                  <div class="solid-box"><h4 class="editable">Title</h4><p class="editable">Description.</p></div>
+                  <div class="solid-box"><h4 class="editable">Title</h4><p class="editable">Description.</p></div>
+                  <div class="solid-box"><h4 class="editable">Title</h4><p class="editable">Description.</p></div>
+                </div>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'four-col', category: 'Grids', label: 'Four Columns', icon: '▧',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <h2 class="t-title reveal editable">New Slide</h2>
+                <div class="grid-3 reveal">${'<div class="solid-box"><h4 class="editable">Title</h4><p class="editable">Description.</p></div>'.repeat(4)}</div>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'split-resizable', category: 'Grids', label: 'Resizable Split', icon: '◫',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <div class="resizable-split reveal" style="--split-pct: 50%;">
+                  <div class="inset-image" style="height:520px;"><img class="img-editable" src="${BlockPanel.PLACEHOLDER_IMG}" alt=""></div>
+                  <div class="split-handle"></div>
+                  <div>
+                    <h2 class="t-title content-block editable" style="font-size:56px;">New Slide</h2>
+                    <p class="t-body content-block editable">Click to edit this text.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'scripture', category: 'Quotes & Scripture', label: 'Scripture / Quote', icon: '❝',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <div class="scripture-card reveal">
+                  <p class="t-card-head editable">Reference</p>
+                  <p class="t-body-lg editable">"Scripture text goes here."</p>
+                </div>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'two-img', category: 'Images', label: '2 Image Columns', icon: '▥',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <h2 class="t-title reveal editable">New Slide</h2>
+                <div class="grid-2 reveal">${`<div class="inset-image img-editable" style="height:500px; background-color:var(--hairline);"></div>`.repeat(2)}</div>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'three-img', category: 'Images', label: '3 Image Columns', icon: '▦',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <h2 class="t-title reveal editable">New Slide</h2>
+                <div class="grid-3 reveal">${`<div class="inset-image img-editable" style="height:420px; background-color:var(--hairline);"></div>`.repeat(3)}</div>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'four-img', category: 'Images', label: '4 Image Columns', icon: '▧',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <h2 class="t-title reveal editable">New Slide</h2>
+                <div class="grid-3 reveal">${`<div class="inset-image img-editable" style="height:340px; background-color:var(--hairline);"></div>`.repeat(4)}</div>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` },
+        { key: 'images-text', category: 'Images', label: 'Images + Text', icon: '▤',
+          html: (footerLabel) => `<div class="slide-inner">
+              <div class="chrome-label reveal editable">Label</div>
+              <div class="slide-content">
+                <h2 class="t-title reveal editable">New Slide</h2>
+                <div class="grid-3 reveal">${`<div><div class="inset-image img-editable" style="height:260px; background-color:var(--hairline); margin-bottom:14px;"></div><p class="editable" style="font-size:17px;">Caption goes here.</p></div>`.repeat(3)}</div>
+              </div>
+              <div class="chrome-footer reveal"><span>${footerLabel}</span><span>00</span></div>
+            </div>` }
+    ];
+
+    constructor(presentation, editor, slideManager) {
+        this.presentation = presentation;
+        this.editor = editor;
+        this.slideManager = slideManager;
+        this.panel = document.getElementById('slideLayoutPanel');
+        this.body = document.getElementById('slideLayoutPanelBody');
+        this.toggleBtn = document.getElementById('addSlideBtn');
+        this.closeBtn = document.getElementById('slideLayoutPanelClose');
+
+        this.renderLibrary();
+        this.toggleBtn.addEventListener('click', () => this.toggle());
+        this.closeBtn.addEventListener('click', () => this.close());
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') this.close(); });
+    }
+
+    renderLibrary() {
+        const categories = [...new Set(SlideLayoutPanel.LIBRARY.map((l) => l.category))];
+        this.body.innerHTML = '';
+        categories.forEach((cat) => {
+            const section = document.createElement('div');
+            section.className = 'block-panel-section';
+            const h4 = document.createElement('h4');
+            h4.textContent = cat;
+            section.appendChild(h4);
+            const grid = document.createElement('div');
+            grid.className = 'block-panel-grid';
+            SlideLayoutPanel.LIBRARY.filter((l) => l.category === cat).forEach((layout) => {
+                const card = document.createElement('div');
+                card.className = 'block-card';
+                card.title = `Add a "${layout.label}" slide after this one`;
+                card.innerHTML = `<div class="block-card-icon">${layout.icon}</div><div class="block-card-label">${layout.label}</div>`;
+                card.addEventListener('click', () => this.insertSlide(layout));
+                grid.appendChild(card);
+            });
+            section.appendChild(grid);
+            this.body.appendChild(section);
+        });
+    }
+
+    toggle() {
+        if (blockPanel) blockPanel.close();
+        const opening = !this.panel.classList.contains('show');
+        this.panel.classList.toggle('show', opening);
+        this.toggleBtn.classList.toggle('active', opening);
+        if (slideThumbPanel) { if (opening) slideThumbPanel.open(); else slideThumbPanel.close(); }
+    }
+
+    close() {
+        this.panel.classList.remove('show');
+        this.toggleBtn.classList.remove('active');
+        if (slideThumbPanel) slideThumbPanel.close();
+    }
+
+    footerLabel() {
+        const span = document.querySelector('.chrome-footer span');
+        return span ? span.textContent : '';
+    }
+
+    insertSlide(layout) {
+        const slides = document.querySelectorAll('.slide');
+        const current = slides[this.presentation.currentSlide] || slides[slides.length - 1];
+        const section = document.createElement('section');
+        section.className = 'slide';
+        section.innerHTML = layout.html(this.footerLabel()).trim();
+        current.after(section);
+        this.presentation.renumberSlides();
+        this.editor.applyEditableState();
+        this.editor.rebindSplitHandles();
+        const newIndex = [...document.querySelectorAll('.slide')].indexOf(section);
+        this.presentation.refresh(newIndex);
+        this.slideManager.showToast(`"${layout.label}" slide added — press Ctrl+S to keep it`);
+        this.close();
+    }
+}
+
+/* ===========================================
+   SLIDE THUMBNAIL RAIL — a live-rendered strip of every slide, so the
+   deck's structure stays visible while picking where a new slide lands.
+   Opens/closes in lockstep with SlideLayoutPanel rather than having its
+   own toggle button.
+   =========================================== */
+class SlideThumbPanel {
+    constructor(presentation) {
+        this.presentation = presentation;
+        this.panel = document.getElementById('slideThumbPanel');
+        this.list = document.getElementById('slideThumbList');
+        this.selectionBar = document.getElementById('slideThumbSelectionBar');
+        this.selectionCount = document.getElementById('slideThumbSelectionCount');
+        // Keyed on the real .slide elements (stable across re-renders and across
+        // reordering — reordering moves existing nodes, it never recreates them),
+        // never on the transient .slide-thumb wrappers render() rebuilds each time.
+        this.selectedSlides = new Set();
+        document.getElementById('slideThumbClearSelection').addEventListener('click', () => {
+            this.selectedSlides.clear();
+            this.render();
+        });
+    }
+
+    open() {
+        this.panel.classList.add('show');
+        this.render();
+    }
+
+    close() {
+        this.panel.classList.remove('show');
+    }
+
+    toggleSelect(slide) {
+        if (this.selectedSlides.has(slide)) this.selectedSlides.delete(slide);
+        else this.selectedSlides.add(slide);
+        this.render();
+    }
+
+    updateSelectionBar() {
+        const n = this.selectedSlides.size;
+        this.selectionBar.style.display = n > 0 ? 'flex' : 'none';
+        this.selectionCount.textContent = n === 1 ? '1 selected' : n > 1 ? `${n} selected` : '';
+    }
+
+    /* Called from SlidePresentation.refresh() on every duplicate/delete/move/insert
+       so the rail never goes stale relative to the real slides — but skips the
+       clone work entirely while the rail is hidden. Must check 'show' rather than
+       track a separate built flag: open() always adds 'show' before rendering, so
+       'show' state is always accurate at the moment this runs. */
+    rebuild() {
+        if (this.panel.classList.contains('show')) this.render();
+    }
+
+    render() {
+        this.list.innerHTML = '';
+        const slides = document.querySelectorAll('.slide');
+        slides.forEach((slide, i) => {
+            const isSelected = this.selectedSlides.has(slide);
+            const thumb = document.createElement('div');
+            thumb.className = 'slide-thumb'
+                + (i === this.presentation.currentSlide ? ' active' : '')
+                + (isSelected ? ' selected' : '');
+            thumb.dataset.index = i;
+            thumb._slideEl = slide;
+
+            const number = document.createElement('div');
+            number.className = 'slide-thumb-number';
+            number.textContent = i + 1;
+            thumb.appendChild(number);
+
+            if (isSelected) {
+                const badge = document.createElement('div');
+                badge.className = 'slide-thumb-selected-badge';
+                badge.textContent = '✓';
+                thumb.appendChild(badge);
+            }
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'slide-thumb-inner';
+            const inner = slide.querySelector('.slide-inner').cloneNode(true);
+            // Strip live-editing state from the clone — it's a detached snapshot,
+            // never meant to be typed into or trigger the image picker.
+            inner.querySelectorAll('[data-edit-id]').forEach((n) => n.removeAttribute('data-edit-id'));
+            inner.querySelectorAll('[data-img-id]').forEach((n) => n.removeAttribute('data-img-id'));
+            inner.querySelectorAll('[contenteditable]').forEach((n) => n.removeAttribute('contenteditable'));
+            wrapper.appendChild(inner);
+            thumb.appendChild(wrapper);
+
+            thumb.addEventListener('mousedown', (e) => this.startThumbDrag(e, thumb, slide));
+            thumb.addEventListener('click', (e) => {
+                // The trailing click after a drag must not also navigate/toggle —
+                // same disambiguation pattern used for image drag-to-reposition.
+                if (this._thumbDragMoved) { this._thumbDragMoved = false; return; }
+                if (e.shiftKey) { this.toggleSelect(slide); return; }
+                if (this.selectedSlides.size) { this.selectedSlides.clear(); this.render(); }
+                this.presentation.showSlide(i);
+            });
+            this.list.appendChild(thumb);
+
+            // clientWidth isn't reliable until the element is actually in the DOM.
+            requestAnimationFrame(() => {
+                const scale = thumb.clientWidth / 1920;
+                wrapper.style.transform = `scale(${scale})`;
+            });
+
+            if (i === this.presentation.currentSlide) {
+                const marker = document.createElement('div');
+                marker.className = 'slide-thumb-insert-marker';
+                marker.textContent = '+ New slide inserts here';
+                this.list.appendChild(marker);
+            }
+        });
+        this.updateSelectionBar();
+    }
+
+    /* ---- Drag to reorder — single thumb, or the whole selected group ---- */
+
+    startThumbDrag(e, thumbEl, slide) {
+        if (e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        this._thumbDragMoved = false;
+        const allThumbs = [...this.list.querySelectorAll('.slide-thumb')];
+        // If the grabbed thumb is part of a multi-selection, drag the whole
+        // group together (in their existing relative order); otherwise it's
+        // just this one thumb, selected or not.
+        const dragThumbs = this.selectedSlides.has(slide) && this.selectedSlides.size > 1
+            ? allThumbs.filter((t) => this.selectedSlides.has(t._slideEl))
+            : [thumbEl];
+        dragThumbs.forEach((t) => t.classList.add('thumb-dragging'));
+
+        const onMove = (ev) => {
+            this._thumbDragMoved = true;
+            const candidates = allThumbs.filter((t) => !dragThumbs.includes(t));
+            let nearest = null, nearestDist = Infinity;
+            candidates.forEach((t) => {
+                const r = t.getBoundingClientRect();
+                const cy = r.top + r.height / 2;
+                const dist = Math.abs(ev.clientY - cy);
+                if (dist < nearestDist) { nearestDist = dist; nearest = { t, cy }; }
+            });
+            if (!nearest) return;
+            const before = ev.clientY < nearest.cy;
+            // Element.before()/after() accept multiple nodes, inserting them as one
+            // contiguous run — this is how a multi-thumb group moves as a block.
+            if (before) nearest.t.before(...dragThumbs); else nearest.t.after(...dragThumbs);
+        };
+        const onUp = () => {
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onUp);
+            dragThumbs.forEach((t) => t.classList.remove('thumb-dragging'));
+            if (this._thumbDragMoved) this.finalizeThumbOrder();
+        };
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+    }
+
+    finalizeThumbOrder() {
+        const activeSlide = document.querySelector('.slide.active');
+        const newOrder = [...this.list.querySelectorAll('.slide-thumb')].map((t) => t._slideEl);
+        const stage = document.getElementById('deckStage');
+        newOrder.forEach((slide) => stage.appendChild(slide));
+        const newIndex = Math.max(0, newOrder.indexOf(activeSlide));
+        this.presentation.refresh(newIndex);
+        slideManager.showToast('Slide order changed — press Ctrl+S to keep it');
+    }
+
+    /* The insert marker's position depends on which slide is active, so a plain
+       active-class swap isn't enough on its own — re-render to move it. */
+    updateActive() {
+        if (this.panel.classList.contains('show')) this.render();
+    }
+}
+
+// Declared (but not yet assigned) before SlidePresentation is constructed —
+// its constructor calls showSlide(0) synchronously, which references
+// slideThumbPanel. A `const` declared later in this block would still be in
+// its temporal dead zone at that moment and throw; predeclaring with `let`
+// makes the reference resolve to `undefined` instead, which every guard
+// below already treats as "not ready yet."
+//
+// Every "is this singleton ready" check elsewhere in this file (and this one)
+// tests the bare identifier — e.g. `if (slideThumbPanel)` — never
+// `window.slideThumbPanel`. Every one of these panels also has a same-named
+// DOM element (id="slideThumbPanel" etc.), and elements with an id are
+// auto-exposed as window.<id> properties. window.slideThumbPanel would
+// therefore resolve to that DOM element (always truthy, from page load)
+// instead of this JS singleton, letting a guard pass before the singleton
+// exists — exactly what happened here before this was caught.
+let slideThumbPanel;
+const editor = new InlineEditor();
+const presentation = new SlidePresentation();
+const slideManager = new SlideManager(presentation, editor);
+const selectionToolbar = new SelectionToolbar(editor);
+const blockPanel = new BlockPanel(editor, presentation, slideManager);
+const slideLayoutPanel = new SlideLayoutPanel(presentation, editor, slideManager);
+slideThumbPanel = new SlideThumbPanel(presentation);
+</script>
+
+</body></html>
