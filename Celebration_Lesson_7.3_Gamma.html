@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Communion: The Table You Can't Earn</title>
+<title>Celebration: Found and Alive — Lesson 7.3</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
@@ -379,7 +379,8 @@ body.edit-mode .slide.active .outline-box,
 body.edit-mode .slide.active .category-item,
 body.edit-mode .slide.active .joined-boxes > div,
 body.edit-mode .slide.active .arrow-item,
-body.edit-mode .slide.active .content-block {
+body.edit-mode .slide.active .content-block,
+body.edit-mode .slide.active .bullets > li {
     position: relative;
     outline: 1px dashed transparent;
     outline-offset: 6px;
@@ -396,7 +397,8 @@ body.edit-mode .slide.active .outline-box:hover,
 body.edit-mode .slide.active .category-item:hover,
 body.edit-mode .slide.active .joined-boxes > div:hover,
 body.edit-mode .slide.active .arrow-item:hover,
-body.edit-mode .slide.active .content-block:hover {
+body.edit-mode .slide.active .content-block:hover,
+body.edit-mode .slide.active .bullets > li:hover {
     outline-color: var(--primary);
 }
 .dragging { opacity: 0.35; }
@@ -648,6 +650,26 @@ body.block-dragging .slide.active .split-content {
 }
 
 /* ===========================================
+   SECTION CONTAINERS (inner drop zones — e.g. the Two-Column section)
+   Dropped blocks land inside a .section-slot instead of at the slide's top
+   level; insertBlock() tags whatever lands here with .content-block so each
+   one gets its own copy/delete/drag handles, independent of its neighbor slot.
+   =========================================== */
+.section-slot {
+    min-height: 60px; display: flex; flex-direction: column; gap: 16px;
+}
+body.edit-mode .section-slot:empty {
+    min-height: 100px; border: 1.5px dashed var(--border); border-radius: 12px;
+    align-items: center; justify-content: center;
+}
+body.edit-mode .section-slot:empty::before {
+    content: 'Drop a block here'; color: var(--muted); font-size: 14px; font-style: italic;
+}
+body.block-dragging .section-slot {
+    outline: 2px dashed var(--primary); outline-offset: 4px; border-radius: 12px;
+}
+
+/* ===========================================
    SLIDE THUMBNAIL RAIL (opens alongside the Add-a-Slide panel)
    =========================================== */
 .slide-thumb-panel {
@@ -712,7 +734,7 @@ body.block-dragging .slide.active .split-content {
 
 <button type="button" class="copy-btn" id="hoverCopyBtn" title="Copy this block">⧉</button>
 <button type="button" class="delete-btn" id="hoverDeleteBtn" title="Delete this block">🗑</button>
-<button type="button" class="drag-btn" id="hoverDragBtn" title="Drag to reorder" style="left: 1544.8px; top: 542.058px;">⠿</button>
+<button type="button" class="drag-btn" id="hoverDragBtn" title="Drag to reorder" style="left: 1572px; top: 556.73px;">⠿</button>
 
 <div class="image-picker-overlay" id="iconPickerOverlay">
   <div class="image-picker-card">
@@ -758,7 +780,7 @@ body.block-dragging .slide.active .split-content {
 </div>
 
 <div class="deck-viewport">
-<main class="deck-stage" id="deckStage" style="transform: translate(56.8889px, 0px) scale(0.815741);">
+<main class="deck-stage" id="deckStage" style="transform: translate(26.6667px, 0px) scale(0.847222);">
 
 <!-- =========================================================
      SLIDE 0 — TITLE & BIG IDEA
@@ -767,20 +789,20 @@ body.block-dragging .slide.active .split-content {
   <div class="slide-inner">
     <div class="split">
       <div class="split-panel">
-        <div class="split-panel-img img-editable edit-active" style="background-image: url(&quot;https://abundant-life.com/wp-content/uploads/2023/08/AdobeStock_23801636-scaled.jpeg&quot;); background-position: 86.9339% 56.3499%;" data-img-id="img-0"></div>
+        <div class="split-panel-img img-editable edit-active" style="background-image:url('assets/men-hugging-embrace.jpg');" data-img-id="img-0"></div>
         <div class="split-panel-overlay"></div>
-        <div class="photo-credit">Photo — Tommaso Urli / Unsplash</div>
+        <div class="photo-credit">Photo — Samuel Yongbo Kwon / Unsplash</div>
       </div>
       <div class="split-content">
-        <div class="chrome-label reveal editable" data-edit-id="el-0">Communion · Cristo Viene</div>
-        <h1 class="t-display reveal editable" data-edit-id="el-1">COMMUNION<br>The Table You Can't Earn</h1>
-        <p class="t-hook reveal editable" data-edit-id="el-2">"The table isn't a reward for the clean. It's a meal for the forgiven."</p>
-        <p class="t-body-lg reveal editable" data-edit-id="el-3"><strong>Big Idea:</strong> You don't come to the table because you're good enough — you come because Jesus made you worthy.</p>
+        <div class="chrome-label reveal editable" data-edit-id="el-0">Lesson 7.3 · Cristo Viene</div>
+        <h1 class="t-display reveal editable" data-edit-id="el-1">CELEBRATION<br>Found and Alive</h1>
+        <p class="t-hook reveal editable" data-edit-id="el-2">"The party doesn't start when you clean up. It starts when you come home."</p>
+        <p class="t-body-lg reveal editable" data-edit-id="el-3"><strong>Big Idea:</strong> The Church celebrates the great things of God — because we were lost, and now we're found.</p>
         <div class="scripture-card anim">
           <div class="scripture-bar"></div>
           <div class="scripture-body">
-            <p class="t-body editable" data-edit-id="el-4">"This is my body, which is for you; do this in remembrance of me... This cup is the new covenant in my blood; do this, whenever you drink it, in remembrance of me."</p>
-            <p class="t-body-sm editable" data-edit-id="el-5">— 1 Corinthians 11:24–25</p>
+            <p class="t-body editable" data-edit-id="el-4">"'My son,' the father said, 'you are always with me, and everything I have is yours. But we have to celebrate and be glad, because this brother of yours was dead and is alive again; he was lost and is found.'"</p>
+            <p class="t-body-sm editable" data-edit-id="el-5">— Luke 15:31–32</p>
           </div>
         </div>
       </div>
@@ -789,119 +811,117 @@ body.block-dragging .slide.active .split-content {
 </section>
 
 <!-- =========================================================
-     SLIDE 1 — HOOK: "Do I Even Belong Here?"
+     SLIDE 1 — HOOK: "Does Church Feel Like a Party or a Funeral?"
      ========================================================= -->
 <section class="slide" data-index="1">
   <div class="slide-inner">
-    <div class="chrome-label reveal editable" data-edit-id="el-6">Hook</div>
+    <div class="chrome-label reveal editable" data-edit-id="el-6">an honest question</div>
     <div class="slide-content">
-      <h2 class="t-title reveal editable" data-edit-id="el-7">Do I Even Belong Here?</h2>
+      <h2 class="t-title reveal editable" data-edit-id="el-7">Does Church Feel Like a Party or a Funeral?</h2>
       <p class="t-body reveal editable" data-edit-id="el-8">Be honest for a second:</p>
       <ul class="bullets reveal">
-        <li class="t-body editable" data-edit-id="el-9">Have you ever passed on communion because you felt like a hypocrite — like you'd messed up too much that week?</li>
-        <li class="t-body editable" data-edit-id="el-10">Have you ever taken the bread and cup while your mind was a thousand miles away, just going through the motions?</li>
-        <li class="t-body editable" data-edit-id="el-11">Have you ever felt like everyone else at church has it together and you're the fraud?</li>
+        <li class="t-body editable" data-edit-id="el-9">Have you ever walked into church feeling like you had to be quiet, serious, and buttoned-up — like celebration wasn't really allowed?</li>
+        <li class="t-body editable" data-edit-id="el-10">Have you ever felt like church was more about behaving correctly than about rejoicing?</li>
+        <li class="t-body editable" data-edit-id="el-11">Have you ever watched someone else get genuinely excited about God and felt a little embarrassed for them?</li>
       </ul>
-      <p class="t-body reveal editable" data-edit-id="el-12">Today we deal with two opposite mistakes: feeling too unworthy to come to the table, and coming to it carelessly like it's nothing. There's a better way — and it runs straight through the cross.</p>
+      <p class="t-body reveal editable" data-edit-id="el-12">Today we're looking at what church is actually supposed to feel like — and it's not what a lot of us picture. Jesus told a story about a party that almost didn't happen, and the reason says everything about what we're allowed to feel in here.</p><div class="pull-quote reveal"><p class="t-quote editable" data-edit-id="el-new-mtp8louo-1"><span style="color: rgb(107, 109, 127); font-size: 22px;">I remember the time I was asked who likes to be at church and I was brutally honest</span></p></div>
       
     </div>
-    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>02</span></div>
+    <div class="chrome-footer reveal"><span>Celebration · Found and Alive</span><span>02</span></div>
   </div>
 </section>
 
 <!-- =========================================================
-     SLIDE 2 — THE PSYCHOLOGY: "Guilt Says 'Oops.' Shame Says 'I'm Ruined.'"
+     SLIDE 2 — THE MISCONCEPTION: "Church Is an Overly Serious and Formal Place"
      ========================================================= -->
 <section class="slide" data-index="2">
   <div class="slide-inner">
-    <div class="chrome-label reveal editable" data-edit-id="el-14">The Psychology</div>
+    <div class="chrome-label reveal editable" data-edit-id="el-14">The Misconception</div>
     <div class="slide-content">
-      <h2 class="t-title reveal editable" data-edit-id="el-15">Guilt Says "Oops." Shame Says "I'm not worthy."</h2>
-      <p class="t-body reveal editable" data-edit-id="el-16">Psychologists draw a sharp line between two feelings:</p>
+      <h2 class="t-title reveal editable" data-edit-id="el-15">"Church Is an Overly Serious and Formal Place"</h2>
+      <div class="outline-box reveal">
+        <h4 class="editable" data-edit-id="el-16">The Lie</h4>
+        <p class="editable" data-edit-id="el-17">A lot of us picked up the idea that church means always being composed, quiet, and reverent or that real joy doesn't quite belong here.</p>
+      </div>
       <div class="grid-2 reveal">
-        <div class="outline-box">
-          <h4 class="editable" data-edit-id="el-17">Guilt</h4>
-          <p class="editable" data-edit-id="el-18">"I did something bad." It points at the behavior — and it can actually move you to fix things.</p>
+        <div class="scripture-card scripture-card--compact">
+          <p class="t-card-head editable" data-edit-id="el-18">1 Peter 1:15-17</p>
+          <p class="t-body editable" data-edit-id="el-19"><p style="min-width: 0px; line-height: 2.4rem; font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; color: rgb(0, 0, 0);"><span style="font-size: 20px;"><span id="en-NIV-30390" class="text 1Pet-1-15" style=""><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">15 </span>But just as he who called you is holy, so be holy in all you do;</span> <span id="en-NIV-30391" class="text 1Pet-1-16" style=""><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">16 </span>for it is written: “Be holy, because I am holy.”<span data-fn="#fen-NIV-30391a" class="footnote" data-link="[&lt;a href=&quot;#fen-NIV-30391a&quot; title=&quot;See footnote a&quot;&gt;a&lt;/a&gt;]" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; display: inline;">[<a href="https://www.biblegateway.com/passage/?search=1%20Peter%201%3A15-17&amp;version=NIV#fen-NIV-30391a" title="See footnote a" style="background-color: transparent; min-width: 0px; color: rgb(74, 74, 74); vertical-align: text-top;">a</a>]</span></span></span></p><p style="min-width: 0px; line-height: 2.4rem; font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; color: rgb(0, 0, 0);"><span id="en-NIV-30392" class="text 1Pet-1-17" style=""><span style="font-size: 20px;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">17 </span>Since you call on a Father who judges each person’s work impartially, live out your time as foreigners here in reverent fear.</span></span></p></p>
         </div>
-        <div class="outline-box">
-          <h4 class="editable" data-edit-id="el-19">Shame</h4>
-          <p class="editable" data-edit-id="el-20">"I am bad." It points at you — and it makes you want to hide, disappear, and pull away.</p>
+        <div class="scripture-card scripture-card--compact">
+          <p class="t-card-head editable" data-edit-id="el-20"><strong>Ecclesiastes 5</strong></p>
+          <p class="t-body editable" data-edit-id="el-21"><span class="chapternum" style="font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; font-weight: 700; font-size: 2.4rem; position: relative; line-height: 0.8em; bottom: -0.1em; left: 0px; display: inline; color: rgb(0, 0, 0);">5 </span><span data-fn="#fen-NIV-17399a" class="footnote" data-link="[&lt;a href=&quot;#fen-NIV-17399a&quot; title=&quot;See footnote a&quot;&gt;a&lt;/a&gt;]" style="font-size: 0.625em; line-height: normal; position: relative; vertical-align: text-top; top: auto; display: inline; color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;">[<a href="https://www.biblegateway.com/passage/?search=Ecclesiastes%205%3A1-2&amp;version=NIV#fen-NIV-17399a" title="See footnote a" style="background-color: transparent; min-width: 0px; color: rgb(74, 74, 74); vertical-align: text-top;">a</a>]</span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; font-size: 16px;">Guard your steps when you go to the house of God. Go near to listen rather than to offer the sacrifice of fools, who do not know that they do wrong.</span></p>
         </div>
       </div>
       <div class="callout reveal">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        <p class="editable" data-edit-id="el-21">Here's the key: shame makes us hide. It's the exact instinct Adam and Eve had — mess up, then run and cover. So when we feel unworthy, our gut says pull back from God, skip the table, avoid the very place that could heal us.</p>
-      </div>
-      <div class="pull-quote reveal">
-        <p class="t-quote editable" data-edit-id="el-22">Shame tells you to run from the table when the table is the one place designed to remind you that you're already accepted.</p>
+        <p class="editable" data-edit-id="el-22">Those verses are real, and they matter. But even the verse people use to justify solemnity says more than that: "A time to weep and a time to laugh, a time to mourn and a time to dance."<b> (Ecclesiastes 3:4)</b><div>The mistake isn't taking God seriously. It's forgetting there's also a time to dance.</div></p>
       </div>
     </div>
-    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>03</span></div>
+    <div class="chrome-footer reveal"><span>Celebration · Found and Alive</span><span>03</span></div>
   </div>
 </section>
 
 <!-- =========================================================
-     SLIDE 3 — THE MISCONCEPTION: "Not Good Enough? Exactly."
+     SLIDE 3 — ILLUMINATION: "A Place Full of Joy and Hope"
      ========================================================= -->
 <section class="slide" data-index="3">
   <div class="slide-inner">
-    <div class="chrome-label reveal editable" data-edit-id="el-23">The Misconception</div>
+    <div class="chrome-label reveal editable" data-edit-id="el-23">The Illumination</div>
     <div class="slide-content">
-      <h2 class="t-title reveal editable" data-edit-id="el-24">Not Good Enough? Exactly.</h2>
-      <div class="outline-box reveal">
-        <h4 class="editable" data-edit-id="el-25"><span style="font-size: 28px;">The Lie</span></h4>
-        <p class="editable" data-edit-id="el-26"><span style="font-size: 22px;">"I can't take communion — I'm not good enough." Here's the twist: nobody is good enough. That's the whole point.</span></p>
+      <h2 class="t-title reveal editable" data-edit-id="el-24">A Place Full of Joy and Hope</h2>
+      <div class="pull-quote reveal">
+        <p class="t-quote editable" data-edit-id="el-25">Church should be a place full of joy and hope.</p>
+      </div>
+      <div class="scripture-card reveal">
+        <p class="t-card-head editable" data-edit-id="el-26">Philippians 4:4</p>
+        <p class="t-body-lg editable" data-edit-id="el-27">"Rejoice in the Lord always. I will say it again: Rejoice!"</p>
       </div>
       <div class="grid-2 reveal">
-        <div class="scripture-card scripture-card--compact">
-          <p class="t-card-head editable" data-edit-id="el-27">1 John 1:8</p>
-          <p class="t-body editable" data-edit-id="el-28">"If we claim to be without sin, we deceive ourselves and the truth is not in us."</p>
+        <div class="outline-box">
+          <h4 class="editable" data-edit-id="el-28">Acts 2:46-47</h4>
+          <p class="editable" data-edit-id="el-29">"They broke bread in their homes and ate together with glad and sincere hearts, praising God... and the Lord added to their number daily those who were being saved."</p>
         </div>
-        <div class="scripture-card scripture-card--compact">
-          <p class="t-card-head editable" data-edit-id="el-29">Romans 8:1</p>
-          <p class="t-body editable" data-edit-id="el-30">"Therefore, there is now no condemnation for those who are in Christ Jesus."</p>
+        <div class="outline-box">
+          <h4 class="editable" data-edit-id="el-30">Revelation 19:6-7</h4>
+          <p class="editable" data-edit-id="el-31">"'Hallelujah! For our Lord God Almighty reigns. Let us rejoice and be glad and give Him glory!'" Even heaven's worship is described as a roar of joy, not a hush.</p>
         </div>
-      </div>
-      <p class="t-body reveal editable" data-edit-id="el-31">The table was never for people who cleaned themselves up. It's for people who admit they couldn't — and trust that Jesus did it for them.</p>
-      <div class="callout reveal">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        <p class="editable" data-edit-id="el-32"><span style="font-size: 22px;"><strong>The reframe:</strong> You don't earn a seat at this table with your goodness. Jesus bought your seat with His blood. "Not good enough" isn't a reason to stay away — it's the reason communion exists.</span></p>
-      </div>
+      </div><div class="pull-quote reveal"><p class="t-quote editable" data-edit-id="el-new-mtp8xl8w-2"><span style="font-size: 22px; font-style: normal;">We might not be breaking bread today but we will be spending time together as a church this afternoon. These are days we will remember always and can look back and give thanks to God for these good times we shared together.</span></p></div>
     </div>
-    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>04</span></div>
+    <div class="chrome-footer reveal"><span>Celebration · Found and Alive</span><span>04</span></div>
   </div>
 </section>
 
 <!-- =========================================================
-     SLIDE 4 — BIBLICAL EXAMPLE: "The Man Who Denied Him — At the Table" (Peter)
+     SLIDE 4 — BIBLICAL EXAMPLE: The Prodigal Son (Luke 15:11-32)
      ========================================================= -->
 <section class="slide" data-index="4">
   <div class="slide-inner">
     <div class="split">
       <div class="split-panel">
-        <div class="split-panel-img img-editable edit-active" style="background-image: url(&quot;https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3WCUDp8PMaat9KrQMot9jHn50-RG096sbuafEPPcc89G8j5OIaNMfkm0&amp;s=10&quot;); background-position: 62.7875% 100%;" data-img-id="img-1"></div>
+        <div class="split-panel-img img-editable edit-active" style="background-image:url('assets/dirt-road-sunset-figures.jpg');" data-img-id="img-1"></div>
         <div class="split-panel-overlay"></div>
-        <div class="photo-credit">Photo — Sies Kranen / Unsplash</div>
+        <div class="photo-credit">Photo — Angelina Kusznirewicz / Unsplash</div>
       </div>
       <div class="split-content">
-        <div class="chrome-label reveal editable" data-edit-id="el-33">Biblical Example</div>
-        <h2 class="t-title reveal editable" style="font-size:56px;" data-edit-id="el-34">The Man Who Denied Him — At the Table</h2>
+        <div class="chrome-label reveal editable" data-edit-id="el-32">Biblical Example</div>
+        <div class="scripture-card reveal"><p class="t-card-head editable" data-edit-id="el-new-mtp90bnc-3">Luke 15:11-32</p><p class="t-body-lg editable" data-edit-id="el-new-mtp90bnc-4"><h2 class="t-title reveal editable" data-edit-id="el-33" style="transition: outline-color 0.15s; font-size: 56px; color: rgb(0, 0, 0); outline: rgb(191, 193, 214) dashed 1px; outline-offset: 6px; position: relative;">The Party That Almost Didn't Happen</h2></p></div>
         <div class="grid-2 reveal" style="gap:20px;">
           <div class="outline-box compact">
-            <h4 class="editable" data-edit-id="el-35">Situation</h4>
-            <p class="editable" data-edit-id="el-36">At the Last Supper, Jesus handed the bread and cup to His disciples — including Peter, who would swear loyalty that very night.</p>
+            <h4 class="editable" data-edit-id="el-34">Spoiled Younger Son</h4>
+            <p class="editable" data-edit-id="el-35">A younger son demanded his inheritance, left home, and burned through everything on reckless living. When it all fell apart, he decided to go home. (v.11-19)</p>
           </div>
           <div class="outline-box compact">
-            <h4 class="editable" data-edit-id="el-37">Struggle</h4>
-            <p class="editable" data-edit-id="el-38">Hours later, Peter denied even knowing Jesus — three times, to save his own skin — then wept bitterly. If anyone ever felt disqualified, it was Peter.</p>
+            <h4 class="editable" data-edit-id="el-36">Is rewarded in the end</h4>
+            <p class="editable" data-edit-id="el-37">Before he could even finish his apology, his father ran to him, put the best robe on him, and threw a party with music and dancing. (v.20-23)</p>
           </div>
           <div class="outline-box compact">
-            <h4 class="editable" data-edit-id="el-39">Decision</h4>
-            <p class="editable" data-edit-id="el-40">Peter could have run for good. Instead, after the resurrection, when Jesus came looking for him, Peter let himself be found — and Jesus restored him over breakfast: "Do you love me? ... Feed my sheep." (John 21)</p>
+            <h4 class="editable" data-edit-id="el-38">Bitter Older Brother</h4>
+            <p class="editable" data-edit-id="el-39">His older brother refused to go in. He'd stayed, served, and never disobeyed — and it felt unfair that his brother got a party. (v.28-30)</p>
           </div>
           <div class="outline-box compact">
-            <h4 class="editable" data-edit-id="el-41">The Lesson</h4>
-            <p class="editable" data-edit-id="el-42">Jesus served the first communion to the very people who were about to fail Him — and then came back for them. The table has always been for failures who let grace find them.</p>
+            <h4 class="editable" data-edit-id="el-40">The Lesson</h4>
+            <p class="editable" data-edit-id="el-41"><span style="font-size: 20px;"><span id="en-NIV-25620" class="text Luke-15-31" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">31 </span>“‘My son,’ the father said, ‘you are always with me, and everything I have is yours.</span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"> </span><span id="en-NIV-25621" class="text Luke-15-32" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">32 </span>But we had to celebrate and be glad, because this brother of yours was dead and is alive again; he was lost and is found.’”</span></span></p>
           </div>
         </div>
       </div>
@@ -910,34 +930,27 @@ body.block-dragging .slide.active .split-content {
 </section>
 
 <!-- =========================================================
-     SLIDE 5 — WHAT COMMUNION IS: "What You're Actually Holding"
+     SLIDE 5 — WHY WE CELEBRATE
      ========================================================= -->
 <section class="slide" data-index="5">
   <div class="slide-inner">
-    <div class="chrome-label reveal editable" data-edit-id="el-43">What Communion Is</div>
+    <div class="chrome-label reveal editable" data-edit-id="el-42">Why We Celebrate</div>
     <div class="slide-content">
-      <h2 class="t-title reveal editable" data-edit-id="el-44">What You're Actually Holding</h2>
-      <p class="t-body reveal editable" data-edit-id="el-45">Communion isn't a snack and it isn't a fancy ritual. It's a remembrance Jesus Himself gave us:</p>
+      <h2 class="t-title reveal editable" data-edit-id="el-43">We Were Lost. We Are Found.</h2>
+      <p class="t-body reveal editable" data-edit-id="el-44">All Christians have been the younger brother. The story isn't just his — it's ours.</p>
       <div class="grid-2 reveal">
         <div class="solid-box">
-          <h4 class="editable" data-edit-id="el-46"><span style="font-size: 28px;">The Bread</span></h4>
-          <p class="editable" data-edit-id="el-47"><span style="font-size: 24px;">His body, broken for you</span></p>
+          <h4 class="editable" data-edit-id="el-45">We Were Lost</h4>
+          <p class="editable" data-edit-id="el-46">Guilty of rebellion against God, making sinful choices, squandering the gift of life on foolishness. (Romans 3:23)<div><span style="font-size: 16px;"><i><font color="#6b6d7f">There are times when I see people online who say they are Christians doing really foolish things</font></i></span></div></p>
         </div>
         <div class="solid-box">
-          <h4 class="editable" data-edit-id="el-48"><span style="font-size: 28px;">The Cup</span></h4>
-          <p class="editable" data-edit-id="el-49"><span style="font-size: 22px;">His blood, poured out to start a whole new covenant, a new relationship with God</span></p>
+          <h4 class="editable" data-edit-id="el-47">We Are Found</h4>
+          <p class="editable" data-edit-id="el-48">Instead of rejecting us, our Father has joyfully welcomed us as full sons and daughters in Christ. (John 1:12-13)<div><i style="font-size: 16px;"><font color="#6b6d7f">but just because people are foolish when doesn't mean they can't see the light one day</font></i></div></p>
         </div>
       </div>
-      <div class="scripture-card reveal">
-        <p class="t-card-head editable" data-edit-id="el-50">&nbsp;1 Corinthians 11:24-26</p>
-        <p class="t-body editable" data-edit-id="el-51"><span style="font-size: 24px;"><span id="en-NIV-28625" class="text 1Cor-11-24" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;">This is my body, which is for you; do this in remembrance of me.”</span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"> </span><span id="en-NIV-28626" class="text 1Cor-11-25" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">25 </span>In the same way, after supper he took the cup, saying, <span class="woj">“This cup is the new covenant in my blood; do this, whenever you drink it, in remembrance of me.”</span></span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"> </span><span id="en-NIV-28627" class="text 1Cor-11-26" style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial;"><span class="versenum" style="line-height: normal; position: relative; vertical-align: text-top; top: auto; font-weight: 700; display: inline;">26 </span>For whenever you eat this bread and drink this cup, you proclaim the Lord’s death until he comes.</span></span></p>
-      </div>
-      <div class="callout reveal">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        <p class="editable" data-edit-id="el-52"><span style="font-size: 24px;">Why a physical, repeated ritual? Because your heart forgets. Every time you taste it, your body preaches the gospel back to you: <strong>I was that broken, I am that loved.</strong> And you don't do it alone — the whole church declares together, we all needed the same cross.</span></p>
-      </div>
+      
     </div>
-    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>06</span></div>
+    <div class="chrome-footer reveal"><span>Celebration · Found and Alive</span><span>06</span></div>
   </div>
 </section>
 
@@ -948,33 +961,33 @@ body.block-dragging .slide.active .split-content {
   <div class="slide-inner">
     <div class="split">
       <div class="split-panel">
-        <div class="split-panel-img img-editable edit-active" style="background-image:url('assets/empty-church-pew.jpg');" data-img-id="img-2"></div>
+        <div class="split-panel-img img-editable edit-active" style="background-image:url('assets/empty-church-pews-2.jpg');" data-img-id="img-2"></div>
         <div class="split-panel-overlay"></div>
-        <div class="photo-credit">Photo — Stefan Kunze / Unsplash</div>
+        <div class="photo-credit">Photo — Benigno Hoyuela / Unsplash</div>
       </div>
       <div class="split-content">
-        <div class="chrome-label reveal editable" data-edit-id="el-53">Modern Examples</div>
-        <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-54">Where This Trips Us Up</h2>
-        <p class="t-body reveal editable" data-edit-id="el-55">For us right now, it usually goes one of two ways:</p>
+        <div class="chrome-label reveal editable" data-edit-id="el-50">Modern Day</div>
+        <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-51">Where This Trips Us Up</h2>
+        <p class="t-body reveal editable" data-edit-id="el-52">For students right now, it usually goes one of two ways:</p>
         <div class="grid-2 reveal" style="gap:20px;">
           <div class="outline-box compact">
-            <h4 class="editable" data-edit-id="el-56">Hiding (Shame)</h4>
+            <h4 class="editable" data-edit-id="el-53">The Older Brother</h4>
             <ul class="bullets">
-              <li class="editable" data-edit-id="el-57">Skipping communion because you sinned this week and feel like a fraud</li>
-              <li class="editable" data-edit-id="el-58">Avoiding church after a big mess-up</li>
-              <li class="editable" data-edit-id="el-59">Believing your secret makes you the one person grace doesn't cover</li>
+              <li class="editable" data-edit-id="el-54">Keeping score of who "deserves" grace</li>
+              <li class="editable" data-edit-id="el-55">Feeling entitled because you've "done everything right"</li>
+              <li class="editable" data-edit-id="el-56">Resenting it when someone else gets celebrated</li>
             </ul>
           </div>
           <div class="outline-box compact">
-            <h4 class="editable" data-edit-id="el-60">Going Through the Motions (Careless)</h4>
+            <h4 class="editable" data-edit-id="el-57">The Serious Church</h4>
             <ul class="bullets">
-              <li class="editable" data-edit-id="el-61">Taking the bread and cup while scrolling in your head</li>
-              <li class="editable" data-edit-id="el-62">Treating it like a routine snack, zero thought</li>
-              <li class="editable" data-edit-id="el-63">Showing up to church to be seen, not to meet God — like the Corinthians who made it all about themselves</li>
+              <li class="editable" data-edit-id="el-58">Treating worship like a formality to get through</li>
+              <li class="editable" data-edit-id="el-59">Feeling embarrassed by real, visible joy</li>
+              <li class="editable" data-edit-id="el-60">Mistaking quiet for reverence</li>
             </ul>
           </div>
         </div>
-        <p class="t-body-sm reveal editable" data-edit-id="el-64">Both miss it. One runs from the table; the other sleepwalks through it.</p>
+        <p class="t-body-sm reveal editable" data-edit-id="el-61">Both miss it. One resents the party; the other forgets there's supposed to be one.</p>
       </div>
     </div>
   </div>
@@ -985,137 +998,126 @@ body.block-dragging .slide.active .split-content {
      ========================================================= -->
 <section class="slide" data-index="7">
   <div class="slide-inner">
-    <div class="chrome-label reveal editable" data-edit-id="el-65">What God Says</div>
+    <div class="chrome-label reveal editable" data-edit-id="el-62">What God Says</div>
     <div class="slide-content">
-      <h2 class="t-title reveal editable" data-edit-id="el-66">What God Says</h2>
+      <h2 class="t-title reveal editable" data-edit-id="el-63">What does the Bible Say</h2>
       <div class="grid-2 reveal">
         <div style="display:flex; flex-direction:column; gap:14px;">
           <div class="outline-box compact">
-            <h4 class="editable" data-edit-id="el-67"><span style="font-size: 24px;">1 Corinthians 11:28</span></h4>
-            <p class="editable" data-edit-id="el-68"><span style="font-size: 24px;">"Everyone ought to examine themselves before they eat of the bread and drink from the cup."</span></p>
+            <h4 class="editable" data-edit-id="el-64">Romans 5:10-11</h4>
+            <p class="editable" data-edit-id="el-65">Reconciled to God through His Son, "we also rejoice in God through our Lord Jesus Christ, through whom we have now received reconciliation."</p>
           </div>
           <div class="outline-box compact">
-            <h4 class="editable" data-edit-id="el-69"><span style="font-size: 24px;">1 John 1:9</span></h4>
-            <p class="editable" data-edit-id="el-70"><span style="font-size: 24px;">"If we confess our sins, he is faithful and just and will forgive us our sins."</span></p>
+            <h4 class="editable" data-edit-id="el-66"><strong style="">Nehemiah 8:10</strong></h4>
+            <p class="editable" data-edit-id="el-67">Do not grieve, for the joy of the LORD is your strength.</p>
           </div>
           <div class="outline-box compact">
-            <h4 class="editable" data-edit-id="el-71"><span style="font-size: 24px;">Romans 3:23–24</span></h4>
-            <p class="editable" data-edit-id="el-72"><span style="font-size: 24px;">"All have sinned and fall short... and are justified freely by his grace through the redemption that came by Christ Jesus."</span></p>
+            <h4 class="editable" data-edit-id="el-68">1 Peter 1:8-9</h4>
+            <p class="editable" data-edit-id="el-69">"Though you have not seen Him, you love Him... you are filled with an inexpressible and glorious joy."</p>
           </div>
         </div>
         <div>
-          <p class="t-body-sm editable" style="font-weight:700; text-transform:uppercase; letter-spacing:0.08em; font-size: 22px; color:var(--muted); margin-bottom:6px;" data-edit-id="el-73"><span style="font-size: 24px;">Culture Says</span></p>
-          <p class="t-body-lg editable" style="margin-bottom:20px;" data-edit-id="el-74">"Clean yourself up first, then maybe you'll be worthy."</p>
-          <p class="t-body-sm editable" style="font-weight:700; text-transform:uppercase; letter-spacing:0.08em; font-size: 22px; color:var(--primary); margin-bottom:6px;" data-edit-id="el-75"><span style="font-size: 24px;">God Says</span></p>
-          <p class="t-body-lg editable" style="margin-bottom:20px;" data-edit-id="el-76">"Come honestly, examine your heart, and receive what I already made you — worthy."</p>
+          <p class="t-body-sm editable" style="font-weight:700; text-transform:uppercase; letter-spacing:0.08em; font-size: 22px; color:var(--muted); margin-bottom:6px;" data-edit-id="el-70">Culture Says</p>
+          <p class="t-body-lg editable" style="margin-bottom:20px;" data-edit-id="el-71">"Keep it composed. Don't express your joy to the Lord."</p>
+          <p class="t-body-sm editable" style="font-weight:700; text-transform:uppercase; letter-spacing:0.08em; font-size: 22px; color:var(--primary); margin-bottom:6px;" data-edit-id="el-72">God Says</p>
+          <p class="t-body-lg editable" style="margin-bottom:20px;" data-edit-id="el-73">"Rejoice in the Lord always." (Philippians 4:4) Not once a year. Always.</p>
           <div class="callout">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-            <p class="editable" style="font-size: 22px;" data-edit-id="el-77"><span style="font-size: 24px;"><strong>The balance:</strong> Paul's warning about taking communion "in an unworthy manner" (1 Cor 11:27) is about how you come — carelessly, selfishly, with no thought for Christ — not about whether you are worthy enough. So examine your heart honestly, confess what's there... then come freely.</span></p>
+            <p class="editable" style="font-size: 22px;" data-edit-id="el-74"><strong>The balance:</strong> Reverence and joy aren't opposites — both are appropriate responses to who God is, at different moments. The mistake is treating solemn as the default and joy as the exception.</p>
           </div>
         </div>
       </div>
     </div>
-    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>08</span></div>
+    <div class="chrome-footer reveal"><span>Celebration · Found and Alive</span><span>08</span></div>
   </div>
 </section>
 
 <!-- =========================================================
-     SLIDE 8 — IDENTITY SHIFT: "From Fraud to Family"
+     SLIDE 8 — IDENTITY SHIFT: "From Older Brother to the Party"
      ========================================================= -->
 <section class="slide" data-index="8">
   <div class="slide-inner">
     <div class="split">
-      <div class="split-content" style="gap:18px;">
-        <div class="chrome-label reveal editable" data-edit-id="el-78">Identity Shift</div>
-        <h2 class="t-title reveal editable" style="font-size:56px;" data-edit-id="el-79">From Fraud to Family</h2>
+      <div class="split-content">
+        <div class="chrome-label reveal editable" data-edit-id="el-75">Identity Shift</div>
+        <h2 class="t-title reveal editable" style="font-size:56px;" data-edit-id="el-76">From Older Brother to the Party</h2>
         <div class="pull-quote reveal">
-          <p class="t-quote editable" style="font-size:28px;" data-edit-id="el-80">Stop asking: "Am I good enough to be at this table?" Start believing: "Jesus made me worthy — I belong at this table."</p>
+          <p class="t-quote editable" style="font-size:28px;" data-edit-id="el-77">Stop keeping score of who deserves to celebrate. Start believing you're already at the table.</p>
         </div>
-        <p class="t-body reveal editable" style="font-size: 22px;" data-edit-id="el-81">Self-examination isn't a shame spiral where you dig until you feel awful enough to earn forgiveness. It's honest confession — and then freedom. Once you've named it and handed it to God, the examination is over. You're not a guest hoping not to get caught; you're family, invited by name.</p>
+        <p class="t-body reveal editable" style="font-size: 22px;" data-edit-id="el-78">You're not earning your invite by staying composed or proving you deserve to be here. You're not a guest hoping the party doesn't get taken away — you're the reason it started.</p>
         <div class="callout reveal">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-          <p class="editable" style="font-size: 22px;" data-edit-id="el-82"><span style="font-size: 24px;"><strong>Insight:</strong> Shame says "clean yourself up before you come." Grace says "come, and I'll clean you up." Only one of those is the gospel.</span></p>
+          <p class="editable" style="font-size: 22px;" data-edit-id="el-79"><strong>Insight:</strong> The older brother thought the party threatened what he'd earned. But nothing was ever about earning it.</p>
         </div>
-        <div class="story-placeholder reveal">
-          <span class="tag">Your story</span>
-          <p class="editable" style="font-size: 22px;" data-edit-id="el-83">I've walked in times of when I thought I wasn't worthy or that my time is over but God called out to me saying that there is so much more to you than what you think. (Drumming-&gt;Teaching)</p>
-        </div>
-      </div>
+        
+      <div class="pull-quote reveal"><p class="t-quote editable" data-edit-id="el-new-mtpaj5hc-5"><span style="color: rgb(107, 109, 127); font-size: 22px;">I remember when Adamo and I were applying for an internship in college. While I got accepted Adamo instead celebrated for me. A great friend who was always there.</span></p></div></div>
       <div class="split-panel">
-        <div class="split-panel-img img-editable edit-active" style="background-image:url('assets/hand-light-rays.jpg');" data-img-id="img-3"></div>
+        <div class="split-panel-img img-editable edit-active" style="background-image:url('assets/crowd-celebrating-arms.jpg');" data-img-id="img-3"></div>
         <div class="split-panel-overlay"></div>
-        <div class="photo-credit">Photo — Mishal Ibrahim / Unsplash</div>
+        <div class="photo-credit">Photo — Les Taylor / Unsplash</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- =========================================================
-     SLIDE 9 — ACTION STEPS: "How to Come to the Table"
+     SLIDE 9 — ACTION STEPS
      ========================================================= -->
 <section class="slide" data-index="9">
   <div class="slide-inner">
-    <div class="chrome-label reveal editable" data-edit-id="el-84">Action Steps</div>
+    <div class="chrome-label reveal editable" data-edit-id="el-81">Action Steps</div>
     <div class="slide-content" style="gap:22px;">
-      <h2 class="t-title reveal editable" data-edit-id="el-85">How to Come to the Table</h2>
+      <h2 class="t-title reveal editable" data-edit-id="el-82">How to Actually Celebrate</h2>
       <div class="step-item reveal">
         <div class="step-number">1</div>
-        <div><h4 class="editable" data-edit-id="el-86"><span style="font-size: 32px;">Examine — Don't Obsess</span></h4><p class="editable" data-edit-id="el-87">Ask God to show you what's really there. Be honest, not brutal.</p></div>
+        <div><h4 class="editable" data-edit-id="el-83">Notice When You're the Older Brother</h4><p class="editable" data-edit-id="el-84">Catch yourself keeping score of who "deserves" grace — including yourself.</p></div>
       </div>
       <div class="step-item reveal">
         <div class="step-number">2</div>
-        <div><h4 class="editable" data-edit-id="el-88"><span style="font-size: 32px;">Confess, Then Stop</span></h4><p class="editable" data-edit-id="el-89">Name your sin, receive forgiveness (1 John 1:9), and let the examination be over. Don't keep paying a debt Jesus already covered.<div><span class="versenum" style="font-size: 1.2rem; line-height: normal; position: relative; vertical-align: text-top; top: auto; font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; font-weight: 700; display: inline; color: rgb(0, 0, 0);">9 </span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; font-size: 22px;">If we confess our sins, he is faithful and just and will forgive us our sins</span><span style="color: rgb(0, 0, 0); font-family: system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, Ubuntu, Cantarell, &quot;Noto Sans&quot;, sans-serif, Arial; font-size: 22px;"> and purify us from all unrighteousness.</span></div></p></div>
+        <div><h4 class="editable" data-edit-id="el-85">Let Yourself Actually Celebrate</h4><p class="editable" data-edit-id="el-86">Sing loud. Say amen. Don't perform reverence — feel it.</p></div>
       </div>
       <div class="step-item reveal">
         <div class="step-number">3</div>
-        <div><h4 class="editable" data-edit-id="el-90"><span style="font-size: 32px;">Don't Skip Out of Shame</span></h4><p class="editable" data-edit-id="el-91">Feeling unworthy is the reason to come, not a reason to hide.</p></div>
+        <div><h4 class="editable" data-edit-id="el-87">Remember What You're Celebrating</h4><p class="editable" data-edit-id="el-88">Not a vague good mood. The specific fact that you were dead and are alive.</p></div>
       </div>
       <div class="step-item reveal">
         <div class="step-number">4</div>
-        <div><h4 class="editable" data-edit-id="el-92"><span style="font-size: 32px;">Don't Sleepwalk Through It</span></h4><p class="editable" data-edit-id="el-93">Slow down. Actually picture the cross. Let the bread and cup mean something.</p></div>
+        <div><h4 class="editable" data-edit-id="el-89">Make Room for Someone Else's Party</h4><p class="editable" data-edit-id="el-90">When someone else's "lost and found" story gets celebrated, join it instead of resenting it.</p></div>
       </div>
       <div class="step-item reveal">
         <div class="step-number">5</div>
-        <div><h4 class="editable" data-edit-id="el-94"><span style="font-size: 32px;">Remember, Out Loud If You Can</span></h4><p class="editable" data-edit-id="el-95">Thank Jesus specifically for what His body and blood bought you.</p></div>
+        <div><h4 class="editable" data-edit-id="el-91">Bring Your Worries, Then Set Them Down</h4><p class="editable" data-edit-id="el-92">Pray your concerns (Philippians 4:6-7), then actually thank God and celebrate.</p></div>
       </div>
     </div>
-    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>10</span></div>
+    <div class="chrome-footer reveal"><span>Celebration · Found and Alive</span><span>10</span></div>
   </div>
 </section>
 
 <!-- =========================================================
-     SLIDE 10 — REFLECTION & CHALLENGE: "Remember Me"
+     SLIDE 10 — REFLECTION & CHALLENGE
      ========================================================= -->
 <section class="slide" data-index="10">
   <div class="slide-inner">
-    <div class="chrome-label reveal editable" data-edit-id="el-96">Reflection</div>
-    <div class="slide-content" style="gap:20px;">
-      <h2 class="t-title reveal editable" data-edit-id="el-97">Remember Me</h2>
+    <div class="chrome-label reveal editable" data-edit-id="el-93">Reflection</div>
+    <div class="slide-content" style="gap:22px;">
+      <h2 class="t-title reveal editable" data-edit-id="el-94">Remember: You Were Found</h2>
       <div class="step-item reveal">
         <div class="step-number">1</div>
-        <div><h4 class="editable" data-edit-id="el-98"><span style="font-size: 28px;">Which Mistake Is More You?</span></h4><p class="editable" data-edit-id="el-99">Hiding from the table in shame, or sleepwalking through it?</p></div>
+        <div><h4 class="editable" data-edit-id="el-95">Is Your Attitude One of Celebration?</h4><p class="editable" data-edit-id="el-96">There are times to be quiet and thoughtful in church — but Scripture shows church is also a place to celebrate and rejoice. Is that your posture when you come together to worship?</p></div>
       </div>
       <div class="step-item reveal">
         <div class="step-number">2</div>
-        <div><h4 class="editable" data-edit-id="el-100"><span style="font-size: 28px;">Still Carrying It?</span></h4><p class="editable" data-edit-id="el-101">Is there sin you've confessed but never let go of?</p></div>
-      </div>
-      <div class="step-item reveal">
-        <div class="step-number">3</div>
-        <div><h4 class="editable" data-edit-id="el-102"><span style="font-size: 28px;">What Would Change?</span></h4><p class="editable" data-edit-id="el-103">What would change if you truly believed Jesus already made you worthy?</p></div>
-      </div>
-      <div class="step-item reveal">
-        <div class="step-number">4</div>
-        <div><h4 class="editable" data-edit-id="el-104"><span style="font-size: 28px;">Where's Your Mind?</span></h4><p class="editable" data-edit-id="el-105">When you take communion, what are you actually thinking about?</p></div>
+        <div><h4 class="editable" data-edit-id="el-97">What's Getting in the Way?</h4><p class="editable" data-edit-id="el-98">Some of us struggle to set aside worries and concerns to actually celebrate what God has done. Pray and hand God your concerns, then spend time thanking Him. (Philippians 4:6-7)</p></div>
       </div>
       <div class="callout reveal">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#494FBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-editable"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        <p class="editable" data-edit-id="el-106"><span style="font-size: 22px;"><strong style="">This Week's Challenge:</strong> Before the next communion (or even today), do the two-step: honestly examine your heart, confess what's there to God — and then receive His forgiveness and come freely. Practice letting the examination be over.</span></p>
+        <p class="editable" data-edit-id="el-99"><strong>This Week's Challenge:</strong> Before you show up to worship this week, pray your worries and concerns out to God first — then spend a few minutes to remember and thank Him for the good things He's done.</p>
       </div>
       <div class="pull-quote reveal">
-        <p class="t-quote editable" data-edit-id="el-107">"You'll never be good enough for the table. That's exactly why He set it for you."</p>
+        <p class="t-quote editable" data-edit-id="el-100">"You were lost. You were found. That's not a small feat."</p>
       </div>
     </div>
-    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>11</span></div>
+    <div class="chrome-footer reveal"><span>Celebration · Found and Alive</span><span>11</span></div>
   </div>
 </section>
 
@@ -1124,18 +1126,26 @@ body.block-dragging .slide.active .split-content {
      ========================================================= -->
 <section class="slide" data-index="11">
   <div class="slide-inner">
-    <div class="chrome-label reveal editable" data-edit-id="el-108">Bonus · Small Group Discussion</div>
+    <div class="chrome-label reveal editable" data-edit-id="el-101">Bonus · Small Group Discussion</div>
     <div class="slide-content">
-      <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-109">Small Group Discussion</h2>
-      <ul class="bullets two-col reveal">
-        <li class="t-body editable" data-edit-id="el-110">Have you ever skipped or dreaded communion because you felt unworthy? What was going on?</li>
-        <li class="t-body editable" data-edit-id="el-111">What's the difference between guilt ("I did something bad") and shame ("I am bad") — and which do you feel more?</li>
-        <li class="t-body editable" data-edit-id="el-112">Why do you think Jesus gave communion to disciples He knew would fail Him that very night? (Grace over Failure)</li>
-        <li class="t-body editable" data-edit-id="el-113">What does it look like to "examine yourself" without spiraling into shame?</li>
-        <li class="t-body editable" data-edit-id="el-114">How can we take communion meaningfully instead of just going through the motions?</li>
-      </ul>
+      <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-102">Small Group Discussion</h2>
+      <div class="grid-2 reveal">
+        <div class="section-slot">
+          <ul class="bullets content-block">
+            <li class="t-body editable" data-edit-id="el-103">Have you ever felt like church was more about behaving than celebrating? What gave you that impression?</li>
+            <li class="t-body editable" data-edit-id="el-104">Which brother do you relate to more right now — the one who ran, or the one who stayed and got resentful?</li>
+            
+          </ul>
+        </div>
+        <div class="section-slot">
+          <ul class="bullets content-block">
+            <li class="t-body editable" data-edit-id="el-106">What's one specific thing God has done that you haven't actually stopped to celebrate?</li>
+            <li class="t-body editable" data-edit-id="el-107">Is there a worry or concern you need to hand to God before you can genuinely rejoice?</li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>12</span></div>
+    <div class="chrome-footer reveal"><span>Celebration · Found and Alive</span><span>12</span></div>
   </div>
 </section>
 
@@ -1144,25 +1154,25 @@ body.block-dragging .slide.active .split-content {
      ========================================================= -->
 <section class="slide" data-index="12">
   <div class="slide-inner">
-    <div class="chrome-label reveal editable" data-edit-id="el-115">Bonus · Mic Drop &amp; Closing Prayer</div>
+    <div class="chrome-label reveal editable" data-edit-id="el-108">Bonus · Mic Drop &amp; Closing Prayer</div>
     <div class="slide-content">
-      <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-116">Remember</h2>
+      <h2 class="t-title reveal editable" style="font-size:60px;" data-edit-id="el-109">Remember</h2>
       <div class="grid-3 reveal">
         <div class="solid-box">
-          <p class="editable" style="font-size: 22px; font-style:italic;" data-edit-id="el-117">"The table isn't a reward for the clean. It's a meal for the forgiven."</p>
+          <p class="editable" style="font-size: 22px; font-style:italic;" data-edit-id="el-110">The party doesn't start when you clean up. It starts when you come home.</p>
         </div>
         <div class="solid-box">
-          <p class="editable" style="font-size: 22px; font-style:italic;" data-edit-id="el-118">"Shame says clean yourself up before you come. Grace says come, and I'll clean you up."</p>
+          <p class="editable" style="font-size: 22px; font-style:italic;" data-edit-id="el-111">We were all were lost at one point. Until we are found.</p>
         </div>
         <div class="solid-box">
-          <p class="editable" style="font-size: 22px; font-style:italic;" data-edit-id="el-119">"You'll never be good enough for the table. That's exactly why He set it for you."</p>
+          <p class="editable" style="font-size: 22px; font-style:italic;" data-edit-id="el-112">The mistake isn't taking God seriously. It's forgetting there's also a time to dance.</p>
         </div>
       </div>
       <div class="card-outline reveal" style="text-align:center;">
-        <p class="t-body-sm editable" style="font-style:italic; font-size: 22px;" data-edit-id="el-120">Jesus, thank You that Your body was broken and Your blood was poured out for me — before I ever cleaned myself up. When shame tells me to hide, remind me the table is where I belong. Teach me to examine my heart honestly, confess freely, and then rest in the fact that You already made me worthy. Help me never take this lightly, and never stay away. I remember You. Amen.</p>
+        <p class="t-body-sm editable" style="font-style:italic; font-size: 22px;" data-edit-id="el-113">Father, thank You that You don't just tolerate me coming home — You run to meet me. Forgive me for the times I've kept score instead of celebrating, or stayed quiet instead of rejoicing. Teach me to bring You my worries and leave them there, and to actually celebrate what You've done — in me, and in the people around me. I was lost, and I am found. That's worth everything. In Jesus' name, Amen.</p>
       </div>
     </div>
-    <div class="chrome-footer reveal"><span>Communion · The Table You Can't Earn</span><span>13</span></div>
+    <div class="chrome-footer reveal"><span>Celebration · Found and Alive</span><span>13</span></div>
   </div>
 </section>
 
@@ -1214,13 +1224,13 @@ body.block-dragging .slide.active .split-content {
     <h3>Add a block</h3>
     <button id="blockPanelClose" title="Close">✕</button>
   </div>
-  <div class="block-panel-body" id="blockPanelBody"><div class="block-panel-section"><h4>Text</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="heading" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">H2</div><div class="block-card-label">Heading</div></div><div class="block-card" draggable="true" data-block-key="label" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">Aa</div><div class="block-card-label">Label</div></div><div class="block-card" draggable="true" data-block-key="paragraph" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">¶</div><div class="block-card-label">Paragraph</div></div></div></div><div class="block-panel-section"><h4>Quotes &amp; Scripture</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="scripture" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">❝</div><div class="block-card-label">Scripture Card</div></div><div class="block-card" draggable="true" data-block-key="pullquote" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">"</div><div class="block-card-label">Pull Quote</div></div></div></div><div class="block-panel-section"><h4>Callouts &amp; Lists</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="callout" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">✦</div><div class="block-card-label">Callout</div></div><div class="block-card" draggable="true" data-block-key="bullets" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">☰</div><div class="block-card-label">Bullet List</div></div><div class="block-card" draggable="true" data-block-key="step" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">①</div><div class="block-card-label">Numbered Step</div></div></div></div><div class="block-panel-section"><h4>Cards &amp; Grids</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="grid3" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">▦</div><div class="block-card-label">3-Card Row</div></div><div class="block-card" draggable="true" data-block-key="grid2" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">▤</div><div class="block-card-label">2-Card Row</div></div><div class="block-card" draggable="true" data-block-key="category" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">▥</div><div class="block-card-label">Category Grid</div></div></div></div><div class="block-panel-section"><h4>Layout &amp; Media</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="split" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">◫</div><div class="block-card-label">Two-Column Split</div></div><div class="block-card" draggable="true" data-block-key="image" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">🖼</div><div class="block-card-label">Image</div></div></div></div></div>
+  <div class="block-panel-body" id="blockPanelBody"><div class="block-panel-section"><h4>Section</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="section-two-col" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">◫</div><div class="block-card-label">Two-Column</div></div></div></div><div class="block-panel-section"><h4>Text</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="heading" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">H2</div><div class="block-card-label">Heading</div></div><div class="block-card" draggable="true" data-block-key="label" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">Aa</div><div class="block-card-label">Label</div></div><div class="block-card" draggable="true" data-block-key="paragraph" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">¶</div><div class="block-card-label">Paragraph</div></div></div></div><div class="block-panel-section"><h4>Quotes &amp; Scripture</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="scripture" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">❝</div><div class="block-card-label">Scripture Card</div></div><div class="block-card" draggable="true" data-block-key="pullquote" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">"</div><div class="block-card-label">Pull Quote</div></div></div></div><div class="block-panel-section"><h4>Callouts &amp; Lists</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="callout" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">✦</div><div class="block-card-label">Callout</div></div><div class="block-card" draggable="true" data-block-key="bullets" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">☰</div><div class="block-card-label">Bullet List</div></div><div class="block-card" draggable="true" data-block-key="step" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">①</div><div class="block-card-label">Numbered Step</div></div></div></div><div class="block-panel-section"><h4>Cards &amp; Grids</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="grid3" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">▦</div><div class="block-card-label">3-Card Row</div></div><div class="block-card" draggable="true" data-block-key="grid2" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">▤</div><div class="block-card-label">2-Card Row</div></div><div class="block-card" draggable="true" data-block-key="category" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">▥</div><div class="block-card-label">Category Grid</div></div></div></div><div class="block-panel-section"><h4>Layout &amp; Media</h4><div class="block-panel-grid"><div class="block-card" draggable="true" data-block-key="split" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">◫</div><div class="block-card-label">Two-Column Split</div></div><div class="block-card" draggable="true" data-block-key="image" title="Drag onto a slide, or click to add to the end"><div class="block-card-icon">🖼</div><div class="block-card-label">Image</div></div></div></div></div>
 </div>
-<div class="block-drop-indicator" id="blockDropIndicator"></div>
+<div class="block-drop-indicator" id="blockDropIndicator" style="top: 915px; left: 26.6667px; width: 715.731px;"></div>
 
-<div class="selection-toolbar" id="selectionToolbar" style="transform: translate(-50%, calc(-100% - 12px)); left: 462.86px; top: 532.997px;">
+<div class="selection-toolbar" id="selectionToolbar" style="transform: translate(-50%, calc(-100% - 12px)); left: 1129.56px; top: 384.943px;">
   <button type="button" data-cmd="bold" title="Bold" class=""><b>B</b></button>
-  <button type="button" data-cmd="italic" title="Italic" class=""><i>I</i></button>
+  <button type="button" data-cmd="italic" title="Italic" class="active"><i>I</i></button>
   <button type="button" data-cmd="underline" title="Underline"><u>U</u></button>
   <div class="sel-divider"></div>
   <div class="sel-size-combo">
@@ -1318,9 +1328,6 @@ class SlidePresentation {
                 if (dist < nearestDist) { nearestDist = dist; nearest = { d, cx }; }
             });
             if (!nearest) return;
-            // Highlight whichever dot the drag would land next to — the dragged
-            // dot's own color already makes it obvious which one is moving, but
-            // without this there's no cue for exactly where it will drop.
             if (lastTarget && lastTarget !== nearest.d) lastTarget.classList.remove('drop-target');
             nearest.d.classList.add('drop-target');
             lastTarget = nearest.d;
@@ -1445,7 +1452,7 @@ class SlidePresentation {
 class InlineEditor {
     constructor() {
         this.isActive = false;
-        this.storageKey = 'gamma-communion-table-edits';
+        this.storageKey = 'gamma-celebration-7-3-edits';
         this.toggle = document.getElementById('editToggle');
         this.hotzone = document.querySelector('.edit-hotzone');
         this.toast = document.getElementById('saveToast');
@@ -1550,9 +1557,6 @@ class InlineEditor {
         const onMove = (ev) => {
             const dx = ev.clientX - startX, dy = ev.clientY - startY;
             if (Math.abs(dx) > 3 || Math.abs(dy) > 3) this._imgDragMoved = true;
-            // Dragging the pointer right should visually move the image right (reveal
-            // more of its left side), which is a DECREASE in background/object-position
-            // X% — the opposite sign of the pointer delta.
             let newX = startPctX - (dx / rect.width) * 100;
             let newY = startPctY - (dy / rect.height) * 100;
             newX = Math.min(100, Math.max(0, newX));
@@ -1573,7 +1577,7 @@ class InlineEditor {
         document.addEventListener('mouseup', onUp);
     }
 
-    static ITEM_SELECTOR = '.solid-box, .outline-box, .category-item, .joined-boxes > div, .arrow-item, .content-block';
+    static ITEM_SELECTOR = '.solid-box, .outline-box, .category-item, .joined-boxes > div, .arrow-item, .content-block, .bullets > li';
     static GROUP_SELECTOR = '.slide.active .slide-content > .reveal, .slide.active .split-content > .reveal, .slide.active .slide-content > .scripture-card, .slide.active .split-content > .scripture-card';
 
     setupHoverCopy() {
@@ -1608,9 +1612,6 @@ class InlineEditor {
     updateHoverCopy(e) {
         if (this.dragState) { this.onDragMove(e); return; }
         if (!this.isActive) { this.hideHoverCopy(); return; }
-        // e.target is occasionally a non-Element (e.g. the Document itself) for
-        // synthetic mousemove events some automation/extension tooling dispatches —
-        // guard rather than let .closest() throw and kill this listener permanently.
         if (!e.target || typeof e.target.closest !== 'function') return;
         if (this.hoverCopyBtn.contains(e.target) || this.hoverDeleteBtn.contains(e.target) || this.hoverDragBtn.contains(e.target)) return;
 
@@ -1865,7 +1866,6 @@ class InlineEditor {
     applyImage(url) {
         const el = this.activeImageEl;
         if (!el) return;
-        // A brand-new image shouldn't inherit the previous photo's crop offset.
         if (el.tagName === 'IMG') {
             el.src = url;
             el.style.objectPosition = '50% 50%';
@@ -1878,7 +1878,10 @@ class InlineEditor {
     }
 
     save() {
-        const data = {};
+        const data = {
+            __editableCount: document.querySelectorAll('.editable').length,
+            __imgCount: document.querySelectorAll('.img-editable').length
+        };
         document.querySelectorAll('.editable').forEach((el) => { data[el.dataset.editId] = el.innerHTML; });
         document.querySelectorAll('.img-editable').forEach((el) => {
             const isImgTag = el.tagName === 'IMG';
@@ -1896,18 +1899,19 @@ class InlineEditor {
     restore() {
         const raw = localStorage.getItem(this.storageKey);
         const data = raw ? JSON.parse(raw) : {};
+        const structureMatches = data.__editableCount === document.querySelectorAll('.editable').length
+            && data.__imgCount === document.querySelectorAll('.img-editable').length;
         document.querySelectorAll('.editable').forEach((el, i) => {
             const id = 'el-' + i;
             el.dataset.editId = id;
-            if (data[id] !== undefined) el.innerHTML = data[id];
+            if (structureMatches && data[id] !== undefined) el.innerHTML = data[id];
         });
         document.querySelectorAll('.img-editable').forEach((el, i) => {
             const id = 'img-' + i;
             el.dataset.imgId = id;
+            if (!structureMatches) return;
             const entry = data[id];
             if (entry === undefined) return;
-            // Older saves (from before drag-to-reposition existed) stored a plain
-            // src/background string instead of {src, pos} — support both shapes.
             const src = typeof entry === 'string' ? entry : entry.src;
             const pos = typeof entry === 'string' ? null : entry.pos;
             if (el.tagName === 'IMG') { if (src) el.src = src; if (pos) el.style.objectPosition = pos; }
@@ -1943,7 +1947,7 @@ class InlineEditor {
         const blob = new Blob([html], { type: 'text/html' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'Communion_The_Table_You_Cant_Earn_Gamma.html';
+        a.download = 'Celebration_Lesson_7.3_Gamma.html';
         a.click();
     }
 }
@@ -2202,6 +2206,8 @@ class BlockPanel {
     static PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect width='100%25' height='100%25' fill='%23EEEEF3'/%3E%3C/svg%3E";
 
     static LIBRARY = [
+        { key: 'section-two-col', category: 'Section', label: 'Two-Column', icon: '◫',
+          html: () => `<div class="grid-2 reveal"><div class="section-slot"></div><div class="section-slot"></div></div>` },
         { key: 'heading', category: 'Text', label: 'Heading', icon: 'H2',
           html: () => `<h2 class="t-title reveal editable">New Heading</h2>` },
         { key: 'label', category: 'Text', label: 'Label', icon: 'Aa',
@@ -2304,9 +2310,31 @@ class BlockPanel {
         return slide.querySelector('.slide-content') || slide.querySelector('.split-content') || slide.querySelector('.slide-inner');
     }
 
-    findDropSpot(clientY) {
+    findDropSpot(clientX, clientY) {
         const slide = this.activeSlide();
         if (!slide) return null;
+        // A section-slot (e.g. inside a Two-Column section) takes priority
+        // whenever the pointer is directly over it, so a block can be dropped
+        // INTO a nested container instead of always landing at the slide's
+        // top level. Falls through to the normal top-level search otherwise.
+        const slots = [...slide.querySelectorAll('.section-slot')];
+        const hoveredSlot = slots.find((slot) => {
+            const r = slot.getBoundingClientRect();
+            return clientX >= r.left && clientX <= r.right && clientY >= r.top && clientY <= r.bottom;
+        });
+        if (hoveredSlot) {
+            const children = [...hoveredSlot.children];
+            if (!children.length) return { container: hoveredSlot, before: null };
+            let nearestChild = null, nearestChildDist = Infinity;
+            children.forEach((el) => {
+                const r = el.getBoundingClientRect();
+                const cy = r.top + r.height / 2;
+                const dist = Math.abs(clientY - cy);
+                if (dist < nearestChildDist) { nearestChildDist = dist; nearestChild = { el, cy }; }
+            });
+            const beforeChild = clientY < nearestChild.cy;
+            return { container: hoveredSlot, before: beforeChild ? nearestChild.el : nearestChild.el.nextSibling };
+        }
         const candidates = [...slide.querySelectorAll(InlineEditor.GROUP_SELECTOR)];
         if (!candidates.length) {
             const container = this.primaryContainer(slide);
@@ -2328,7 +2356,7 @@ class BlockPanel {
         if (!this.dragging) return;
         e.preventDefault();
         e.dataTransfer.dropEffect = 'copy';
-        const spot = this.findDropSpot(e.clientY);
+        const spot = this.findDropSpot(e.clientX, e.clientY);
         this.dropTarget = spot;
         if (!spot) { this.indicator.classList.remove('show'); return; }
         const rect = spot.before ? spot.before.getBoundingClientRect() : spot.container.getBoundingClientRect();
@@ -2367,6 +2395,9 @@ class BlockPanel {
         temp.innerHTML = block.html(slide).trim();
         const node = temp.firstElementChild;
         if (!node) return;
+        if (container.classList.contains('section-slot') && !node.classList.contains('content-block')) {
+            node.classList.add('content-block');
+        }
         if (before) container.insertBefore(node, before); else container.appendChild(node);
         this.editor.applyEditableState();
         this.editor.rebindSplitHandles();
@@ -2637,9 +2668,6 @@ class SlideThumbPanel {
         this.list = document.getElementById('slideThumbList');
         this.selectionBar = document.getElementById('slideThumbSelectionBar');
         this.selectionCount = document.getElementById('slideThumbSelectionCount');
-        // Keyed on the real .slide elements (stable across re-renders and across
-        // reordering — reordering moves existing nodes, it never recreates them),
-        // never on the transient .slide-thumb wrappers render() rebuilds each time.
         this.selectedSlides = new Set();
         document.getElementById('slideThumbClearSelection').addEventListener('click', () => {
             this.selectedSlides.clear();
@@ -2668,11 +2696,6 @@ class SlideThumbPanel {
         this.selectionCount.textContent = n === 1 ? '1 selected' : n > 1 ? `${n} selected` : '';
     }
 
-    /* Called from SlidePresentation.refresh() on every duplicate/delete/move/insert
-       so the rail never goes stale relative to the real slides — but skips the
-       clone work entirely while the rail is hidden. Must check 'show' rather than
-       track a separate built flag: open() always adds 'show' before rendering, so
-       'show' state is always accurate at the moment this runs. */
     rebuild() {
         if (this.panel.classList.contains('show')) this.render();
     }
@@ -2704,8 +2727,6 @@ class SlideThumbPanel {
             const wrapper = document.createElement('div');
             wrapper.className = 'slide-thumb-inner';
             const inner = slide.querySelector('.slide-inner').cloneNode(true);
-            // Strip live-editing state from the clone — it's a detached snapshot,
-            // never meant to be typed into or trigger the image picker.
             inner.querySelectorAll('[data-edit-id]').forEach((n) => n.removeAttribute('data-edit-id'));
             inner.querySelectorAll('[data-img-id]').forEach((n) => n.removeAttribute('data-img-id'));
             inner.querySelectorAll('[contenteditable]').forEach((n) => n.removeAttribute('contenteditable'));
@@ -2714,8 +2735,6 @@ class SlideThumbPanel {
 
             thumb.addEventListener('mousedown', (e) => this.startThumbDrag(e, thumb, slide));
             thumb.addEventListener('click', (e) => {
-                // The trailing click after a drag must not also navigate/toggle —
-                // same disambiguation pattern used for image drag-to-reposition.
                 if (this._thumbDragMoved) { this._thumbDragMoved = false; return; }
                 if (e.shiftKey) { this.toggleSelect(slide); return; }
                 if (this.selectedSlides.size) { this.selectedSlides.clear(); this.render(); }
@@ -2723,7 +2742,6 @@ class SlideThumbPanel {
             });
             this.list.appendChild(thumb);
 
-            // clientWidth isn't reliable until the element is actually in the DOM.
             requestAnimationFrame(() => {
                 const scale = thumb.clientWidth / 1920;
                 wrapper.style.transform = `scale(${scale})`;
@@ -2739,16 +2757,11 @@ class SlideThumbPanel {
         this.updateSelectionBar();
     }
 
-    /* ---- Drag to reorder — single thumb, or the whole selected group ---- */
-
     startThumbDrag(e, thumbEl, slide) {
         if (e.shiftKey || e.button !== 0) return;
         e.preventDefault();
         this._thumbDragMoved = false;
         const allThumbs = [...this.list.querySelectorAll('.slide-thumb')];
-        // If the grabbed thumb is part of a multi-selection, drag the whole
-        // group together (in their existing relative order); otherwise it's
-        // just this one thumb, selected or not.
         const dragThumbs = this.selectedSlides.has(slide) && this.selectedSlides.size > 1
             ? allThumbs.filter((t) => this.selectedSlides.has(t._slideEl))
             : [thumbEl];
@@ -2766,8 +2779,6 @@ class SlideThumbPanel {
             });
             if (!nearest) return;
             const before = ev.clientY < nearest.cy;
-            // Element.before()/after() accept multiple nodes, inserting them as one
-            // contiguous run — this is how a multi-thumb group moves as a block.
             if (before) nearest.t.before(...dragThumbs); else nearest.t.after(...dragThumbs);
         };
         const onUp = () => {
@@ -2790,28 +2801,11 @@ class SlideThumbPanel {
         slideManager.showToast('Slide order changed — press Ctrl+S to keep it');
     }
 
-    /* The insert marker's position depends on which slide is active, so a plain
-       active-class swap isn't enough on its own — re-render to move it. */
     updateActive() {
         if (this.panel.classList.contains('show')) this.render();
     }
 }
 
-// Declared (but not yet assigned) before SlidePresentation is constructed —
-// its constructor calls showSlide(0) synchronously, which references
-// slideThumbPanel. A `const` declared later in this block would still be in
-// its temporal dead zone at that moment and throw; predeclaring with `let`
-// makes the reference resolve to `undefined` instead, which every guard
-// below already treats as "not ready yet."
-//
-// Every "is this singleton ready" check elsewhere in this file (and this one)
-// tests the bare identifier — e.g. `if (slideThumbPanel)` — never
-// `window.slideThumbPanel`. Every one of these panels also has a same-named
-// DOM element (id="slideThumbPanel" etc.), and elements with an id are
-// auto-exposed as window.<id> properties. window.slideThumbPanel would
-// therefore resolve to that DOM element (always truthy, from page load)
-// instead of this JS singleton, letting a guard pass before the singleton
-// exists — exactly what happened here before this was caught.
 let slideThumbPanel;
 const editor = new InlineEditor();
 const presentation = new SlidePresentation();
@@ -2821,5 +2815,6 @@ const blockPanel = new BlockPanel(editor, presentation, slideManager);
 const slideLayoutPanel = new SlideLayoutPanel(presentation, editor, slideManager);
 slideThumbPanel = new SlideThumbPanel(presentation);
 </script>
+
 
 </body></html>
